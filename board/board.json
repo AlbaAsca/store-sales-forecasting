@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:58:14+02:00",
+  "updated": "2026-10-15T15:58:17+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-015",
-    "heartbeat": "2026-10-15T15:56:30+02:00",
-    "message": "tester con T-015",
+    "current": "T-016",
+    "heartbeat": "2026-10-15T15:58:17+02:00",
+    "message": "desarrollador con T-016",
     "pid": 708,
-    "agent": "tester",
-    "started": "2026-10-15T15:56:30+02:00"
+    "agent": "desarrollador",
+    "started": "2026-10-15T15:58:17+02:00"
   },
   "agents": [
     {
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-016"
     },
     {
       "id": "tester",
@@ -931,7 +931,7 @@
       "id": "T-016",
       "title": "V-006: estacionalidad anual (retardo 364) como rasgo del LightGBM global",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "baja",
       "estimate_min": 25.0,
       "actual_min": null,
@@ -940,14 +940,19 @@
       "desc": "Hipótesis (chongzhenjie lags 365/730; ANALISIS-ERRORES caso tienda 45 vuelta al cole): ninguna media reciente ve picos anuales. Cambio exacto: V-004 (o V-005 si aceptada) + 2 rasgos: media log1p del mismo día-objetivo -364 d (y de su ventana ±3 d) y su diferencia frente a la media log 14 d previa a t-364. Nada más. Criterio: CV medio < base vigente y no empeora más de 1 fold; mirar SCHOOL AND OFFICE SUPPLIES por familia.",
       "deps": [],
       "created": "2026-10-15T15:50:50+02:00",
-      "updated": "2026-10-15T15:50:50+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:58:17+02:00",
+      "started_at": "2026-10-15T15:58:17+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:50:50+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:58:17+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     }
