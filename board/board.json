@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:51:10+02:00",
+  "updated": "2026-10-15T15:51:12+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-006",
-    "heartbeat": "2026-10-15T15:48:24+02:00",
-    "message": "modelador con T-006",
+    "current": "T-014",
+    "heartbeat": "2026-10-15T15:51:12+02:00",
+    "message": "desarrollador con T-014",
     "pid": 708,
-    "agent": "modelador",
-    "started": "2026-10-15T15:48:24+02:00"
+    "agent": "desarrollador",
+    "started": "2026-10-15T15:51:12+02:00"
   },
   "agents": [
     {
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-014"
     },
     {
       "id": "tester",
@@ -709,7 +709,7 @@
       "id": "T-014",
       "title": "V-004: LightGBM global directo con rasgos de la fecha de corte (medias log + perfil semanal)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 45.0,
       "actual_min": null,
@@ -718,14 +718,19 @@
       "desc": "Hipótesis (Favorita ceshine/lgbm-starter, chongzhenjie LightGBM global; ver docs/DISENO-MODELOS.md #6): un solo modelo para las 1782 series aprende interacciones que una media por serie no ve. Cambio exacto (sobre la base vigente; si V-002 aún no está promovida, sobre base-v2 tras promoverla): fit_predict construye set apilando 8 cortes t_k=corte-16-7k; rasgos <t_k: media log1p 3/7/14/28/56 d, perfil dow en log (8 sem), h, dow, store_nbr y family categóricas; objetivo log1p, L2, params ceshine, 400 rondas, seed de ctx; SIN promos/festivos/anual. Predicción expm1 clip 0. Criterio: CV medio < base vigente y no empeora más de 1 fold; repetir con otra semilla y anotar variación.",
       "deps": [],
       "created": "2026-10-15T15:50:45+02:00",
-      "updated": "2026-10-15T15:50:45+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:51:12+02:00",
+      "started_at": "2026-10-15T15:51:12+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:50:45+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:51:12+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
