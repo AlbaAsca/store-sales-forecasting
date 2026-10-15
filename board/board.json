@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:55:31+02:00",
+  "updated": "2026-10-15T15:55:33+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-010",
-    "heartbeat": "2026-10-15T15:54:37+02:00",
-    "message": "tester con T-010",
+    "current": "T-015",
+    "heartbeat": "2026-10-15T15:55:33+02:00",
+    "message": "desarrollador con T-015",
     "pid": 708,
-    "agent": "tester",
-    "started": "2026-10-15T15:54:37+02:00"
+    "agent": "desarrollador",
+    "started": "2026-10-15T15:55:33+02:00"
   },
   "agents": [
     {
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-015"
     },
     {
       "id": "tester",
@@ -854,7 +854,7 @@
       "id": "T-015",
       "title": "V-005: promociones como rasgos del LightGBM global (sobre V-004)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "media",
       "estimate_min": 25.0,
       "actual_min": null,
@@ -863,14 +863,19 @@
       "desc": "Hipótesis (ceshine promo_i/promo_14; ANALISIS-ERRORES hallazgo 8): el GBM aprende la elasticidad a promos por familia mejor que la heurística V-003. Cambio exacto: V-004 + 3 rasgos: onpromotion del día objetivo, suma onpromotion 14 d antes del corte, ratio día/media 14 d. Nada más. Requiere V-004 aceptada (si no, cerrar sin medir). Criterio: CV medio < base vigente y no empeora más de 1 fold; comparar también con V-003.",
       "deps": [],
       "created": "2026-10-15T15:50:47+02:00",
-      "updated": "2026-10-15T15:50:47+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:55:33+02:00",
+      "started_at": "2026-10-15T15:55:33+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:50:47+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:55:33+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
