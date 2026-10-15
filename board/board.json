@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:46:58+02:00",
+  "updated": "2026-10-15T15:47:24+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -47,8 +47,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-011"
     },
     {
       "id": "arquitecto",
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-009"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -489,18 +489,18 @@
       "id": "T-009",
       "title": "V-002: media y perfil semanal en escala log (media de log1p 14d + perfil log por tienda×familia×día)",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 0.4,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis: la base promedia en ventas pero la métrica es en log → sesgo +0.10 y mala gestión de ceros/intermitentes (22% del error); ver docs/ANALISIS-ERRORES.md. Cambio (sobre V-001 si ya es base, si no sobre base-v0): pred = expm1(media log1p últimos 14d + (media log1p del día de semana − media log1p, 8 semanas)), clip a 0. Criterio: RMSLE medio < base vigente (contrafactual esperado 0.4154 vs 0.4304 de V-001) y empeora como mucho 1 de 4 folds; sesgo medio en log |x|<0.05.",
       "deps": [],
       "created": "2026-10-15T15:46:35+02:00",
-      "updated": "2026-10-15T15:46:58+02:00",
+      "updated": "2026-10-15T15:47:24+02:00",
       "started_at": "2026-10-15T15:46:58+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:47:24+02:00",
       "log": [
         {
           "t": "2026-10-15T15:46:35+02:00",
@@ -511,6 +511,23 @@
           "t": "2026-10-15T15:46:58+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-15T15:47:24+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-002 implementada sobre base-v0 y corre en el fold rápido (RMSLE 0.4201 en f1); falta el backtest completo del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-15T15:47:24+02:00",
+          "min": 0.4,
+          "turns": 11,
+          "tokens": 75161,
+          "cost_usd": 0.0830166,
+          "verdict": "review"
         }
       ]
     },
@@ -535,6 +552,35 @@
           "t": "2026-10-15T15:46:38+02:00",
           "by": "experto",
           "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-011",
+      "title": "Promover V-001 a base-v1",
+      "owner": "consultor",
+      "status": "doing",
+      "priority": "alta",
+      "estimate_min": 5.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Copiar variants/V-001 a models/base, medir base-v1, tag base-v1",
+      "deps": [],
+      "created": "2026-10-15T15:47:12+02:00",
+      "updated": "2026-10-15T15:47:12+02:00",
+      "started_at": "2026-10-15T15:47:12+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:47:12+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:47:12+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
         }
       ]
     }
