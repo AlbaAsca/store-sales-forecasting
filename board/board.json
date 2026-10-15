@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:47:26+02:00",
+  "updated": "2026-10-15T15:47:30+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -47,8 +47,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "working",
-      "current": "T-011"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "arquitecto",
@@ -565,18 +565,18 @@
       "id": "T-011",
       "title": "Promover V-001 a base-v1",
       "owner": "consultor",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 5.0,
-      "actual_min": null,
+      "actual_min": 0.3,
       "auto": true,
       "manual": null,
       "desc": "Copiar variants/V-001 a models/base, medir base-v1, tag base-v1",
       "deps": [],
       "created": "2026-10-15T15:47:12+02:00",
-      "updated": "2026-10-15T15:47:12+02:00",
+      "updated": "2026-10-15T15:47:30+02:00",
       "started_at": "2026-10-15T15:47:12+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:47:30+02:00",
       "log": [
         {
           "t": "2026-10-15T15:47:12+02:00",
@@ -587,6 +587,11 @@
           "t": "2026-10-15T15:47:12+02:00",
           "by": "consultor",
           "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-15T15:47:30+02:00",
+          "by": "consultor",
+          "msg": "models/base = V-001; base-v1 CV 0.4304; tag base-v1"
         }
       ]
     }

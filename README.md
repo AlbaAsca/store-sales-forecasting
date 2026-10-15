@@ -11,7 +11,7 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 | | |
 |---|---|
 | 📈 **Mejor RMSLE en el backtest** | 0.4304 (base-v1 = V-001) · base-v0: 0.4745 |
-| 🧪 **Experimentos cerrados** | 0 aceptados · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
+| 🧪 **Experimentos cerrados** | 1 aceptado · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
 | 🏁 **Leaderboard de Kaggle** | 0.45751 (v0.1, base-v0) · holdout 0.5191 |
 
 ---
