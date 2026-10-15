@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:51:12+02:00",
+  "updated": "2026-10-15T15:51:45+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -685,7 +685,7 @@
       "id": "T-013",
       "title": "Subir v0.2 (base-v2) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 3.0,
       "actual_min": null,
@@ -694,7 +694,7 @@
       "desc": "CV dice mejor (4/4 folds) y holdout dice peor: el LB decide a quién creer.",
       "deps": [],
       "created": "2026-10-15T15:49:25+02:00",
-      "updated": "2026-10-15T15:49:25+02:00",
+      "updated": "2026-10-15T15:51:45+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
@@ -702,6 +702,11 @@
           "t": "2026-10-15T15:49:25+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:51:45+02:00",
+          "by": "consultor",
+          "msg": "LB 0.41457 (v0.1 0.45751): el LB sigue al CV, no al holdout"
         }
       ]
     },

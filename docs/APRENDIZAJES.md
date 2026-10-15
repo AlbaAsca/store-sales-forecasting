@@ -5,6 +5,11 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.2 · segundo envío: ¿a quién creer, a los folds o al holdout? — 🏁 LB 0.41457
+Qué: subir base-v2 (escala log), que mejoraba 4/4 folds (0.4304 → 0.4154) pero empeoraba el holdout (0.5109 → 0.5244). · Pasó: Kaggle
+0.45751 → 0.41457, igual que decían los folds. · Por qué: el holdout es una sola quincena (1-15 ago) y mide sobre todo cómo le va al modelo
+en esos días concretos; 4 folds promedian el ruido. Lección: una ventana de validación sola puede engañar; varias, mucho menos.
+
 ### v0.1 · primer envío a Kaggle (calibración) — 🏁 LB 0.45751
 Qué: subir la base sin mejorar para comprobar si la validación local predice el leaderboard. · Pasó: backtest 0.4745, holdout 0.5191,
 Kaggle 0.45751: el test se parece al backtest, no al holdout. · Por qué: los 16 días del holdout (1-15 ago, con la paga del 15) son
