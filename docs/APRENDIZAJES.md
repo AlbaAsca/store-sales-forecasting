@@ -35,6 +35,13 @@ Qué: V-004 + 3 rasgos (onpromotion del día objetivo, suma 14 d previos al cort
 otra semilla 0.3940 (variación ~0.001). Mejoran SCHOOL AND OFFICE −0.081, BEAUTY −0.056; ninguna familia empeora más de +0.005. Vs V-003: −0.063. ·
 Por qué: el árbol aprende la respuesta a la promo por familia/tienda y no la mezcla con tendencia, que era el fallo de la beta fija de V-003.
 
+### V-006 · estacionalidad anual (retardo 364) como rasgo — ✅ ACEPTADA (RMSLE 0.3946 → 0.3904, mejora 4/4 folds)
+Qué: a V-005 se le añaden 3 rasgos: log1p de las ventas del mismo día un año antes (−364 d), su ventana ±3 d y la diferencia frente a la media 14 d previa a ese día. ·
+Pasó: 0.3932 / 0.3796 / 0.3861 / 0.4029; otra semilla: 0.3903 (variación ~0.001). Mejoran GROCERY I −0.028, HOME CARE −0.022, DAIRY −0.021;
+SCHOOL AND OFFICE queda casi igual (media 0.547 → 0.543: peor en f1/f2 ~+0.009, mejor en f3/f4). 24 s. · Por qué: las medias recientes no ven picos anuales;
+mirar el mismo día del año anterior aporta esa memoria. Ganancia modesta y estable (≈10× la variación de semilla). El pico escolar sigue sin resolverse (solo hay 1 año previo útil).
+(*Retardo (lag)*: valor de la serie de hace N días usado como rasgo.)
+
 ### V-004 · LightGBM global con rasgos de la fecha de corte — ✅ ACEPTADA (RMSLE 0.4154 → 0.4057, mejora 3/4 folds)
 Qué: un solo LightGBM para las 1782 series, entrenado con 8 cortes pasados (medias log 3/7/14/28/56 d, perfil semanal, h, dow, tienda y familia). ·
 Pasó: 0.4041 / 0.3926 / 0.4007 / 0.4255 (f4 +0.003); otra semilla: 0.4046 (variación ~0.001). Empeoran SCHOOL AND OFFICE +0.042 y LIQUOR +0.023;

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:59:30+02:00",
+  "updated": "2026-10-15T16:01:21+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -71,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-016"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -931,7 +931,7 @@
       "id": "T-016",
       "title": "V-006: estacionalidad anual (retardo 364) como rasgo del LightGBM global",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 25.0,
       "actual_min": 1.2,
@@ -940,7 +940,7 @@
       "desc": "Hipótesis (chongzhenjie lags 365/730; ANALISIS-ERRORES caso tienda 45 vuelta al cole): ninguna media reciente ve picos anuales. Cambio exacto: V-004 (o V-005 si aceptada) + 2 rasgos: media log1p del mismo día-objetivo -364 d (y de su ventana ±3 d) y su diferencia frente a la media log 14 d previa a t-364. Nada más. Criterio: CV medio < base vigente y no empeora más de 1 fold; mirar SCHOOL AND OFFICE SUPPLIES por familia.",
       "deps": [],
       "created": "2026-10-15T15:50:50+02:00",
-      "updated": "2026-10-15T15:59:28+02:00",
+      "updated": "2026-10-15T16:01:21+02:00",
       "started_at": "2026-10-15T15:58:17+02:00",
       "finished_at": "2026-10-15T15:59:28+02:00",
       "log": [
@@ -968,6 +968,21 @@
           "t": "2026-10-15T15:59:30+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-15T16:01:06+02:00",
+          "by": "tester",
+          "msg": "CV 0.3904 (V-005 0.3946; base-v2 0.4154); semilla 1: 0.3903. Mejora 4/4 folds vs V-005 (-0.002..-0.006). SCHOOL AND OFFICE: media 0.5426 vs 0.5470 (f1,f2 peor ~+0.009; f3,f4 mejor). Tiempo 24 s → ACEPTADA"
+        },
+        {
+          "t": "2026-10-15T16:01:15+02:00",
+          "by": "tester",
+          "msg": "ACEPTADA: CV 0.3904 (V-005 0.3946), 4/4 folds, 2 semillas"
+        },
+        {
+          "t": "2026-10-15T16:01:21+02:00",
+          "by": "tester",
+          "msg": "DONE: V-006 ACEPTADA: CV 0.3904 vs 0.3946 de V-005, mejora 4/4 folds, confirmada con 2 semillas."
         }
       ],
       "runs": [
@@ -980,6 +995,16 @@
           "tokens": 324627,
           "cost_usd": 0.1901742,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-15T16:01:21+02:00",
+          "min": 1.8,
+          "turns": 20,
+          "tokens": 192031,
+          "cost_usd": 0.134345,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-15T15:59:30+02:00"
