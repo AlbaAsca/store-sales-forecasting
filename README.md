@@ -10,8 +10,8 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 📈 **Mejor RMSLE en el backtest** | 0.4154 (base-v2 = V-002) · base-v0: 0.4745 |
-| 🧪 **Experimentos cerrados** | 2 aceptados · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
+| 📈 **Mejor RMSLE en el backtest** | 0.4057 (V-004, pendiente de promover) · base-v2: 0.4154 · base-v0: 0.4745 |
+| 🧪 **Experimentos cerrados** | 3 aceptados · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
 | 🏁 **Leaderboard de Kaggle** | 0.41457 (v0.2, base-v2) · v0.1: 0.45751 |
 
 ---
@@ -154,6 +154,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | base-v0 | media de los últimos 14 días por tienda×familia | 0.4745 ± 0.0090 (f1 0.4738 · f2 0.4611 · f3 0.4769 · f4 0.4864) | — | línea base |
 | V-001 | base-v0 × factor del día de la semana (8 sem.) por tienda×familia | 0.4304 ± 0.0106 (f1 0.4368 · f2 0.4143 · f3 0.4283 · f4 0.4423) | −0.044 | ✅ ACEPTADA |
 | V-002 | media y perfil semanal en escala log (log1p 14 d + perfil log 8 sem.) | 0.4154 ± 0.0064 (f1 0.4201 · f2 0.4057 · f3 0.4138 · f4 0.4222) | −0.015 vs base-v1 | ✅ ACEPTADA |
+| V-004 | LightGBM global (8 cortes; medias log + perfil semanal) | 0.4057 ± 0.0122 (f1 0.4041 · f2 0.3926 · f3 0.4007 · f4 0.4255) | −0.010 vs base-v2 (3/4) | ✅ ACEPTADA |
 
 ![Progreso de los experimentos](docs/img/progreso.png)
 
