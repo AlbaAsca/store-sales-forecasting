@@ -30,6 +30,11 @@ Pasó: 0.4368 / 0.4143 / 0.4283 / 0.4423 (−0.044 de media); mejoran todas las 
 ligeramente BABY CARE +0.024 y HOME APPLIANCES +0.017. Modelo determinista: una semilla basta. · Por qué: la venta semanal tiene un ciclo fuerte
 (fin de semana) que la media plana ignora; el error era sistemático, no ruido.
 
+### V-005 · promociones como rasgos del LightGBM — ✅ ACEPTADA (RMSLE 0.4057 → 0.3946, mejora 4/4 folds)
+Qué: V-004 + 3 rasgos (onpromotion del día objetivo, suma 14 d previos al corte, ratio día/media). · Pasó: 0.3949 / 0.3860 / 0.3918 / 0.4057;
+otra semilla 0.3940 (variación ~0.001). Mejoran SCHOOL AND OFFICE −0.081, BEAUTY −0.056; ninguna familia empeora más de +0.005. Vs V-003: −0.063. ·
+Por qué: el árbol aprende la respuesta a la promo por familia/tienda y no la mezcla con tendencia, que era el fallo de la beta fija de V-003.
+
 ### V-004 · LightGBM global con rasgos de la fecha de corte — ✅ ACEPTADA (RMSLE 0.4154 → 0.4057, mejora 3/4 folds)
 Qué: un solo LightGBM para las 1782 series, entrenado con 8 cortes pasados (medias log 3/7/14/28/56 d, perfil semanal, h, dow, tienda y familia). ·
 Pasó: 0.4041 / 0.3926 / 0.4007 / 0.4255 (f4 +0.003); otra semilla: 0.4046 (variación ~0.001). Empeoran SCHOOL AND OFFICE +0.042 y LIQUOR +0.023;
