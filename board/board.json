@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:48:21+02:00",
+  "updated": "2026-10-15T15:48:24+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-009",
-    "heartbeat": "2026-10-15T15:47:26+02:00",
-    "message": "tester con T-009",
+    "current": "T-006",
+    "heartbeat": "2026-10-15T15:48:24+02:00",
+    "message": "modelador con T-006",
     "pid": 708,
-    "agent": "tester",
-    "started": "2026-10-15T15:47:26+02:00"
+    "agent": "modelador",
+    "started": "2026-10-15T15:48:24+02:00"
   },
   "agents": [
     {
@@ -95,8 +95,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-006"
     }
   ],
   "tasks": [
@@ -402,7 +402,7 @@
       "id": "T-006",
       "title": "Mapa de técnicas de forecasting (DISENO-MODELOS.md)",
       "owner": "modelador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "media",
       "estimate_min": 40.0,
       "actual_min": null,
@@ -411,14 +411,19 @@
       "desc": "Leer notebooks top de Store Sales, solución Favorita 2018 y M5; tabla en docs/DISENO-MODELOS.md ordenada de simple a complejo; máx. 3 tarjetas V-xxx (p. ej. LightGBM global con lags>=16, log1p, festivos).",
       "deps": [],
       "created": "2026-10-15T15:29:11+02:00",
-      "updated": "2026-10-15T15:29:11+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:48:24+02:00",
+      "started_at": "2026-10-15T15:48:24+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:29:11+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:48:24+02:00",
+          "by": "runner",
+          "msg": "empieza modelador"
         }
       ]
     },
