@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:58:17+02:00",
+  "updated": "2026-10-15T15:59:28+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-016"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -931,18 +931,18 @@
       "id": "T-016",
       "title": "V-006: estacionalidad anual (retardo 364) como rasgo del LightGBM global",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "baja",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 1.2,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (chongzhenjie lags 365/730; ANALISIS-ERRORES caso tienda 45 vuelta al cole): ninguna media reciente ve picos anuales. Cambio exacto: V-004 (o V-005 si aceptada) + 2 rasgos: media log1p del mismo día-objetivo -364 d (y de su ventana ±3 d) y su diferencia frente a la media log 14 d previa a t-364. Nada más. Criterio: CV medio < base vigente y no empeora más de 1 fold; mirar SCHOOL AND OFFICE SUPPLIES por familia.",
       "deps": [],
       "created": "2026-10-15T15:50:50+02:00",
-      "updated": "2026-10-15T15:58:17+02:00",
+      "updated": "2026-10-15T15:59:28+02:00",
       "started_at": "2026-10-15T15:58:17+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:59:28+02:00",
       "log": [
         {
           "t": "2026-10-15T15:50:50+02:00",
@@ -953,6 +953,28 @@
           "t": "2026-10-15T15:58:17+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-15T15:59:23+02:00",
+          "by": "desarrollador",
+          "msg": "V-006 implementada (V-005 + ly_day, ly_win, ly_diff con retardo 364). Quick fold1 0.3932 (V-005: 0.3949). 16 tests en verde. Falta medición completa y SCHOOL AND OFFICE SUPPLIES (tester)."
+        },
+        {
+          "t": "2026-10-15T15:59:28+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-006 (V-005 + retardo anual 364) implementada; quick fold1 0,3932 frente a 0,3949 de V-005 y tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-15T15:59:28+02:00",
+          "min": 1.2,
+          "turns": 21,
+          "tokens": 324627,
+          "cost_usd": 0.1901742,
+          "verdict": "review"
         }
       ]
     }
