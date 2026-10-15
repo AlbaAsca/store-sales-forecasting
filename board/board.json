@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:53:58+02:00",
+  "updated": "2026-10-15T15:54:00+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-014",
-    "heartbeat": "2026-10-15T15:52:21+02:00",
-    "message": "tester con T-014",
+    "current": "T-010",
+    "heartbeat": "2026-10-15T15:54:00+02:00",
+    "message": "desarrollador con T-010",
     "pid": 708,
-    "agent": "tester",
-    "started": "2026-10-15T15:52:21+02:00"
+    "agent": "desarrollador",
+    "started": "2026-10-15T15:54:00+02:00"
   },
   "agents": [
     {
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-010"
     },
     {
       "id": "tester",
@@ -593,7 +593,7 @@
       "id": "T-010",
       "title": "V-003: ajuste por promociones en log (elasticidad por familia)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "media",
       "estimate_min": 30.0,
       "actual_min": null,
@@ -602,14 +602,19 @@
       "desc": "Hipótesis: con más promos que la media de 14d predecimos de menos (sesgo -0.11) y con menos, de más (+0.08); ver hallazgo 8 de docs/ANALISIS-ERRORES.md. Cambio (sobre V-002 si se acepta): sumar en log beta_familia*(log1p(onpromotion_dia) − log1p(promo media 14d)), beta estimada por familia con regresión en el histórico (solo antes del corte). Criterio: RMSLE medio < base vigente y empeora como mucho 1 de 4 folds; si gana < 0.002, rechazar por complejidad.",
       "deps": [],
       "created": "2026-10-15T15:46:38+02:00",
-      "updated": "2026-10-15T15:46:38+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:54:00+02:00",
+      "started_at": "2026-10-15T15:54:00+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:46:38+02:00",
           "by": "experto",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:54:00+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
