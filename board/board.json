@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:46:49+02:00",
+  "updated": "2026-10-15T15:46:55+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -276,7 +276,7 @@
         "T-002"
       ],
       "created": "2026-10-15T15:29:11+02:00",
-      "updated": "2026-10-15T15:46:44+02:00",
+      "updated": "2026-10-15T15:46:55+02:00",
       "started_at": "2026-10-15T15:44:16+02:00",
       "finished_at": "2026-10-15T15:46:44+02:00",
       "log": [
@@ -294,6 +294,23 @@
           "t": "2026-10-15T15:46:44+02:00",
           "by": "experto",
           "msg": "docs/ANALISIS-ERRORES.md: el mayor error es promediar en escala lineal (sesgo +0.10; ceros 22% del error). Contrafactual log+perfil log 0.4154 vs V-001 0.4304. Tarjetas T-009 (V-002) y T-010 (V-003)."
+        },
+        {
+          "t": "2026-10-15T15:46:55+02:00",
+          "by": "experto",
+          "msg": "DONE: El mayor error de base-v0 es hacer la media de las ventas sin pasarlas a log (sesgo +0.10, días a cero = 22 % del error); propuestas V-002 (log + perfil semanal, ~0.4154 esperado) y V-003 (promociones)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "experto",
+          "mode": "work",
+          "at": "2026-10-15T15:46:55+02:00",
+          "min": 2.7,
+          "turns": 31,
+          "tokens": 576084,
+          "cost_usd": 0.6974078,
+          "verdict": "done"
         }
       ]
     },
