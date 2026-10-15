@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:47:30+02:00",
+  "updated": "2026-10-15T15:48:21+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -71,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-009"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -489,7 +489,7 @@
       "id": "T-009",
       "title": "V-002: media y perfil semanal en escala log (media de log1p 14d + perfil log por tienda×familia×día)",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": 0.4,
@@ -498,7 +498,7 @@
       "desc": "Hipótesis: la base promedia en ventas pero la métrica es en log → sesgo +0.10 y mala gestión de ceros/intermitentes (22% del error); ver docs/ANALISIS-ERRORES.md. Cambio (sobre V-001 si ya es base, si no sobre base-v0): pred = expm1(media log1p últimos 14d + (media log1p del día de semana − media log1p, 8 semanas)), clip a 0. Criterio: RMSLE medio < base vigente (contrafactual esperado 0.4154 vs 0.4304 de V-001) y empeora como mucho 1 de 4 folds; sesgo medio en log |x|<0.05.",
       "deps": [],
       "created": "2026-10-15T15:46:35+02:00",
-      "updated": "2026-10-15T15:47:24+02:00",
+      "updated": "2026-10-15T15:48:21+02:00",
       "started_at": "2026-10-15T15:46:58+02:00",
       "finished_at": "2026-10-15T15:47:24+02:00",
       "log": [
@@ -521,6 +521,21 @@
           "t": "2026-10-15T15:47:26+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-15T15:48:08+02:00",
+          "by": "tester",
+          "msg": "CV 0.4154 (base-v1 0.4304): mejora 4/4 folds (-0.009..-0.020); sesgo log medio +0.015 (|x|<0.05); modelo determinista, semilla 7 idéntica. Empeora PRODUCE +0.009, DAIRY +0.004; mejora LIQUOR -0.050. ACEPTADA"
+        },
+        {
+          "t": "2026-10-15T15:48:16+02:00",
+          "by": "tester",
+          "msg": "ACEPTADA: CV 0.4154 vs 0.4304"
+        },
+        {
+          "t": "2026-10-15T15:48:21+02:00",
+          "by": "tester",
+          "msg": "DONE: V-002 ACEPTADA: CV 0.4154 frente a 0.4304 de base-v1, mejora 4/4 folds, sesgo log medio +0.015."
         }
       ],
       "runs": [
@@ -533,6 +548,16 @@
           "tokens": 75161,
           "cost_usd": 0.0830166,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-15T15:48:21+02:00",
+          "min": 0.9,
+          "turns": 21,
+          "tokens": 202214,
+          "cost_usd": 0.14375259999999998,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-15T15:47:26+02:00"
