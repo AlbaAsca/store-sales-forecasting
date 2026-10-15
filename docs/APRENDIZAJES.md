@@ -37,6 +37,12 @@ mejoran HARDWARE −0.033, AUTOMOTIVE −0.031. 15 s. · Por qué: un modelo glo
 nivel reciente) y una media por serie no lo ve. Aún sin promos, festivos ni anual: margen de mejora.
 (*Modelo global*: un único modelo para muchas series, en vez de uno por serie.)
 
+### V-003 · ajuste log por promociones (beta por familia) — ❌ RECHAZADA (RMSLE 0.4154 → 0.4571, empeora 4/4 folds)
+Qué: sumar beta_familia·(log1p(promo día) − log1p(promo media 14 d)) a la predicción de V-002. · Pasó: 0.4311 / 0.4405 / 0.4625 / 0.4945;
+mejoran BEAUTY −0.057 y SCHOOL −0.041, pero PRODUCE +0.394, DELI +0.241, POULTRY +0.229. Determinista (otra semilla idéntica). ·
+Por qué: la beta por regresión mezcla promo con otros efectos (la promo suele coincidir con estacionalidad/tendencia) y en familias de frescos
+saca ajustes grandes y erróneos. Si se reintenta: beta solo en familias donde sea significativa o dejar que lo aprenda el LightGBM (V-004).
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …
