@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:44:16+02:00",
+  "updated": "2026-10-15T15:44:18+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -47,8 +47,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "working",
-      "current": "T-007"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "arquitecto",
@@ -404,18 +404,18 @@
       "id": "T-007",
       "title": "Holdout y CSV de envío de base-v0 (v0.1)",
       "owner": "consultor",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 5.0,
-      "actual_min": null,
+      "actual_min": 0.2,
       "auto": true,
       "manual": null,
       "desc": "Calibración backtest vs leaderboard: holdout + dist/submission-base-v0.csv + tag v0.1",
       "deps": [],
       "created": "2026-10-15T15:44:04+02:00",
-      "updated": "2026-10-15T15:44:04+02:00",
+      "updated": "2026-10-15T15:44:18+02:00",
       "started_at": "2026-10-15T15:44:04+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:44:18+02:00",
       "log": [
         {
           "t": "2026-10-15T15:44:04+02:00",
@@ -426,6 +426,35 @@
           "t": "2026-10-15T15:44:04+02:00",
           "by": "consultor",
           "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-15T15:44:18+02:00",
+          "by": "consultor",
+          "msg": "holdout 0.5191 (CV 0.4745); dist/submission-base-v0.csv; tag v0.1"
+        }
+      ]
+    },
+    {
+      "id": "T-008",
+      "title": "Subir v0.1 (base-v0) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "alta",
+      "estimate_min": 3.0,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-base-v0.csv con el mensaje: v0.1 · backtest 0.4745 · holdout 0.5191. Pasar la puntuación al consultor.",
+      "desc": "Calibración: ¿el leaderboard se parece al backtest o al holdout?",
+      "deps": [],
+      "created": "2026-10-15T15:44:18+02:00",
+      "updated": "2026-10-15T15:44:18+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:44:18+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }
