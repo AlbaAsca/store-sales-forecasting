@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:51:45+02:00",
+  "updated": "2026-10-15T15:52:18+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-014"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -714,18 +714,18 @@
       "id": "T-014",
       "title": "V-004: LightGBM global directo con rasgos de la fecha de corte (medias log + perfil semanal)",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 1.1,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (Favorita ceshine/lgbm-starter, chongzhenjie LightGBM global; ver docs/DISENO-MODELOS.md #6): un solo modelo para las 1782 series aprende interacciones que una media por serie no ve. Cambio exacto (sobre la base vigente; si V-002 aún no está promovida, sobre base-v2 tras promoverla): fit_predict construye set apilando 8 cortes t_k=corte-16-7k; rasgos <t_k: media log1p 3/7/14/28/56 d, perfil dow en log (8 sem), h, dow, store_nbr y family categóricas; objetivo log1p, L2, params ceshine, 400 rondas, seed de ctx; SIN promos/festivos/anual. Predicción expm1 clip 0. Criterio: CV medio < base vigente y no empeora más de 1 fold; repetir con otra semilla y anotar variación.",
       "deps": [],
       "created": "2026-10-15T15:50:45+02:00",
-      "updated": "2026-10-15T15:51:12+02:00",
+      "updated": "2026-10-15T15:52:18+02:00",
       "started_at": "2026-10-15T15:51:12+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:52:18+02:00",
       "log": [
         {
           "t": "2026-10-15T15:50:45+02:00",
@@ -736,6 +736,28 @@
           "t": "2026-10-15T15:51:12+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-15T15:52:13+02:00",
+          "by": "desarrollador",
+          "msg": "V-004 implementada en variants/V-004 (LightGBM global, 8 cortes). Quick fold1 RMSLE 0.4040. Tests verdes. Pendiente: medición completa + otra semilla (tester)."
+        },
+        {
+          "t": "2026-10-15T15:52:18+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-004 (LightGBM global con 8 cortes) implementada y corre en --quick (fold 1: RMSLE 0.4040), tests en verde; falta medición completa de 4 folds y segunda semilla por el tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-15T15:52:18+02:00",
+          "min": 1.1,
+          "turns": 15,
+          "tokens": 195896,
+          "cost_usd": 0.1712876,
+          "verdict": "review"
         }
       ]
     },
