@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:55:33+02:00",
+  "updated": "2026-10-15T15:56:28+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-015"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -854,18 +854,18 @@
       "id": "T-015",
       "title": "V-005: promociones como rasgos del LightGBM global (sobre V-004)",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "media",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 0.9,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (ceshine promo_i/promo_14; ANALISIS-ERRORES hallazgo 8): el GBM aprende la elasticidad a promos por familia mejor que la heurística V-003. Cambio exacto: V-004 + 3 rasgos: onpromotion del día objetivo, suma onpromotion 14 d antes del corte, ratio día/media 14 d. Nada más. Requiere V-004 aceptada (si no, cerrar sin medir). Criterio: CV medio < base vigente y no empeora más de 1 fold; comparar también con V-003.",
       "deps": [],
       "created": "2026-10-15T15:50:47+02:00",
-      "updated": "2026-10-15T15:55:33+02:00",
+      "updated": "2026-10-15T15:56:28+02:00",
       "started_at": "2026-10-15T15:55:33+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:56:28+02:00",
       "log": [
         {
           "t": "2026-10-15T15:50:47+02:00",
@@ -876,6 +876,23 @@
           "t": "2026-10-15T15:55:33+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-15T15:56:28+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-005 implementada (V-004 + 3 rasgos de promo), quick fold1 0.3949 (V-004: 0.4041), tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-15T15:56:28+02:00",
+          "min": 0.9,
+          "turns": 17,
+          "tokens": 185301,
+          "cost_usd": 0.15600060000000002,
+          "verdict": "review"
         }
       ]
     },
