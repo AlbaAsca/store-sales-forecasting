@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:59:28+02:00",
+  "updated": "2026-10-15T15:59:30+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,11 +35,11 @@
     "enabled": true,
     "state": "working",
     "current": "T-016",
-    "heartbeat": "2026-10-15T15:58:17+02:00",
-    "message": "desarrollador con T-016",
+    "heartbeat": "2026-10-15T15:59:30+02:00",
+    "message": "tester con T-016",
     "pid": 708,
-    "agent": "desarrollador",
-    "started": "2026-10-15T15:58:17+02:00"
+    "agent": "tester",
+    "started": "2026-10-15T15:59:30+02:00"
   },
   "agents": [
     {
@@ -71,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-016"
     },
     {
       "id": "investigador",
@@ -963,6 +963,11 @@
           "t": "2026-10-15T15:59:28+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-006 (V-005 + retardo anual 364) implementada; quick fold1 0,3932 frente a 0,3949 de V-005 y tests en verde; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-15T15:59:30+02:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -976,7 +981,8 @@
           "cost_usd": 0.1901742,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-15T15:59:30+02:00"
     }
   ]
 }
