@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:43:06+02:00",
+  "updated": "2026-10-15T15:43:08+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-005",
-    "heartbeat": "2026-10-15T15:42:22+02:00",
-    "message": "tester con T-005",
+    "current": "T-003",
+    "heartbeat": "2026-10-15T15:43:08+02:00",
+    "message": "desarrollador con T-003",
     "pid": 708,
-    "agent": "tester",
-    "started": "2026-10-15T15:42:22+02:00"
+    "agent": "desarrollador",
+    "started": "2026-10-15T15:43:08+02:00"
   },
   "agents": [
     {
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-003"
     },
     {
       "id": "tester",
@@ -191,7 +191,7 @@
       "id": "T-003",
       "title": "Figuras de datos del README (ventas, semana, familias)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "media",
       "estimate_min": 15.0,
       "actual_min": null,
@@ -202,14 +202,19 @@
         "T-001"
       ],
       "created": "2026-10-15T15:29:10+02:00",
-      "updated": "2026-10-15T15:29:10+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:43:08+02:00",
+      "started_at": "2026-10-15T15:43:08+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:29:10+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:43:08+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
