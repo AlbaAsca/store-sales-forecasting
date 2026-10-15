@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:32:49+02:00",
+  "updated": "2026-10-15T15:33:17+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -71,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-002"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -138,10 +138,10 @@
       "id": "T-002",
       "title": "Medir base-v0 con el backtest (4 folds)",
       "owner": "tester",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 0.5,
       "auto": true,
       "manual": null,
       "desc": "python scripts/backtest.py --src models/base --name base-v0. Criterio: eval/results/base-v0.json con 4 folds; anotar RMSLE por fold y media; rellenar fila base-v0 del README y primera entrada de APRENDIZAJES.",
@@ -149,9 +149,9 @@
         "T-001"
       ],
       "created": "2026-10-15T15:29:10+02:00",
-      "updated": "2026-10-15T15:32:49+02:00",
+      "updated": "2026-10-15T15:33:17+02:00",
       "started_at": "2026-10-15T15:32:49+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:33:17+02:00",
       "log": [
         {
           "t": "2026-10-15T15:29:10+02:00",
@@ -162,6 +162,28 @@
           "t": "2026-10-15T15:32:49+02:00",
           "by": "runner",
           "msg": "empieza tester"
+        },
+        {
+          "t": "2026-10-15T15:33:10+02:00",
+          "by": "tester",
+          "msg": "base-v0 CV RMSLE 0.4745 ± 0.0090 (f1 0.4738, f2 0.4611, f3 0.4769, f4 0.4864); determinista; README y APRENDIZAJES rellenos"
+        },
+        {
+          "t": "2026-10-15T15:33:17+02:00",
+          "by": "tester",
+          "msg": "DONE: base-v0 medida: CV RMSLE 0.4745 ± 0.0090 (4 folds); README y APRENDIZAJES actualizados."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "tester",
+          "mode": "work",
+          "at": "2026-10-15T15:33:17+02:00",
+          "min": 0.5,
+          "turns": 11,
+          "tokens": 74165,
+          "cost_usd": 0.09517080000000001,
+          "verdict": "done"
         }
       ]
     },

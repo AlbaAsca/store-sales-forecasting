@@ -10,7 +10,7 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 📈 **Mejor RMSLE en el backtest** | _pendiente_ (base v0: _pendiente_) |
+| 📈 **Mejor RMSLE en el backtest** | _pendiente_ (base v0: 0.4745) |
 | 🧪 **Experimentos cerrados** | 0 aceptados · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
 | 🏁 **Leaderboard de Kaggle** | _pendiente_ |
 
@@ -151,7 +151,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 
 | Variante | Idea | RMSLE backtest | Folds que mejora | Veredicto |
 |---|---|---|---|---|
-| base-v0 | media de los últimos 14 días por tienda×familia | _pendiente_ | — | línea base |
+| base-v0 | media de los últimos 14 días por tienda×familia | 0.4745 ± 0.0090 (f1 0.4738 · f2 0.4611 · f3 0.4769 · f4 0.4864) | — | línea base |
 
 ![Progreso de los experimentos](docs/img/progreso.png)
 
