@@ -1,0 +1,10 @@
+{
+  "_doc": "Backtest fijo (validación temporal). Cada fold = 16 días (igual que el test de Kaggle). El modelo solo ve ventas ANTERIORES a 'start'. No cambiar sin tarjeta del consultor: rompe la comparación con resultados previos.",
+  "horizon_days": 16,
+  "folds": [
+    {"id": "f1", "start": "2017-07-15", "end": "2017-07-30"},
+    {"id": "f2", "start": "2017-06-29", "end": "2017-07-14"},
+    {"id": "f3", "start": "2017-06-13", "end": "2017-06-28"},
+    {"id": "f4", "start": "2017-05-28", "end": "2017-06-12"}
+  ]
+}

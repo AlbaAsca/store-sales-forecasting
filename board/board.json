@@ -1,0 +1,253 @@
+{
+  "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
+  "updated": "2026-10-15T15:29:11+02:00",
+  "columns": [
+    {
+      "id": "backlog",
+      "name": "Backlog"
+    },
+    {
+      "id": "next",
+      "name": "Próximo"
+    },
+    {
+      "id": "doing",
+      "name": "En curso"
+    },
+    {
+      "id": "review",
+      "name": "Revisión"
+    },
+    {
+      "id": "human",
+      "name": "Te necesita"
+    },
+    {
+      "id": "blocked",
+      "name": "Bloqueado"
+    },
+    {
+      "id": "done",
+      "name": "Hecho"
+    }
+  ],
+  "runner": {
+    "enabled": true,
+    "state": "stopped",
+    "current": null,
+    "heartbeat": "2026-10-15T15:23:49+02:00",
+    "message": "Sin arrancar"
+  },
+  "agents": [
+    {
+      "id": "consultor",
+      "name": "Consultor",
+      "role": "Habla contigo, prioriza y mueve tarjetas",
+      "color": "#c2410c",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "arquitecto",
+      "name": "Arquitecto",
+      "role": "Mantiene la estructura del proyecto y trocea ideas grandes",
+      "color": "#7c3aed",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "desarrollador",
+      "name": "Desarrollador",
+      "role": "Implementa cada variante V-xxx en su carpeta",
+      "color": "#2563eb",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "tester",
+      "name": "Evaluador",
+      "role": "Mide cada variante con el backtest fijo y da el veredicto",
+      "color": "#16a34a",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "investigador",
+      "name": "Investigador",
+      "role": "Busca técnicas en la discusión de Kaggle, papers y blogs",
+      "color": "#0891b2",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "experto",
+      "name": "Analista de errores",
+      "role": "Lee los errores del modelo por fold, tienda y familia como un data scientist senior",
+      "color": "#ca8a04",
+      "status": "idle",
+      "current": null
+    },
+    {
+      "id": "modelador",
+      "name": "Modelador",
+      "role": "Lee código de soluciones de referencia y propone variantes de modelo",
+      "color": "#db2777",
+      "status": "idle",
+      "current": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "Descargar los datos de Kaggle a data/",
+      "owner": "consultor",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 5.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "7 CSV (~125 MB) con la CLI de Kaggle de KaggleFarm; descomprimir en data/. Los agentes no pueden descargar.",
+      "deps": [],
+      "created": "2026-10-15T15:29:10+02:00",
+      "updated": "2026-10-15T15:29:10+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:10+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-002",
+      "title": "Medir base-v0 con el backtest (4 folds)",
+      "owner": "tester",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 10.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "python scripts/backtest.py --src models/base --name base-v0. Criterio: eval/results/base-v0.json con 4 folds; anotar RMSLE por fold y media; rellenar fila base-v0 del README y primera entrada de APRENDIZAJES.",
+      "deps": [
+        "T-001"
+      ],
+      "created": "2026-10-15T15:29:10+02:00",
+      "updated": "2026-10-15T15:29:10+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:10+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-003",
+      "title": "Figuras de datos del README (ventas, semana, familias)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 15.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "python scripts/make_figures.py con los datos; revisar que cada figura se lee bien y que el README las enlaza. Ajustar anotaciones si caen mal (terremoto, 1 de enero).",
+      "deps": [
+        "T-001"
+      ],
+      "created": "2026-10-15T15:29:10+02:00",
+      "updated": "2026-10-15T15:29:10+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:10+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-004",
+      "title": "Análisis de errores de base-v0",
+      "owner": "experto",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Dónde falla la base: folds, familias, ceros, días de paga, horizonte 1-16. docs/ANALISIS-ERRORES.md + máx. 2 tarjetas V-xxx con criterio.",
+      "deps": [
+        "T-002"
+      ],
+      "created": "2026-10-15T15:29:11+02:00",
+      "updated": "2026-10-15T15:29:11+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:11+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-005",
+      "title": "V-001: perfil por día de la semana sobre la media de 14 días",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 20.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis: el fin de semana vende más (estacionalidad semanal), la base lo ignora. Cambio: media reciente × factor del día de la semana por tienda×familia (últimas 8 semanas). Criterio: RMSLE medio < base-v0 y empeora como mucho 1 de 4 folds.",
+      "deps": [
+        "T-002"
+      ],
+      "created": "2026-10-15T15:29:11+02:00",
+      "updated": "2026-10-15T15:29:11+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:11+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-006",
+      "title": "Mapa de técnicas de forecasting (DISENO-MODELOS.md)",
+      "owner": "modelador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 40.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Leer notebooks top de Store Sales, solución Favorita 2018 y M5; tabla en docs/DISENO-MODELOS.md ordenada de simple a complejo; máx. 3 tarjetas V-xxx (p. ej. LightGBM global con lags>=16, log1p, festivos).",
+      "deps": [],
+      "created": "2026-10-15T15:29:11+02:00",
+      "updated": "2026-10-15T15:29:11+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:29:11+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "_doc": "Holdout INTOCABLE: los últimos 16 días de train. Solo el consultor lo usa (backtest.py --holdout) para confirmar una base antes de enviar a Kaggle. Nunca para elegir variantes.",
+  "folds": [
+    {"id": "holdout", "start": "2017-07-31", "end": "2017-08-15"}
+  ]
+}

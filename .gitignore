@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+board/.lock
+board/STOP
+board/runs/
+.claude/worktrees/
+.claude/settings.local.json
+data/
+eval/results/*/
+dist/

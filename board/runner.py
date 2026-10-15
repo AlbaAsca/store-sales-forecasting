@@ -1,0 +1,352 @@
+"""Runner autónomo: coge tareas del panel y las ejecuta con Claude Code (`claude -p --agent <rol>`).
+
+Orden: 1) tareas en Revisión → las verifica el tester; 2) Próximo; 3) Backlog (por prioridad).
+Salta: Te necesita, Bloqueado, tareas del consultor (son tuyas) y dependencias sin terminar.
+Mide tiempo real, turnos y coste de cada ejecución, y hace commit git antes y después.
+Se pausa desde el panel (botón Pausar) o creando el archivo board/STOP.
+
+Con --contribute, si no hay tareas ejecutables, un agente (por turnos: modelador, investigador, experto, arquitecto) revisa
+el estado del proyecto y aporta algo pequeño o registra tarjetas; como mucho una vez cada --contrib-every horas.
+
+Uso: python board/runner.py [--once] [--contribute] [--contrib-every H] [--dry-run] [--claude RUTA]
+"""
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import board as bd  # noqa: E402
+
+ROOT = Path(__file__).parents[1]
+STOP = Path(__file__).with_name("STOP")
+LOGDIR = Path(__file__).with_name("runs")
+RESULT_RE = re.compile(r"RESULT:\s*(done|review|human|blocked|fail)\b\s*[—:-]?\s*(.*)", re.I)
+MAX_FAILS = 3
+
+# Permisos "código y tests": edita archivos, ejecuta python/pytest/git local. Nada de instalar, encadenar ni push.
+# python = el de .venv (run-agents*.bat lo pone primero en PATH).
+ALLOWED = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch",
+           "Bash(python *)", "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)",
+           "Bash(ls*)", "Bash(cat *)", "Bash(head *)", "Bash(tail *)", "Bash(wc *)", "Bash(mkdir *)", "Bash(diff *)",
+           # en Windows la CLI puede usar PowerShell en vez de Bash: mismos permisos
+           "PowerShell(python *)", "PowerShell(git status*)", "PowerShell(git diff*)", "PowerShell(git log*)",
+           "PowerShell(Get-ChildItem*)", "PowerShell(Get-Content*)",
+           # Kaggle CLI solo lectura (leaderboard y notebooks públicos); nunca submit ni push
+           "Bash(../KaggleFarm/.venv/Scripts/kaggle.exe competitions leaderboard *)",
+           "Bash(../KaggleFarm/.venv/Scripts/kaggle.exe kernels list *)",
+           "Bash(../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull * -p data/kaggle-code/*)",
+           "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe competitions leaderboard *)",
+           "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe kernels list *)",
+           "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull * -p data/kaggle-code/*)"]
+DENIED = ["Bash(python -m pip *)", "Bash(pip *)", "Bash(npm *)", "Bash(winget *)", "Bash(curl *)", "Bash(wget *)",
+          "Bash(cp *)", "Bash(mv *)", "Bash(rm *)", "Bash(git push*)", "Bash(git reset*)", "Bash(git checkout*)",
+          "Bash(*kaggle* competitions submit*)", "Bash(*kaggle* kernels push*)", "Bash(*kaggle* competitions download*)",
+          "PowerShell(python -m pip *)", "PowerShell(pip *)", "PowerShell(Copy-Item*)", "PowerShell(Remove-Item*)",
+          "PowerShell(git push*)", "PowerShell(*kaggle* competitions submit*)", "PowerShell(*kaggle* kernels push*)"]
+
+RULES = """Reglas (modo autónomo, permisos: solo código y tests):
+- Nadie va a responder preguntas: decide tú dentro de tu rol, con el criterio más sensato.
+- Sigue CLAUDE.md. Trabaja SOLO en esta tarea. Si ves otras mejoras o bugs, regístralos con
+  `python board/board.py add "Título" --owner <rol> --est <minutos de agente> --prio <alta|media|baja> --desc "..." --by {owner}`.
+  Las estimaciones son en MINUTOS DE AGENTE (lo que tardarías tú), no horas humanas.
+- NO edites board/board.json a mano: usa siempre board/board.py.
+- Comandos permitidos: python (scripts, pytest, board.py), git status/diff/log, ls/cat/head/tail/diff, mkdir y
+  `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
+  (sin `cd ... &&`, `;` ni `|`), o se denegará. Nunca toques models/base/ (la base vigente) ni eval/holdout.json.
+- Si cierras un experimento V-xxx (aceptado o rechazado), añade 2-3 líneas a docs/APRENDIZAJES.md: qué se probó, qué pasó
+  y por qué, en lenguaje llano. Si aparece un concepto nuevo, explícalo en una frase la primera vez.
+- NO instales software ni dependencias, no descargues binarios, no hagas git push. Si la tarea lo
+  necesita, o necesita un archivo o una decisión del responsable, para y termina con RESULT: human explicando
+  exactamente qué tiene que hacer ella (pasos concretos).
+- Si tocas código: ejecuta los tests del proyecto (comando en CLAUDE.md) y déjalos en verde; añade tests nuevos si procede.
+- Responde en español. Tu ÚLTIMA línea debe ser exactamente:
+  RESULT: <estado> — <resumen en una frase>
+  {states}"""
+
+STATES_DEV = "Estados: review (hecho, falta verificar), human (necesita al responsable), blocked (no puedes avanzar)."
+STATES_DOC = "Estados: done (terminado), human (necesita al responsable), blocked (no puedes avanzar)."
+STATES_QA = ("Estados: done (verificado y, si es una variante V-xxx, medida con el backtest y con veredicto ACEPTADA/RECHAZADA "
+             "anotado; una variante rechazada también es done), blocked (no se puede medir aún, p. ej. faltan datos en data/: "
+             "NUNCA human por esto), fail (el código no funciona: explica cómo reproducirlo), "
+             "human (solo si necesita algo que únicamente puede hacer Alba).")
+
+
+CONTRIB_ROLES = ["modelador", "investigador", "experto", "arquitecto"]
+CONTRIB = {
+    "modelador": "Sigue tu definición (.claude/agents/modelador.md): compara models/base/ con el código de soluciones de "
+                 "referencia y actualiza docs/DISENO-MODELOS.md con las técnicas que nos faltan.",
+    "investigador": "Busca en la discusión y notebooks públicos de la competición, en papers o blogs de forecasting "
+                    "una idea concreta con ganancia esperada que no esté ya en el panel.",
+    "experto": "Si hay resultados en eval/results/*/ que nadie haya analizado, mira dónde se equivoca más el modelo "
+               "(fold, tienda, familia, días festivos) y qué haría un data scientist senior.",
+    "arquitecto": "Revisa que el panel refleje el plan (CLAUDE.md): dependencias, tareas grandes sin trocear, huecos, "
+                  "y que README.md y docs/APRENDIZAJES.md estén al día con los experimentos cerrados.",
+}
+CONTRIB_RULES = """Eres el agente «{agent}» y hoy no hay tareas asignadas para ti. Ronda de aportación (máx. 15 min de agente):
+1. Ponte al día: CLAUDE.md, `python board/board.py list`, docs/ y los resúmenes eval/results/*.json si existen.
+2. Dentro de tu rol: {focus}
+3. Solo si aporta de verdad: registra como mucho 2 tarjetas con
+   `python board/board.py add "Título" --owner <rol> --est <min> --prio <alta|media|baja> --desc "hipótesis · cambio · criterio" --by {agent}`
+   y/o deja el detalle en docs/NOTAS-{agent}.md (fecha + hallazgo + fuente). No dupliques tarjetas ni notas existentes.
+4. No toques models/base/ ni ejecutes evaluaciones: eso va por tarjeta.
+- NO edites board/board.json a mano. NO instales nada ni hagas git push. Responde en español.
+Tu ÚLTIMA línea debe ser exactamente: RESULT: done — <qué aportaste> | RESULT: none — nada útil que aportar ahora"""
+
+
+def now():
+    return datetime.now().astimezone().isoformat(timespec="seconds")
+
+
+def set_runner(**kw):
+    def f(b):
+        b.setdefault("runner", {}).update(kw, heartbeat=now())
+    bd.update(f)
+
+
+def enabled():
+    if STOP.exists():
+        return False
+    return bd.load().get("runner", {}).get("enabled", True)
+
+
+def pick(b):
+    """Siguiente tarea ejecutable: (tarea, modo) con modo 'verify' o 'work'."""
+    # tareas que necesitan algo del responsable (manual) solo corren cuando el responsable las mueve a Próximo
+    ok = lambda t: t["owner"] != "consultor" and t.get("kind") != "contrib" and bd.deps_done(b, t) and (t.get("auto", True) or t["status"] == "next")
+    key = lambda t: (bd.PRIO.get(t.get("priority"), 1), t["id"])
+    rev = sorted([t for t in b["tasks"] if t["status"] == "review" and ok(t)], key=key)
+    if rev:
+        return rev[0], "verify"
+    for st in ("next", "backlog"):
+        c = sorted([t for t in b["tasks"] if t["status"] == st and ok(t)], key=key)
+        if c:
+            return c[0], "work"
+    return None, None
+
+
+def build_prompt(t, mode, agent):
+    hist = "\n".join(f"- {l['t'][:16]} {l['by']}: {l['msg']}" for l in t.get("log", [])[-8:])
+    if mode == "verify":
+        head = (f"Eres el TESTER. Verifica la tarea {t['id']} «{t['title']}» que el {t['owner']} ha dejado en Revisión.\n"
+                "Revisa el cambio (git log/diff), ejecuta los tests del proyecto y añade un test que cubra la tarea si no existe.")
+        states = STATES_QA
+    else:
+        head = f"Eres el agente «{agent}». Ejecuta la tarea {t['id']}: {t['title']}"
+        states = STATES_DEV if agent == "desarrollador" else STATES_DOC
+    return (f"{head}\n\nDescripción: {t.get('desc') or '(sin descripción)'}\n"
+            f"Estimación: {t.get('estimate_min') or '?'} min\nHistorial reciente:\n{hist}\n\n"
+            + RULES.format(owner=agent, states=states))
+
+
+def git(*args):
+    if not (ROOT / ".git").exists() or not shutil.which("git"):
+        return
+    subprocess.run(["git", *args],  # identidad: la configurada en el repo
+                   cwd=ROOT, capture_output=True)
+
+
+def run_claude(claude, prompt, agent, timeout_s):
+    cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
+           "--permission-mode", "acceptEdits", "--permission-prompts", "none",
+           "--max-turns", "80", "--allowedTools", *ALLOWED, "--disallowedTools", *DENIED]
+    t0 = time.time()
+    try:
+        p = subprocess.run(cmd, input=prompt, text=True, encoding="utf-8", capture_output=True,
+                           cwd=ROOT, timeout=timeout_s)
+        out, err, code = p.stdout, p.stderr, p.returncode
+    except subprocess.TimeoutExpired as e:
+        out, err, code = (e.stdout or ""), "timeout", -1
+    data = {}
+    try:
+        data = json.loads(out.strip().splitlines()[-1]) if out.strip() else {}
+    except (json.JSONDecodeError, IndexError):
+        pass
+    text = data.get("result") if isinstance(data.get("result"), str) else out
+    return dict(text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
+                turns=data.get("num_turns"), cost=data.get("total_cost_usd"),
+                usage=data.get("usage") or {}, is_error=data.get("is_error", code != 0))
+
+
+def finish(tid, mode, agent, r):
+    m = None
+    for line in reversed(r["text"].strip().splitlines()):
+        m = RESULT_RE.search(line)
+        if m:
+            break
+    verdict = m.group(1).lower() if m else ("blocked" if r["is_error"] else "review")
+    summary = (m.group(2).strip() if m else (r["err"] or r["text"][-300:]).strip())[:400] or "sin resumen"
+    u = r["usage"]
+    toks = (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0) + (u.get("cache_read_input_tokens") or 0) \
+        + (u.get("cache_creation_input_tokens") or 0)
+
+    def f(b):
+        t = bd.task(b, tid)
+        if mode == "verify":
+            new = {"done": "done", "fail": "next", "human": "human"}.get(verdict, "blocked")
+            if new == "next":
+                t["owner"] = "desarrollador"
+        else:
+            new = {"done": "done", "review": "review", "human": "human"}.get(verdict, "blocked")
+            if new == "done" and agent == "desarrollador":
+                new = "review"  # el código siempre lo verifica el tester
+        runs = t.setdefault("runs", [])
+        runs.append(dict(agent=agent, mode=mode, at=now(), min=round(r["secs"] / 60, 1), turns=r["turns"],
+                         tokens=toks or None, cost_usd=r["cost"], verdict=verdict))
+        if verdict == "human" and summary:
+            t["manual"], t["auto"] = summary, False
+        bd.set_status(b, t, new, agent, f"{verdict.upper()}: {summary}")
+        return new
+    return bd.update(f), verdict, summary
+
+
+def contribute(o):
+    """Ronda de aportación cuando no hay tareas: un rol por vez, con enfriamiento."""
+    st = bd.load().get("runner", {})
+    last = st.get("contrib_at")
+    if last and (datetime.now().astimezone() - datetime.fromisoformat(last)).total_seconds() < o.contrib_every * 3600:
+        return False
+    agent = CONTRIB_ROLES[(CONTRIB_ROLES.index(st["contrib_agent"]) + 1) % len(CONTRIB_ROLES)
+                          if st.get("contrib_agent") in CONTRIB_ROLES else 0]
+    print(f"\n[{now()[11:19]}] aportación · {agent}")
+    prompt = CONTRIB_RULES.format(agent=agent, focus=CONTRIB[agent])
+    if o.dry_run:
+        print(prompt); return True
+    def card(b):  # visible en el panel mientras trabaja (CLAUDE.md: el panel es la fuente de verdad)
+        t = bd.new_task(b, f"Ronda de aportación: {agent}", agent, 15, prio="baja", desc=CONTRIB[agent], by="runner")
+        t["kind"] = "contrib"
+        bd.set_status(b, t, "doing", "runner", "empieza la ronda")
+        return t["id"]
+    tid = bd.update(card)
+    set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent}: ronda de aportación ({tid})")
+    r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60)
+    (LOGDIR / f"contrib-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
+        f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
+    m = next((RESULT_RE.search(l) or re.search(r"RESULT:\s*(none)\b\s*[—:-]?\s*(.*)", l, re.I)
+              for l in reversed(r["text"].strip().splitlines())
+              if "RESULT:" in l), None)
+    summary = (m.group(2).strip() if m else "sin RESULT")[:300]
+    verdict = (m.group(1).lower() if m else "blocked")
+    u = r["usage"]
+    toks = sum(u.get(k) or 0 for k in ("input_tokens", "output_tokens", "cache_read_input_tokens",
+                                       "cache_creation_input_tokens")) or None
+
+    def close(b):
+        t = bd.task(b, tid)
+        t.setdefault("runs", []).append(dict(agent=agent, mode="contrib", at=now(), min=round(r["secs"] / 60, 1),
+                                            turns=r["turns"], tokens=toks, cost_usd=r["cost"], verdict=verdict))
+        bd.set_status(b, t, "blocked" if verdict == "blocked" else "done", agent, f"{verdict.upper()}: {summary}")
+    bd.update(close)
+    set_runner(contrib_at=now(), contrib_agent=agent, state="idle", current=None,
+               message=f"aportación {agent} ({tid}): {summary}")
+    git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): contribution round by {agent}")
+    git("push", "-q")
+    print(f"  → {summary}")
+    return True
+
+
+def main():
+    sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # cp1252 en Programador de tareas
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--once", action="store_true", help="ejecuta una tarea y sale")
+    ap.add_argument("--dry-run", action="store_true", help="muestra qué haría sin ejecutar")
+    ap.add_argument("--claude", default=os.environ.get("CLAUDE_BIN") or shutil.which("claude") or "claude")
+    ap.add_argument("--idle", type=int, default=30, help="segundos de espera cuando no hay tareas")
+    ap.add_argument("--contribute", action="store_true", help="sin tareas: ronda de aportación de un agente")
+    ap.add_argument("--contrib-every", type=float, default=6, help="horas mínimas entre rondas de aportación")
+    o = ap.parse_args()
+    LOGDIR.mkdir(exist_ok=True)
+    fails = 0
+    print(f"Runner en marcha · claude = {o.claude}\nPausa: botón en el panel o crea board/STOP · Ctrl+C para salir")
+    set_runner(state="idle", current=None, message="Runner en marcha", pid=os.getpid())
+
+    def recover(b):  # tareas que se quedaron "En curso" si el runner se cortó
+        for x in b["tasks"]:
+            if x["status"] == "doing" and x.get("kind") == "contrib":
+                bd.set_status(b, x, "done", "runner", "ronda interrumpida (runner reiniciado)")
+            elif x["status"] == "doing" and x["owner"] != "consultor":
+                bd.set_status(b, x, "next", "runner", "interrumpida (runner reiniciado); se reintentará")
+        for a in b["agents"]:
+            if a["id"] != "consultor":
+                a.update(status="idle", current=None)
+    bd.update(recover)
+    try:
+        mtime = Path(__file__).stat().st_mtime
+        while True:
+            if Path(__file__).stat().st_mtime != mtime:  # código del runner actualizado: recargar entre tareas
+                print("runner.py ha cambiado: recargando…")
+                set_runner(state="idle", current=None, message="Recargando runner")
+                os.execv(sys.executable, [sys.executable, __file__, *sys.argv[1:]])
+            if not enabled():
+                set_runner(state="paused", current=None, message="En pausa")
+                if o.once:  # ejecución programada: no esperar a que alguien reanude
+                    print("En pausa (panel o board/STOP): no se ejecuta nada.")
+                    break
+                time.sleep(5)
+                continue
+            b = bd.load()
+            t, mode = pick(b)
+            if not t:
+                set_runner(state="idle", current=None, message="Sin tareas ejecutables")
+                if o.contribute and contribute(o) and o.dry_run:
+                    break
+                if o.once:
+                    break
+                time.sleep(o.idle)
+                continue
+            agent = "tester" if mode == "verify" else t["owner"]
+            print(f"\n[{now()[11:19]}] {t['id']} · {agent} · {mode} · {t['title']}")
+            if o.dry_run:
+                print(build_prompt(t, mode, agent)); break
+            tid = t["id"]
+
+            def start(b):
+                x = bd.task(b, tid)
+                if mode == "verify":
+                    bd.log(x, "tester", "verificando")
+                    x["verify_started"] = now()
+                    for a in b["agents"]:
+                        if a["id"] == "tester":
+                            a.update(status="working", current=tid)
+                else:
+                    bd.set_status(b, x, "doing", "runner", f"empieza {agent}")
+            bd.update(start)
+            set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent} con {tid}")
+            git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): checkpoint before {tid}")
+
+            est = t.get("estimate_min") or 15
+            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(60, max(15, est * 4)) * 60))
+            (LOGDIR / f"{tid}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
+                f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
+            new, verdict, summary = finish(tid, mode, agent, r)
+            if mode == "verify":
+                def free(b):
+                    for a in b["agents"]:
+                        if a["id"] == "tester" and a.get("current") == tid:
+                            a.update(status="idle", current=None)
+                bd.update(free)
+            git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): {tid} {verdict} by {agent}")
+            git("push", "-q")  # sincroniza con GitHub (lo hace el runner, nunca el agente)
+            print(f"  → {new} en {r['secs'] / 60:.1f} min · {summary}")
+
+            fails = fails + 1 if (r["is_error"] or verdict == "blocked") else 0
+            if fails >= MAX_FAILS:
+                set_runner(state="paused", current=None, message=f"Pausado tras {MAX_FAILS} fallos seguidos; revisa board/runs/")
+                bd.update(lambda b: b["runner"].update(enabled=False))
+                fails = 0
+            if o.once:
+                break
+    except KeyboardInterrupt:
+        pass
+    finally:
+        set_runner(state="stopped", current=None, message="Runner parado")
+
+
+if __name__ == "__main__":
+    main()
