@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:43:48+02:00",
+  "updated": "2026-10-15T15:44:13+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -47,8 +47,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-007"
     },
     {
       "id": "arquitecto",
@@ -71,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-003"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -191,7 +191,7 @@
       "id": "T-003",
       "title": "Figuras de datos del README (ventas, semana, familias)",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 15.0,
       "actual_min": 0.6,
@@ -202,7 +202,7 @@
         "T-001"
       ],
       "created": "2026-10-15T15:29:10+02:00",
-      "updated": "2026-10-15T15:43:46+02:00",
+      "updated": "2026-10-15T15:44:13+02:00",
       "started_at": "2026-10-15T15:43:08+02:00",
       "finished_at": "2026-10-15T15:43:46+02:00",
       "log": [
@@ -225,6 +225,16 @@
           "t": "2026-10-15T15:43:48+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-15T15:44:11+02:00",
+          "by": "tester",
+          "msg": "Verificado: 4 figuras (ventas, semana, familias, progreso) existen y README las enlaza; anotaciones de ventas.png correctas (terremoto, 1 de enero); añadido tests/test_figures.py; 10 tests en verde → ACEPTADA"
+        },
+        {
+          "t": "2026-10-15T15:44:13+02:00",
+          "by": "tester",
+          "msg": "DONE: T-003 verificada: figuras presentes y enlazadas en el README, anotaciones correctas, test nuevo y 10 tests en verde."
         }
       ],
       "runs": [
@@ -237,6 +247,16 @@
           "tokens": 125500,
           "cost_usd": 0.0882638,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-15T15:44:13+02:00",
+          "min": 0.4,
+          "turns": 13,
+          "tokens": 106138,
+          "cost_usd": 0.08050900000000001,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-15T15:43:48+02:00"
@@ -372,6 +392,35 @@
           "t": "2026-10-15T15:29:11+02:00",
           "by": "consultor",
           "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-007",
+      "title": "Holdout y CSV de envío de base-v0 (v0.1)",
+      "owner": "consultor",
+      "status": "doing",
+      "priority": "alta",
+      "estimate_min": 5.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Calibración backtest vs leaderboard: holdout + dist/submission-base-v0.csv + tag v0.1",
+      "deps": [],
+      "created": "2026-10-15T15:44:04+02:00",
+      "updated": "2026-10-15T15:44:04+02:00",
+      "started_at": "2026-10-15T15:44:04+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:44:04+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:44:04+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
         }
       ]
     }
