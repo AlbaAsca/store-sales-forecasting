@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:49:25+02:00",
+  "updated": "2026-10-15T15:51:10+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -95,8 +95,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "working",
-      "current": "T-006"
+      "status": "idle",
+      "current": null
     }
   ],
   "tasks": [
@@ -402,18 +402,18 @@
       "id": "T-006",
       "title": "Mapa de técnicas de forecasting (DISENO-MODELOS.md)",
       "owner": "modelador",
-      "status": "doing",
+      "status": "done",
       "priority": "media",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 2.5,
       "auto": true,
       "manual": null,
       "desc": "Leer notebooks top de Store Sales, solución Favorita 2018 y M5; tabla en docs/DISENO-MODELOS.md ordenada de simple a complejo; máx. 3 tarjetas V-xxx (p. ej. LightGBM global con lags>=16, log1p, festivos).",
       "deps": [],
       "created": "2026-10-15T15:29:11+02:00",
-      "updated": "2026-10-15T15:48:24+02:00",
+      "updated": "2026-10-15T15:51:10+02:00",
       "started_at": "2026-10-15T15:48:24+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:50:56+02:00",
       "log": [
         {
           "t": "2026-10-15T15:29:11+02:00",
@@ -424,6 +424,28 @@
           "t": "2026-10-15T15:48:24+02:00",
           "by": "runner",
           "msg": "empieza modelador"
+        },
+        {
+          "t": "2026-10-15T15:50:56+02:00",
+          "by": "modelador",
+          "msg": "docs/DISENO-MODELOS.md: 6 referencias leídas (Store Sales LGBM/darts/guía, Favorita ceshine+5º, M5, mlforecast), mapa de 14 técnicas; tarjetas T-014 V-004 (LGBM global), T-015 V-005 (promos), T-016 V-006 (anual 364)."
+        },
+        {
+          "t": "2026-10-15T15:51:10+02:00",
+          "by": "modelador",
+          "msg": "DONE: Mapa de técnicas en docs/DISENO-MODELOS.md y 3 tarjetas creadas (T-014 V-004, T-015 V-005, T-016 V-006)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "modelador",
+          "mode": "work",
+          "at": "2026-10-15T15:51:10+02:00",
+          "min": 2.8,
+          "turns": 36,
+          "tokens": 568490,
+          "cost_usd": 0.8434632000000002,
+          "verdict": "done"
         }
       ]
     },
@@ -679,6 +701,78 @@
         {
           "t": "2026-10-15T15:49:25+02:00",
           "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-014",
+      "title": "V-004: LightGBM global directo con rasgos de la fecha de corte (medias log + perfil semanal)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (Favorita ceshine/lgbm-starter, chongzhenjie LightGBM global; ver docs/DISENO-MODELOS.md #6): un solo modelo para las 1782 series aprende interacciones que una media por serie no ve. Cambio exacto (sobre la base vigente; si V-002 aún no está promovida, sobre base-v2 tras promoverla): fit_predict construye set apilando 8 cortes t_k=corte-16-7k; rasgos <t_k: media log1p 3/7/14/28/56 d, perfil dow en log (8 sem), h, dow, store_nbr y family categóricas; objetivo log1p, L2, params ceshine, 400 rondas, seed de ctx; SIN promos/festivos/anual. Predicción expm1 clip 0. Criterio: CV medio < base vigente y no empeora más de 1 fold; repetir con otra semilla y anotar variación.",
+      "deps": [],
+      "created": "2026-10-15T15:50:45+02:00",
+      "updated": "2026-10-15T15:50:45+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:50:45+02:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-015",
+      "title": "V-005: promociones como rasgos del LightGBM global (sobre V-004)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (ceshine promo_i/promo_14; ANALISIS-ERRORES hallazgo 8): el GBM aprende la elasticidad a promos por familia mejor que la heurística V-003. Cambio exacto: V-004 + 3 rasgos: onpromotion del día objetivo, suma onpromotion 14 d antes del corte, ratio día/media 14 d. Nada más. Requiere V-004 aceptada (si no, cerrar sin medir). Criterio: CV medio < base vigente y no empeora más de 1 fold; comparar también con V-003.",
+      "deps": [],
+      "created": "2026-10-15T15:50:47+02:00",
+      "updated": "2026-10-15T15:50:47+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:50:47+02:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-016",
+      "title": "V-006: estacionalidad anual (retardo 364) como rasgo del LightGBM global",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (chongzhenjie lags 365/730; ANALISIS-ERRORES caso tienda 45 vuelta al cole): ninguna media reciente ve picos anuales. Cambio exacto: V-004 (o V-005 si aceptada) + 2 rasgos: media log1p del mismo día-objetivo -364 d (y de su ventana ±3 d) y su diferencia frente a la media log 14 d previa a t-364. Nada más. Criterio: CV medio < base vigente y no empeora más de 1 fold; mirar SCHOOL AND OFFICE SUPPLIES por familia.",
+      "deps": [],
+      "created": "2026-10-15T15:50:50+02:00",
+      "updated": "2026-10-15T15:50:50+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:50:50+02:00",
+          "by": "modelador",
           "msg": "creada"
         }
       ]
