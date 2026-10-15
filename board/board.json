@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:48:24+02:00",
+  "updated": "2026-10-15T15:49:25+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -622,6 +622,64 @@
           "t": "2026-10-15T15:47:30+02:00",
           "by": "consultor",
           "msg": "models/base = V-001; base-v1 CV 0.4304; tag base-v1"
+        }
+      ]
+    },
+    {
+      "id": "T-012",
+      "title": "Promover V-002 a base-v2 y preparar envío v0.2",
+      "owner": "consultor",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 5.0,
+      "actual_min": 0.5,
+      "auto": true,
+      "manual": null,
+      "desc": "models/base = V-002, base-v2, holdout, dist/submission-base-v2.csv, tag v0.2",
+      "deps": [],
+      "created": "2026-10-15T15:48:57+02:00",
+      "updated": "2026-10-15T15:49:25+02:00",
+      "started_at": "2026-10-15T15:48:58+02:00",
+      "finished_at": "2026-10-15T15:49:25+02:00",
+      "log": [
+        {
+          "t": "2026-10-15T15:48:57+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:48:58+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-15T15:49:25+02:00",
+          "by": "consultor",
+          "msg": "base-v2 CV 0.4154; holdout v0 0.5191 / v1 0.5109 / v2 0.5244 (CV y holdout discrepan); dist/submission-base-v2.csv; tag v0.2"
+        }
+      ]
+    },
+    {
+      "id": "T-013",
+      "title": "Subir v0.2 (base-v2) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "alta",
+      "estimate_min": 3.0,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-base-v2.csv con el mensaje: v0.2 · backtest 0.4154 · holdout 0.5244. Pasar la puntuación al consultor.",
+      "desc": "CV dice mejor (4/4 folds) y holdout dice peor: el LB decide a quién creer.",
+      "deps": [],
+      "created": "2026-10-15T15:49:25+02:00",
+      "updated": "2026-10-15T15:49:25+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-15T15:49:25+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }

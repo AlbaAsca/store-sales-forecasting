@@ -1,8 +1,7 @@
-# V-001 — perfil por día de la semana
+# V-002: media y perfil semanal en escala log
 
-**Qué cambia:** la predicción sigue siendo la media de 14 días, pero se multiplica por un factor por tienda×familia y día de la semana
-(media de ese día / media global, últimas 8 semanas). Sin dato o media 0 → factor 1.
-
-**Por qué:** la base predice lo mismo cada día y se pierde la estacionalidad semanal (el fin de semana se vende más).
-
-**Estado:** corre en el backtest rápido (f1 RMSLE 0.4368); medición completa pendiente del tester.
+La métrica (RMSLE) mide error en log, pero la base promediaba ventas en bruto: los días de pico inflaban la media y
+sesgaba al alza (+0.10), sobre todo en series intermitentes con ceros.
+Cambio: se promedia log1p de las ventas (14 d) y se suma el perfil del día de la semana también en log (8 semanas,
+por tienda×familia); se deshace con expm1 y se recorta a 0.
+Construida sobre base-v0 (V-001 aún no es base); sustituye por completo el perfil multiplicativo de V-001.
