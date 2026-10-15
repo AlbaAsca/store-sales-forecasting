@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:29:11+02:00",
+  "updated": "2026-10-15T15:32:49+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,10 +33,13 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "stopped",
-    "current": null,
-    "heartbeat": "2026-10-15T15:23:49+02:00",
-    "message": "Sin arrancar"
+    "state": "working",
+    "current": "T-002",
+    "heartbeat": "2026-10-15T15:32:49+02:00",
+    "message": "tester con T-002",
+    "pid": 15784,
+    "agent": "tester",
+    "started": "2026-10-15T15:32:49+02:00"
   },
   "agents": [
     {
@@ -68,8 +71,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-002"
     },
     {
       "id": "investigador",
@@ -101,23 +104,33 @@
       "id": "T-001",
       "title": "Descargar los datos de Kaggle a data/",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 5.0,
-      "actual_min": null,
+      "actual_min": 1.3,
       "auto": true,
       "manual": null,
       "desc": "7 CSV (~125 MB) con la CLI de Kaggle de KaggleFarm; descomprimir en data/. Los agentes no pueden descargar.",
       "deps": [],
       "created": "2026-10-15T15:29:10+02:00",
-      "updated": "2026-10-15T15:29:10+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-15T15:32:42+02:00",
+      "started_at": "2026-10-15T15:31:24+02:00",
+      "finished_at": "2026-10-15T15:32:42+02:00",
       "log": [
         {
           "t": "2026-10-15T15:29:10+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:31:24+02:00",
+          "by": "consultor",
+          "msg": "descargando con la CLI de Kaggle"
+        },
+        {
+          "t": "2026-10-15T15:32:42+02:00",
+          "by": "consultor",
+          "msg": "7 CSV en data/ (train 122 MB)"
         }
       ]
     },
@@ -125,7 +138,7 @@
       "id": "T-002",
       "title": "Medir base-v0 con el backtest (4 folds)",
       "owner": "tester",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 10.0,
       "actual_min": null,
@@ -136,14 +149,19 @@
         "T-001"
       ],
       "created": "2026-10-15T15:29:10+02:00",
-      "updated": "2026-10-15T15:29:10+02:00",
-      "started_at": null,
+      "updated": "2026-10-15T15:32:49+02:00",
+      "started_at": "2026-10-15T15:32:49+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-15T15:29:10+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-15T15:32:49+02:00",
+          "by": "runner",
+          "msg": "empieza tester"
         }
       ]
     },
