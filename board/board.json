@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-15T15:54:00+02:00",
+  "updated": "2026-10-15T15:54:35+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -63,8 +63,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-010"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -593,18 +593,18 @@
       "id": "T-010",
       "title": "V-003: ajuste por promociones en log (elasticidad por familia)",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "media",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 0.5,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis: con más promos que la media de 14d predecimos de menos (sesgo -0.11) y con menos, de más (+0.08); ver hallazgo 8 de docs/ANALISIS-ERRORES.md. Cambio (sobre V-002 si se acepta): sumar en log beta_familia*(log1p(onpromotion_dia) − log1p(promo media 14d)), beta estimada por familia con regresión en el histórico (solo antes del corte). Criterio: RMSLE medio < base vigente y empeora como mucho 1 de 4 folds; si gana < 0.002, rechazar por complejidad.",
       "deps": [],
       "created": "2026-10-15T15:46:38+02:00",
-      "updated": "2026-10-15T15:54:00+02:00",
+      "updated": "2026-10-15T15:54:35+02:00",
       "started_at": "2026-10-15T15:54:00+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-15T15:54:30+02:00",
       "log": [
         {
           "t": "2026-10-15T15:46:38+02:00",
@@ -615,6 +615,33 @@
           "t": "2026-10-15T15:54:00+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-15T15:54:06+02:00",
+          "by": "desarrollador",
+          "msg": "empiezo V-003"
+        },
+        {
+          "t": "2026-10-15T15:54:30+02:00",
+          "by": "desarrollador",
+          "msg": "V-003 implementada (variants/V-003), corre en --quick (fold1 0.4311), tests verdes. Pendiente medición completa del tester."
+        },
+        {
+          "t": "2026-10-15T15:54:35+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-003 implementada (promo en log con beta por familia, sobre V-002), corre en --quick (0.4311) y tests en verde; falta medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-15T15:54:35+02:00",
+          "min": 0.6,
+          "turns": 12,
+          "tokens": 125383,
+          "cost_usd": 0.10207580000000001,
+          "verdict": "review"
         }
       ]
     },
