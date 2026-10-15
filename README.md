@@ -152,6 +152,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | Variante | Idea | RMSLE backtest | Folds que mejora | Veredicto |
 |---|---|---|---|---|
 | base-v0 | media de los últimos 14 días por tienda×familia | 0.4745 ± 0.0090 (f1 0.4738 · f2 0.4611 · f3 0.4769 · f4 0.4864) | — | línea base |
+| V-001 | base-v0 × factor del día de la semana (8 sem.) por tienda×familia | 0.4304 ± 0.0106 (f1 0.4368 · f2 0.4143 · f3 0.4283 · f4 0.4423) | −0.044 | ✅ ACEPTADA |
 
 ![Progreso de los experimentos](docs/img/progreso.png)
 
