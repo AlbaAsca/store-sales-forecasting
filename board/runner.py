@@ -263,6 +263,10 @@ def main():
     ap.add_argument("--contrib-every", type=float, default=6, help="horas mínimas entre rondas de aportación")
     o = ap.parse_args()
     LOGDIR.mkdir(exist_ok=True)
+    other = bd.load().get("runner", {}).get("pid")
+    if other and other != os.getpid() and bd.pid_alive(other):  # p. ej. botón Iniciar + ejecución programada
+        print(f"Ya hay un runner en marcha (pid {other}): no arranco otro.")
+        return
     fails = 0
     print(f"Runner en marcha · claude = {o.claude}\nPausa: botón en el panel o crea board/STOP · Ctrl+C para salir")
     set_runner(state="idle", current=None, message="Runner en marcha", pid=os.getpid())

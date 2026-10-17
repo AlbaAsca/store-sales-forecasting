@@ -125,24 +125,7 @@ _sched_cache = {"t": 0, "v": None}
 
 
 def pid_alive(pid):
-    """¿Sigue vivo el proceso? (sin os.kill: en Windows os.kill mata el proceso)."""
-    if not pid:
-        return False
-    if os.name != "nt":
-        try:
-            os.kill(pid, 0)
-            return True
-        except OSError:
-            return False
-    import ctypes
-    k = ctypes.windll.kernel32
-    h = k.OpenProcess(0x1000, False, int(pid))  # PROCESS_QUERY_LIMITED_INFORMATION
-    if not h:
-        return False
-    code = ctypes.c_ulong()
-    ok = k.GetExitCodeProcess(h, ctypes.byref(code))
-    k.CloseHandle(h)
-    return bool(ok) and code.value == 259  # STILL_ACTIVE
+    return _bd().pid_alive(pid)
 
 
 def claude_bin():
