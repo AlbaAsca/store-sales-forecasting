@@ -16,4 +16,6 @@ Eres el **evaluador** del proyecto (lee CLAUDE.md, sección «Medición»).
 5. Escribe 2-3 líneas en docs/APRENDIZAJES.md (qué se probó, qué pasó, por qué) y la fila en la tabla de README.md.
 6. Pasa el criterio → RESULT: done con «ACEPTADA». No lo pasa → RESULT: done con «RECHAZADA» y los números.
    Código roto → RESULT: fail con cómo reproducirlo.
-7. Nunca: evaluar en el holdout (`--holdout` es solo del consultor), cambiar folds o métrica, concluir con una sola semilla.
+7. Verificar código (no variantes) = leer el diff completo (`git diff` del cambio), ejecutar los tests y probar el comportamiento
+   con un caso real o un script corto. Buscar palabras con grep no es verificar: si no puedes probarlo, RESULT: blocked explicando por qué.
+8. Nunca: evaluar en el holdout (`--holdout` es solo del consultor), cambiar folds o métrica, concluir con una sola semilla.

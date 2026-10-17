@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:59:16+02:00",
+  "updated": "2026-10-17T18:03:46+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,16 +33,16 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "idle",
-    "current": null,
-    "heartbeat": "2026-10-17T17:59:16+02:00",
-    "message": "aportación investigador (T-040): notas con la comparación y dos propuestas (V-015 rasgos de ceros, V-016 rasgos de calendario) en docs/NOTAS-investigador.md; las tarjetas no se crearon porque `board.py add` fue denegado y quedan pendientes de crear.",
-    "pid": 23052,
-    "agent": "investigador",
-    "started": "2026-10-17T17:58:39+02:00",
+    "state": "working",
+    "current": "T-041",
+    "heartbeat": "2026-10-17T18:03:02+02:00",
+    "message": "modelador con T-041",
+    "pid": 24832,
+    "agent": "modelador",
+    "started": "2026-10-17T18:03:02+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-040-investigador-20261017-175839.jsonl"
+    "live": "live-T-041-modelador-20261017-180302.jsonl"
   },
   "agents": [
     {
@@ -98,8 +98,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-041"
     }
   ],
   "tasks": [
@@ -2490,7 +2490,7 @@
       "desc": "Busca en la discusión y notebooks públicos de la competición, en papers o blogs de forecasting una idea concreta con ganancia esperada que no esté ya en el panel.",
       "deps": [],
       "created": "2026-10-17T17:58:39+02:00",
-      "updated": "2026-10-17T17:59:16+02:00",
+      "updated": "2026-10-17T18:03:46+02:00",
       "started_at": "2026-10-17T17:58:39+02:00",
       "finished_at": "2026-10-17T17:59:16+02:00",
       "log": [
@@ -2508,6 +2508,16 @@
           "t": "2026-10-17T17:59:16+02:00",
           "by": "investigador",
           "msg": "DONE: notas con la comparación y dos propuestas (V-015 rasgos de ceros, V-016 rasgos de calendario) en docs/NOTAS-investigador.md; las tarjetas no se crearon porque `board.py add` fue denegado y quedan pendientes de crear."
+        },
+        {
+          "t": "2026-10-17T18:01:45+02:00",
+          "by": "consultor",
+          "msg": "Las tarjetas no se crearon porque encadenó cat y board.py add en un solo comando (prohibido). Creadas por el consultor: V-015; V-016 pasa al plan del modelador (T-041)."
+        },
+        {
+          "t": "2026-10-17T18:03:46+02:00",
+          "by": "consultor",
+          "msg": "Auditado: único caso de tarjetas no creadas; corregido (V-015 = T-042, V-016 en T-041); prevención en T-044"
         }
       ],
       "kind": "contrib",
@@ -2521,6 +2531,112 @@
           "tokens": 145013,
           "cost_usd": 0.15131170000000002,
           "verdict": "done"
+        }
+      ]
+    },
+    {
+      "id": "T-041",
+      "title": "Plan de variables nuevas: festivos, día de paga y vuelta al cole",
+      "owner": "modelador",
+      "status": "doing",
+      "priority": "alta",
+      "estimate_min": 40.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Petición de Alba. V-010, V-012, V-013 y V-014 (variaciones del mismo modelo) no aportan: el siguiente salto debe venir de información nueva. Estudiar con datos y código de referencia: (1) festivos de holidays_events.csv (nacionales/regionales/locales por ciudad de la tienda, transferidos, puentes, Carnaval) como variables del día objetivo; (2) día de paga (15 y último día del mes, y los días siguientes); (3) vuelta al cole (SCHOOL AND OFFICE SUPPLIES; Sierra en agosto-septiembre, Costa en abril), que es donde más falla el control c1 (0.755 vs 0.386 de media). Revisar antes docs/ANALISIS-ERRORES.md, docs/REVISION-RUMBO.md y la ronda de aportación del investigador (T-040) para no duplicar. Entregable: sección nueva en docs/DISENO-MODELOS.md ordenada por ganancia esperada/coste, explicada para quien aprende, y como mucho 3 tarjetas V-xxx sobre base-v4 con criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora mayor que la variación de semilla (~0.001) y no empeora el control c1; anotar también el holdout.",
+      "deps": [],
+      "created": "2026-10-17T18:00:35+02:00",
+      "updated": "2026-10-17T18:03:02+02:00",
+      "started_at": "2026-10-17T18:03:02+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:00:35+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:01:45+02:00",
+          "by": "consultor",
+          "msg": "El investigador (T-040) propuso V-016: día del mes, is_payday y días a fin de mes. Inclúyela en tu plan en vez de duplicarla. V-015 (ceros) ya tiene tarjeta propia."
+        },
+        {
+          "t": "2026-10-17T18:03:02+02:00",
+          "by": "runner",
+          "msg": "empieza modelador"
+        }
+      ]
+    },
+    {
+      "id": "T-042",
+      "title": "V-015: variables de intermitencia (fracción de ceros 14/28/56 d y días desde la última venta)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Propuesta del investigador (T-040, docs/NOTAS-investigador.md). Hipótesis: los ceros son el 8 % de las filas y el 22 % del error (ANALISIS-ERRORES #2); el modelo no sabe si una serie es intermitente. Cambio sobre base-v4: añadir zfrac14/28/56 y since_nz a _features y _step_feats. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora mayor que la variación de semilla (~0.001), no empeora el control c1; anotar RMSLE en filas con venta real 0 y el holdout. Explicar en APRENDIZAJES qué es una serie intermitente.",
+      "deps": [],
+      "created": "2026-10-17T18:01:45+02:00",
+      "updated": "2026-10-17T18:01:45+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:01:45+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-043",
+      "title": "Búsqueda web: qué variables y técnicas usan las mejores soluciones de Store Sales",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 40.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "La ronda T-040 trabajó solo con documentos propios. Ahora buscar en internet (WebSearch/WebFetch y Kaggle CLI de solo lectura: kernels list --competition store-sales-time-series-forecasting --sort-by voteCount, kernels pull <ref> -p data/kaggle-code/<ref>): (1) qué variables usan los notebooks con mejor puntuación (festivos y traslados, paga, Carnaval, vuelta al cole por región, terremoto 2016, petróleo, transacciones, intermitencia) y qué RMSLE consiguen; (2) soluciones de Favorita 2018 y M5 aplicables; (3) qué no tenemos aún. Contrastar con docs/NOTAS-investigador.md, docs/DISENO-MODELOS.md y las tarjetas T-041/T-042 para no duplicar. Entregable: sección fechada en docs/NOTAS-investigador.md con enlaces a cada fuente y lo no verificado marcado; como mucho 2 tarjetas V-xxx sobre base-v4 con criterio (CV < 0.3858, ≤1 fold peor, mejora > variación de semilla, no empeora c1). IMPORTANTE: cada comando por separado;  solo, sin cat, heredoc, && ni ;. Si una tarjeta no se puede crear, RESULT: blocked indicándolo (no done).",
+      "deps": [],
+      "created": "2026-10-17T18:03:02+02:00",
+      "updated": "2026-10-17T18:03:02+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:03:02+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-044",
+      "title": "Runner: avisar en la tarjeta cuando el agente tuvo comandos denegados",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Auditoría del consultor: en T-040 el investigador encadenó cat + board.py add, el permiso se denegó, las tarjetas no se crearon y aun así cerró la suya como done. En T-021 board.py note falló porque no acepta --msg. Cambios: (1) al terminar cada ejecución, el runner recorre el live-*.jsonl y cuenta los tool_result con 'Permission for this tool use was denied'; si hay alguno, añade a la tarjeta una nota '⚠ N comandos denegados: <primeros 80 caracteres de cada uno>' y, si alguno contenía 'board.py add', el veredicto pasa a blocked en vez de done; (2) board.py note acepta también --msg como alias del texto posicional; (3) en RULES del runner, una línea explícita: los comandos de board.py van solos, nunca después de cat, heredoc, && o ;. Criterio: tests con un live-*.jsonl de ejemplo (denegado → nota y blocked; sin denegaciones → sin nota) y con note --msg; suite en verde; los tests no tocan el board real.",
+      "deps": [],
+      "created": "2026-10-17T18:03:46+02:00",
+      "updated": "2026-10-17T18:03:46+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:03:46+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }
