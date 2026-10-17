@@ -183,7 +183,7 @@ footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--lin
       <div class="row minus"><span>V-009 dos opiniones</span><span>−0,0046</span></div>
       <div class="row total"><span>TOTAL</span><span>0,3858</span></div>
     </div>
-    <div class="foot">6 ideas aceptadas · 7 rechazadas · 1 en curso<br>¡Gracias por su experimento!</div>
+    <div class="foot">6 ideas aceptadas · 9 rechazadas<br>¡Gracias por su experimento!</div>
   </aside>
 </header>
 
@@ -222,7 +222,7 @@ footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--lin
   <div class="legend">
     <span><i class="dot ok"></i>aceptada (tronco)</span>
     <span><i class="dot bad"></i>rechazada (rama)</span>
-    <span><i class="dot wait"></i>en curso</span>
+    <span><i class="dot wait"></i>en curso (ninguna ahora)</span>
     <span><i class="dot flag"></i>enviada a Kaggle</span>
   </div>
   <div>
@@ -245,7 +245,7 @@ footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--lin
     <div class="lesson"><h3>Las ideas sencillas dan más</h3><p>Fijarse en el día de la semana bajó el error más que todo lo demás junto. Antes de sofisticar, hay que mirar los patrones obvios.</p></div>
     <div class="lesson"><h3>Mide como te van a medir</h3><p>La nota de Kaggle castiga los errores en proporción. Cuando calculamos así (V-002) mejoramos; cuando entrenamos con otra vara (V-007), empeoramos.</p></div>
     <div class="lesson"><h3>Un solo examen engaña</h3><p>El examen final y la nota de v0.3 contaban historias distintas. Una mejora solo es fiable si se ve en las prácticas, el final y el control a la vez, como pasó con v0.4.</p></div>
-    <div class="lesson"><h3>Rechazar también es avanzar</h3><p>Siete de trece ideas no funcionaron. Cada rechazo dejó escrito por qué, y eso orientó la siguiente idea.</p></div>
+    <div class="lesson"><h3>Rechazar también es avanzar</h3><p>Nueve de quince ideas no funcionaron. Cada rechazo dejó escrito por qué, y eso orientó la siguiente idea.</p></div>
   </div>
 </section>
 
@@ -353,12 +353,18 @@ const E = [
     result: "Mejora un poco al modelo de V-006, pero pierde contra la base actual en las 4 prácticas y en el control.",
     why: "La base actual ya combina dos opiniones fuertes. Añadir una más débil resta más de lo que suma.",
     concept: "<b>Diversidad con calidad.</b> En una combinación, cada miembro tiene que aportar algo que los demás no tengan." },
-  { id: "V-014", tier: 6, state: "wait", name: "Afinar los ajustes del modelo", num: "en curso",
-    idea: "Probar distintos valores en los ajustes internos del LightGBM: cuántas preguntas hace, a qué ritmo aprende y cuántos ejemplos pide como mínimo.",
+  { id: "V-010", tier: 6, state: "bad", name: "Promediar seis copias del mismo modelo", num: "0,3858 → 0,3856",
+    idea: "Entrenamos el modelo actual seis veces (tres puntos de partida del azar y dos periodos de historia distintos) y hacemos la media.",
+    like: "Pedir la misma opinión seis veces a la misma persona, en días distintos.",
+    result: "0,3856: mejora las 4 prácticas, pero solo 0,0002, menos de lo que ya varía por azar. Y tarda 3 veces más.",
+    why: "La base actual ya combina dos maneras de predecir. Más copias del mismo tipo de modelo no aportan información nueva.",
+    concept: "<b>Ruido de semilla.</b> Si una mejora es menor que lo que cambia el resultado al repetir con otra semilla, no se puede distinguir de la suerte." },
+  { id: "V-014", tier: 6, state: "bad", name: "Afinar los ajustes del modelo", num: "0,3858 → 0,3853",
+    idea: "Probamos otros valores en los ajustes internos del LightGBM: cuántas preguntas encadena cada árbol, a qué ritmo aprende, cuántos árboles hace y cuántos ejemplos pide como mínimo.",
     like: "Ajustar la temperatura y el tiempo de una receta que ya funciona.",
-    result: "Pendiente de medir.",
-    why: "Los ajustes actuales se copiaron de un ejemplo público y nunca se afinaron para estos datos.",
-    concept: "<b>Hiperparámetros.</b> Los ajustes que decide la persona, no el modelo. Se afinan probando y midiendo." }
+    result: "0,3853 y 0,3851 con dos semillas: mejora las 4 prácticas, pero menos de 0,002, y el tiempo se triplica.",
+    why: "Los ajustes copiados de un ejemplo público ya estaban cerca de lo mejor. Lo que queda de error está en la información que le damos al modelo, no en sus mandos.",
+    concept: "<b>Hiperparámetros.</b> Los ajustes que decide la persona, no el modelo. Afinarlos probando muchas combinaciones sobre los mismos exámenes tiene un riesgo: elegir la que tuvo suerte." }
 ];
 const label = { base: "punto de partida", ok: "aceptada", bad: "rechazada", wait: "en curso" };
 const $ = (s) => document.querySelector(s);
