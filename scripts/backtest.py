@@ -29,6 +29,13 @@ def rmsle(y, p):
     return float(np.sqrt(np.mean((np.log1p(p) - np.log1p(y)) ** 2)))
 
 
+def open_mask(df, thr=0.5):
+    """True en las filas de tiendas «abiertas» en la ventana: se excluyen las que tienen >= thr de sus días con ventas totales 0
+    (cierres como 18 y 25 en c1). Un cierre no se puede prever."""
+    daily = df.groupby(["store_nbr", "date"])["sales"].sum().eq(0).groupby("store_nbr").mean()
+    return ~df["store_nbr"].isin(daily.index[daily >= thr]).to_numpy()
+
+
 def load_data(data_dir=DATA):
     if not (data_dir / "train.csv").exists():
         sys.exit(f"Faltan los datos en {data_dir} (train.csv…). Ver README «Cómo reproducirlo».")
@@ -84,7 +91,11 @@ def _one(model, f, train, ctx, seed, out_dir, save_preds):
     r = dict(id=f["id"], start=f["start"], end=f["end"], rmsle=rmsle(y, p), secs=round(secs, 1),
              by_family={k: float(np.sqrt(v)) for k, v in le.groupby(df["family"], observed=True).mean().items()},
              bias=float((np.log1p(df["pred"]) - np.log1p(df["sales"])).mean()))
-    print(f"  {f['id']} {f['start']}..{f['end']}  RMSLE {r['rmsle']:.4f}  ({secs:.1f} s)")
+    m = open_mask(df)
+    r["rmsle_open"] = rmsle(df["sales"][m], df["pred"][m])
+    r["closed_stores"] = sorted(int(x) for x in df["store_nbr"][~m].unique())
+    extra = f"  sin cerradas {r['rmsle_open']:.4f} (tiendas {r['closed_stores']})" if r["closed_stores"] else ""
+    print(f"  {f['id']} {f['start']}..{f['end']}  RMSLE {r['rmsle']:.4f}  ({secs:.1f} s){extra}")
     return r
 
 

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:29:23+02:00",
+  "updated": "2026-10-17T18:30:03+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -58,8 +58,8 @@
       "name": "Arquitecto",
       "role": "Mantiene la estructura del proyecto y trocea ideas grandes",
       "color": "#7c3aed",
-      "status": "working",
-      "current": "T-048"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "desarrollador",
@@ -2949,18 +2949,18 @@
       "id": "T-048",
       "title": "Medir la quincena de control sin las tiendas que cerraron",
       "owner": "arquitecto",
-      "status": "doing",
+      "status": "human",
       "priority": "alta",
       "estimate_min": 15.0,
-      "actual_min": null,
-      "auto": true,
-      "manual": null,
+      "actual_min": 0.8,
+      "auto": false,
+      "manual": "Código de `c1_open` listo y los 39 tests existentes en verde; falta el test nuevo en `tests/test_backtest.py`, porque el sistema denegó el comando que lo añadía.",
       "desc": "Teníamos una prueba extra con la quincena de la vuelta al cole de 2016 que salía muy mal, y creíamos que era por el material escolar. El modelador ha descubierto que no: dos tiendas (la 18 y la 25) cerraron justo esos días y vendieron cero. Eso explica casi tres cuartas partes del error, y un cierre no se puede prever.\n\nQueremos que esa prueba también se muestre sin esas tiendas cerradas, para que mida lo que de verdad nos interesa.\n\nCómo sabremos que funciona: al comparar variantes aparece el resultado de esa prueba con y sin tiendas cerradas, y los tests siguen en verde.\n\n## Técnico\n- Medido en T-041 con preds de base-v4: c1 = 0.755; sin tiendas 18 y 25 = 0.3902. Las dos explican el 74 % del error cuadrático.\n- Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con >= 50 % de días a 0 en la ventana; mostrarlo en compare.",
       "deps": [],
       "created": "2026-10-17T18:06:38+02:00",
-      "updated": "2026-10-17T18:29:15+02:00",
+      "updated": "2026-10-17T18:30:03+02:00",
       "started_at": "2026-10-17T18:29:15+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T18:30:03+02:00",
       "log": [
         {
           "t": "2026-10-17T18:06:38+02:00",
@@ -2976,6 +2976,28 @@
           "t": "2026-10-17T18:29:15+02:00",
           "by": "runner",
           "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-17T18:30:03+02:00",
+          "by": "arquitecto",
+          "msg": "HUMAN: Código de `c1_open` listo y los 39 tests existentes en verde; falta el test nuevo en `tests/test_backtest.py`, porque el sistema denegó el comando que lo añadía."
+        },
+        {
+          "t": "2026-10-17T18:30:03+02:00",
+          "by": "arquitecto",
+          "msg": "⚠ 1 comandos denegados: cat >> tests/test_backtest.py <<'EOF' def test_open_mask_excluye_tiendas_cerrada"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-17T18:30:03+02:00",
+          "min": 0.8,
+          "turns": 9,
+          "tokens": 139387,
+          "cost_usd": 0.13621500000000003,
+          "verdict": "human"
         }
       ]
     },
