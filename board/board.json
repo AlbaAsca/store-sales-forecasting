@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T10:23:30+02:00",
+  "updated": "2026-10-17T10:27:31+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -1403,6 +1403,40 @@
           "t": "2026-10-17T10:23:30+02:00",
           "by": "consultor",
           "msg": "Iniciar (--until-idle) / Parar (mata árbol, tarjeta a Próximo) / próxima ejecución del Programador; runner no arranca si ya hay otro vivo"
+        }
+      ]
+    },
+    {
+      "id": "T-029",
+      "title": "Panel: ver en directo qué hace el agente (stream-json, sin tokens extra)",
+      "owner": "consultor",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": 2.1,
+      "auto": true,
+      "manual": null,
+      "desc": "Petición de Alba. runner con --output-format stream-json → board/runs/live-*.jsonl; endpoint /api/runner/live; vista en el panel.",
+      "deps": [],
+      "created": "2026-10-17T10:25:22+02:00",
+      "updated": "2026-10-17T10:27:31+02:00",
+      "started_at": "2026-10-17T10:25:22+02:00",
+      "finished_at": "2026-10-17T10:27:31+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T10:25:22+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:25:22+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-17T10:27:31+02:00",
+          "by": "consultor",
+          "msg": "stream-json → board/runs/live-*.jsonl; /api/runner/live; panel «Ver en directo»; probado con una ejecución real mínima"
         }
       ]
     }

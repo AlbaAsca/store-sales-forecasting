@@ -157,6 +157,59 @@ def runner_schedule():
     return v
 
 
+def _short(x, n=220):
+    x = " ".join(str(x).split())
+    return x if len(x) <= n else x[:n] + "…"
+
+
+def live_events(lines):
+    """Resume los eventos stream-json de la CLI en líneas legibles: qué piensa, qué herramienta usa y qué le devuelve."""
+    out = []
+    for line in lines:
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        typ = e.get("type")
+        if typ == "system" and e.get("subtype") == "init":
+            out.append({"kind": "inicio", "text": f"modelo {e.get('model', '?')}"})
+        elif typ in ("assistant", "user"):
+            for c in (e.get("message") or {}).get("content") or []:
+                if not isinstance(c, dict):
+                    continue
+                if c.get("type") == "text" and c.get("text", "").strip():
+                    out.append({"kind": "texto", "text": _short(c["text"], 600)})
+                elif c.get("type") == "thinking" and c.get("thinking", "").strip():
+                    out.append({"kind": "piensa", "text": _short(c["thinking"], 600)})
+                elif c.get("type") == "tool_use":
+                    i = c.get("input") or {}
+                    arg = i.get("command") or i.get("file_path") or i.get("pattern") or i.get("query") or i.get("url") or i.get("description") or ""
+                    out.append({"kind": "herramienta", "text": f"{c.get('name')}: {_short(arg, 300)}"})
+                elif c.get("type") == "tool_result":
+                    body = c.get("content")
+                    if isinstance(body, list):
+                        body = " ".join(x.get("text", "") for x in body if isinstance(x, dict))
+                    out.append({"kind": "error" if c.get("is_error") else "resultado", "text": _short(body or "(vacío)")})
+        elif typ == "result":
+            out.append({"kind": "fin", "text": _short(e.get("result") or e.get("subtype") or "", 400)})
+    return out
+
+
+@app.get("/api/runner/live")
+def runner_live(n: int = 60):
+    """Lo que está haciendo el agente ahora (o hizo en la última ejecución), sin gastar tokens: lee el log en vivo."""
+    runs = HERE / "runs"
+    name = json.loads(BOARD.read_text(encoding="utf-8")).get("runner", {}).get("live")
+    f = runs / name if name and (runs / name).is_file() else None
+    if not f:
+        files = sorted(runs.glob("live-*.jsonl"), key=lambda x: x.stat().st_mtime) if runs.is_dir() else []
+        f = files[-1] if files else None
+    if not f:
+        return {"file": None, "events": []}
+    lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:]
+    return {"file": f.name, "events": live_events(lines)[-n:]}
+
+
 @app.post("/api/runner/start")
 def runner_start():
     """Arranca el runner en segundo plano: trabaja tarea tras tarea y se para cuando no quedan (--until-idle)."""
@@ -171,8 +224,12 @@ def runner_start():
     (HERE / "runs").mkdir(exist_ok=True)
     log = open(HERE / "runs" / "panel.log", "a", encoding="utf-8")
     flags = 0x00000008 | 0x00000200 | 0x08000000 if os.name == "nt" else 0  # DETACHED | NEW_GROUP | NO_WINDOW
-    p = subprocess.Popen([sys.executable, str(HERE / "runner.py"), "--until-idle", "--contribute"], cwd=ROOT, env=env,
-                         stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, creationflags=flags)
+    args = dict(cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+    cmd = [sys.executable, str(HERE / "runner.py"), "--until-idle", "--contribute"]
+    try:  # fuera del "job" del proceso padre: si no, Windows lo mata cuando el padre termina
+        p = subprocess.Popen(cmd, creationflags=flags | (0x01000000 if os.name == "nt" else 0), **args)
+    except OSError:
+        p = subprocess.Popen(cmd, creationflags=flags, **args)
     return {"ok": True, "pid": p.pid}
 
 

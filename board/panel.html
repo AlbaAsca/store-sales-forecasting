@@ -24,6 +24,13 @@ header h1{font-size:16px;margin:0}
 #runner.working .pulse{background:var(--ok);animation:p 1.4s infinite}
 #runner.paused .pulse{background:var(--warn)}#runner.stale .pulse,#runner.stopped .pulse{background:var(--bad)}
 @keyframes p{50%{opacity:.35}}
+#live{margin:8px 16px 0;padding:8px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:13px}
+#live summary{cursor:pointer;font-weight:600}#liveFile{color:var(--muted);font-weight:400}
+#liveLog{max-height:340px;overflow:auto;margin-top:8px;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+#liveLog div{padding:2px 0;border-bottom:1px dashed var(--line);white-space:pre-wrap;word-break:break-word}
+#liveLog .k{display:inline-block;min-width:92px;color:var(--muted)}
+#liveLog .herramienta .k{color:var(--acc)}#liveLog .piensa{color:var(--muted);font-style:italic}
+#liveLog .error .k{color:var(--bad)}#liveLog .fin{font-weight:600}
 #runner .info{color:var(--muted);font-size:13px}#runner .info b{color:var(--ink)}
 #agents{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;padding:12px 16px}
 .agent{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;border-top:3px solid var(--c);min-width:0}
@@ -87,6 +94,7 @@ dialog h3{margin:0;grid-column:1/-1;font-size:15px}
   <button id="rStart" title="Trabaja las tarjetas pendientes una tras otra y se para cuando no quedan">▶ Iniciar</button>
   <button id="rStop" title="Para el runner y al agente que esté trabajando; su tarjeta vuelve a Próximo">■ Parar</button>
   <button id="rToggle" title="En pausa, ni el botón Iniciar ni la ejecución programada cogen tarjetas">Pausar</button></section>
+<details id="live"><summary>📜 Ver en directo qué hace el agente <span id="liveFile"></span></summary><div id="liveLog"></div></details>
 <section id="agents"></section>
 <main id="board"></main>
 
@@ -173,6 +181,18 @@ async function loadSchedule() {
   } catch (e) { $("#rNext").textContent = ""; }
 }
 loadSchedule(); setInterval(loadSchedule, 60000);
+async function loadLive() {
+  if (!$("#live").open) return;
+  try {
+    const r = await (await fetch("/api/runner/live", { cache: "no-store" })).json();
+    const box = $("#liveLog"), atEnd = box.scrollTop + box.clientHeight >= box.scrollHeight - 20;
+    const icon = { inicio: "▶ inicio", texto: "💬 dice", piensa: "🤔 piensa", herramienta: "🔧 usa", resultado: "↩ recibe", error: "⚠ error", fin: "✅ fin" };
+    $("#liveFile").textContent = r.file ? "· " + r.file : "· aún no hay ejecuciones";
+    box.innerHTML = r.events.map((e) => `<div class="${e.kind}"><span class="k">${icon[e.kind] || e.kind}</span>${esc(e.text)}</div>`).join("");
+    if (atEnd) box.scrollTop = box.scrollHeight;
+  } catch (e) {}
+}
+$("#live").addEventListener("toggle", loadLive); setInterval(loadLive, 3000);
 
 function render() {
   $("#title").textContent = "Panel de trabajo · " + (B.project || "");

@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime
 from pathlib import Path
@@ -152,23 +153,46 @@ def git(*args):
                    cwd=ROOT, capture_output=True)
 
 
-def run_claude(claude, prompt, agent, timeout_s):
-    cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
+def run_claude(claude, prompt, agent, timeout_s, tag="run"):
+    """Lanza al agente con salida en streaming: cada evento (texto, herramienta, resultado) se guarda al momento en
+    board/runs/live-<tag>-<agente>-<fecha>.jsonl para verlo en directo desde el panel. No cuesta tokens extra:
+    es la misma ejecución, solo que la CLI va contando lo que hace en vez de esperar al final."""
+    cmd = [claude, "-p", "--agent", agent, "--output-format", "stream-json", "--verbose",
            "--permission-mode", "acceptEdits", "--permission-prompts", "none",
            "--max-turns", "80", "--allowedTools", *ALLOWED, "--disallowedTools", *DENIED]
-    t0 = time.time()
+    live = LOGDIR / f"live-{tag}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.jsonl"
+    set_runner(live=live.name)
+    errf = live.with_suffix(".err")
+    t0, data, lines, killed = time.time(), {}, [], []
     try:
-        p = subprocess.run(cmd, input=prompt, text=True, encoding="utf-8", capture_output=True,
-                           cwd=ROOT, timeout=timeout_s)
-        out, err, code = p.stdout, p.stderr, p.returncode
-    except subprocess.TimeoutExpired as e:
-        out, err, code = (e.stdout or ""), "timeout", -1
-    data = {}
+        with errf.open("w", encoding="utf-8") as ef:  # stderr a fichero: un pipe lleno bloquearía al agente
+            p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=ef,
+                                 text=True, encoding="utf-8", errors="replace", cwd=ROOT)
+    except OSError as e:
+        return dict(text="", err=str(e), code=-1, secs=0, turns=None, cost=None, usage={}, is_error=True)
+    timer = threading.Timer(timeout_s, lambda: (killed.append(1), p.kill()))
+    timer.start()
     try:
-        data = json.loads(out.strip().splitlines()[-1]) if out.strip() else {}
-    except (json.JSONDecodeError, IndexError):
-        pass
-    text = data.get("result") if isinstance(data.get("result"), str) else out
+        p.stdin.write(prompt)
+        p.stdin.close()
+        with live.open("w", encoding="utf-8") as f:
+            for line in p.stdout:
+                f.write(line)
+                f.flush()
+                lines.append(line)
+                if '"type":"result"' in line.replace(" ", ""):
+                    try:
+                        data = json.loads(line)
+                    except json.JSONDecodeError:
+                        pass
+        code = p.wait()
+    finally:
+        timer.cancel()
+    err = errf.read_text(encoding="utf-8", errors="replace")
+    errf.unlink(missing_ok=True)
+    if killed:
+        err, code = "timeout", -1
+    text = data.get("result") if isinstance(data.get("result"), str) else "".join(lines[-20:])
     return dict(text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
                 turns=data.get("num_turns"), cost=data.get("total_cost_usd"),
                 usage=data.get("usage") or {}, is_error=data.get("is_error", code != 0))
@@ -225,7 +249,7 @@ def contribute(o):
         return t["id"]
     tid = bd.update(card)
     set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent}: ronda de aportación ({tid})")
-    r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60)
+    r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60, tag=tid)
     (LOGDIR / f"contrib-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
         f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
     m = next((RESULT_RE.search(l) or re.search(r"RESULT:\s*(none)\b\s*[—:-]?\s*(.*)", l, re.I)
@@ -326,7 +350,7 @@ def main():
             git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): checkpoint before {tid}")
 
             est = t.get("estimate_min") or 15
-            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(60, max(15, est * 4)) * 60))
+            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(60, max(15, est * 4)) * 60), tag=tid)
             (LOGDIR / f"{tid}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
                 f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
             new, verdict, summary = finish(tid, mode, agent, r)

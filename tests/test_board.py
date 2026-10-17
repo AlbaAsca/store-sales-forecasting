@@ -62,3 +62,16 @@ def test_control_del_runner(board, monkeypatch):
     assert b["runner"]["state"] == "stopped" and b["runner"]["alive"] is False
     s = c.get("/api/runner/schedule").json()
     assert "exists" in s and (not s["exists"] or "next" in s)
+
+
+def test_live_events_resume_el_stream():
+    sys.path.insert(0, str(ROOT / "board"))
+    import server
+    lines = [json.dumps(x) for x in [
+        {"type": "system", "subtype": "init", "model": "claude-x"},
+        {"type": "assistant", "message": {"content": [{"type": "thinking", "thinking": "miro los folds"},
+                                                      {"type": "tool_use", "name": "Bash", "input": {"command": "python scripts/results.py list"}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "content": [{"type": "text", "text": "base-v3 0.39"}]}]}},
+        {"type": "result", "result": "RESULT: done — ok"}]] + ["no es json"]
+    kinds = [e["kind"] for e in server.live_events(lines)]
+    assert kinds == ["inicio", "piensa", "herramienta", "resultado", "fin"]
