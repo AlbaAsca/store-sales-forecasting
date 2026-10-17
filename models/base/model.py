@@ -1,4 +1,8 @@
-"""V-006: V-005 (LightGBM global + promos) + 3 rasgos de estacionalidad anual (retardo 364 d).
+"""V-009: estrategia recursiva (1 paso, lags cortos, se realimenta 16 veces) y media con el directo (V-006).
+MODE (env V009_MODE): rec | avg (media en log de recursivo y directo) | direct.
+
+Base V-006:
+V-006: V-005 (LightGBM global + promos) + 3 rasgos de estacionalidad anual (retardo 364 d).
 
 Nuevo: ly_day (log1p del mismo dia objetivo hace 364 d), ly_win (media de esa ventana +-3 d), ly_diff (ly_win menos media log de los 14 d previos a t-364).
 NaN si no hay historia. Todo < corte (364 > 16).
@@ -13,6 +17,7 @@ promo_ratio (promo_day / media diaria de 14 d). Objetivo log1p(ventas) en t_k+h-
 Contrato (lo llama scripts/backtest.py y scripts/make_submission.py):
     fit_predict(history, future, ctx) -> array de predicciones (>= 0), una por fila de `future`, en el mismo orden.
 """
+import os
 import numpy as np
 import pandas as pd
 import lightgbm as lgb
@@ -68,8 +73,66 @@ def _features(M, P, origin, dow0, n_series):
     feats["ly_diff"] = win - pmean14[:, None]
     return feats
 
+MODE = "avg"
+REC_DAYS = 150
+REC_LAGS = 7
+REC_WINDOWS = (3, 7, 14, 28)
+
+
+def _step_feats(Mx, P, dow_all, c, store, fam):
+    """Rasgos de 1 paso para la columna objetivo c (vector de series). Usa solo columnas < c de Mx (+ P conocido)."""
+    n = Mx.shape[0]
+    f = {}
+    for k in range(1, REC_LAGS + 1):
+        f[f"lag{k}"] = Mx[:, c - k]
+    for w in REC_WINDOWS:
+        f[f"m{w}"] = Mx[:, c - w:c].mean(1)
+    m56 = Mx[:, c - PROFILE_DAYS:c].mean(1)
+    f["m56"] = m56
+    f["prof"] = Mx[:, [c - 7 * k for k in range(1, 9)]].mean(1) - m56
+    f["dow"] = np.full(n, float(dow_all[c]))
+    pd_ = P[:, c]
+    psum = P[:, c - 14:c].sum(1)
+    f["promo_day"] = pd_
+    f["promo_sum14"] = psum
+    f["promo_ratio"] = pd_ / (psum / 14.0 + 1.0)
+    # estacionalidad anual (hace 364 d); NaN si no hay historia
+    def col(j):
+        return Mx[:, j] if j >= 0 else np.full(n, np.nan)
+    f["ly_day"] = col(c - LAG)
+    sl = np.stack([col(c - LAG + d) for d in range(-3, 4)], axis=1)
+    cnt = (~np.isnan(sl)).sum(1)
+    win = np.where(cnt >= 4, np.nansum(sl, axis=1) / np.maximum(cnt, 1), np.nan)
+    pre = np.stack([col(j) for j in range(c - LAG - 14, c - LAG)], axis=1)
+    pc = (~np.isnan(pre)).sum(1)
+    pm = np.where(pc >= 10, np.nansum(pre, axis=1) / np.maximum(pc, 1), np.nan)
+    f["ly_win"] = win
+    f["ly_diff"] = win - pm
+    f["store_nbr"] = store
+    f["family"] = fam
+    return pd.DataFrame(f)
+
+
+def _recursive(M, P, dow_all, store, fam, seed):
+    n, T = M.shape
+    Mx = np.concatenate([M, np.full((n, HORIZON), np.nan)], axis=1)
+    Xs, ys = [], []
+    for c in range(max(PROFILE_DAYS, T - REC_DAYS), T):
+        Xs.append(_step_feats(Mx, P, dow_all, c, store, fam))
+        ys.append(M[:, c])
+    ds = lgb.Dataset(pd.concat(Xs, ignore_index=True), np.concatenate(ys), categorical_feature=["store_nbr", "family"])
+    model = lgb.train({**PARAMS, "seed": seed}, ds, num_boost_round=ROUNDS)
+    out = np.zeros((n, HORIZON))
+    for s in range(HORIZON):
+        c = T + s
+        p = np.clip(model.predict(_step_feats(Mx, P, dow_all, c, store, fam)), 0, None)
+        Mx[:, c] = p
+        out[:, s] = p
+    return out
+
 
 def fit_predict(history, future, ctx):
+    mode = os.environ.get("V009_MODE", MODE)
     keys = ["store_nbr", "family"]
     start = history["date"].max() + np.timedelta64(1, "D")
     days = pd.date_range(history["date"].min(), history["date"].max())
@@ -110,13 +173,18 @@ def fit_predict(history, future, ctx):
         X, y = build(o, dow0, True)
         Xs.append(X)
         ys.append(y)
-    X = pd.concat(Xs, ignore_index=True)
-    y = np.concatenate(ys)
-    ds = lgb.Dataset(X, y, categorical_feature=["store_nbr", "family"])
-    model = lgb.train({**PARAMS, "seed": int(ctx.get("seed", 0) or 0)}, ds, num_boost_round=ROUNDS)
-
-    Xp, _ = build(T, start.dayofweek, False)
-    pred = model.predict(Xp).reshape(n, HORIZON)
+    pred = None
+    if mode in ("direct", "avg"):
+        X = pd.concat(Xs, ignore_index=True)
+        y = np.concatenate(ys)
+        ds = lgb.Dataset(X, y, categorical_feature=["store_nbr", "family"])
+        model = lgb.train({**PARAMS, "seed": int(ctx.get("seed", 0) or 0)}, ds, num_boost_round=ROUNDS)
+        Xp, _ = build(T, start.dayofweek, False)
+        pred = model.predict(Xp).reshape(n, HORIZON)
+    if mode in ("rec", "avg"):
+        dow_all = np.asarray(days.append(fdates).dayofweek)
+        rec = _recursive(M, P, dow_all, store[:, 0], fam[:, 0], int(ctx.get("seed", 0) or 0))
+        pred = rec if pred is None else 0.5 * (pred + rec)
     lookup = pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
     lookup.index.names = keys + ["date"]
     fut = future[keys + ["date"]].copy()

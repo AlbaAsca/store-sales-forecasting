@@ -23,6 +23,9 @@ El recursivo solo apenas mejora (−0.001, lo que varía la semilla; peor en f1)
 Qué: recortar promo_day y promo_ratio por familia al percentil 99 visto, para que el pico de promos del 16-ago (fuera de rango) no se extrapole. · Pasó: el CV queda igual (folds +0.0020/−0.0004/+0.0002/−0.0005), pero el 16-ago sigue
 disparado frente al 17-ago: SCHOOL ×3.06 (antes ×3.29), LAWN ×2.77 (×3.91), LINGERIE ×1.84 (×2.32); el criterio pedía ≤ ×1.5. · Por qué: recortar ayuda algo, pero el salto lo siguen empujando otros rasgos (calendario, retardos); los árboles no extrapolan, así que el problema no era solo el valor extremo de la promo. Idea: atacar el pico por otro lado (p. ej. rasgo de día concreto o tope de predicción).
 
+### V-012 · 24 cortes de entrenamiento + peso a lo reciente — ❌ RECHAZADA (CV 0.3904 → 0.3919, semilla 1: 0.3928)
+Qué: pasar de 8 a 24 cortes semanales (más ejemplos por serie) y ponderar cada corte con vida media de 120 días. · Pasó: mejora f1/f2 y el control ago-2016 (0.7696 → 0.7596), pero empeora f3 (+0.006) y f4 (+0.005); media peor y ×4 de tiempo. · Por qué: los cortes extra solapan casi la misma información y el peso reciente no compensa; la ganancia en el control sugiere algo útil, pero no para los folds de junio-julio. No se probaron 16/40 cortes ni otras vidas medias.
+
 ### V-008 · 16 modelos directos (uno por horizonte) — ❌ RECHAZADA (RMSLE 0.3904 → 0.4833, empeora 4/4 folds)
 Qué: estrategia multi-paso *directa*: en vez de un LightGBM con h como rasgo, 16 modelos, cada uno entrenado solo con su día de horizonte. · Pasó: 0.4793 / 0.4636 / 0.4835 / 0.5068 (semilla 7: 0.4817, variación 0.0016); peor sobre todo en LIQUOR/WINE/BEER, LAWN AND GARDEN, LADIESWEAR. · Por qué: cada modelo ve 1/16 de las filas (8 cortes × 1782 series) y sobreajusta; el modelo único comparte lo aprendido entre horizontes, y con pocos cortes eso pesa más que la especialización.
 

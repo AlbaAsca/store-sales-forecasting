@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:12:44+02:00",
+  "updated": "2026-10-17T17:18:28+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-034",
-    "heartbeat": "2026-10-17T17:11:47+02:00",
-    "message": "desarrollador con T-034",
+    "heartbeat": "2026-10-17T17:12:47+02:00",
+    "message": "tester con T-034",
     "pid": 15036,
-    "agent": "desarrollador",
-    "started": "2026-10-17T17:11:47+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T17:12:47+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-034-desarrollador-20261017-171147.jsonl"
+    "live": "live-T-034-tester-20261017-171247.jsonl"
   },
   "agents": [
     {
@@ -50,8 +50,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-037"
     },
     {
       "id": "arquitecto",
@@ -2027,7 +2027,7 @@
       "id": "T-034",
       "title": "V-012: más cortes de entrenamiento (8→24-40) y peso a lo reciente en el LightGBM",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 30.0,
       "actual_min": 0.9,
@@ -2036,7 +2036,7 @@
       "desc": "Hipótesis (Favorita/M5, docs/REVISION-RUMBO.md): más cortes semanales dan más ejemplos por serie; ponderar lo reciente mantiene frescura · Cambio: variar nº de cortes (16, 24, 40) y peso exponencial por antigüedad, sin tocar rasgos · Criterio: RMSLE medio < base-v3 (0.3904) y mejora en ≥ 3/4 folds (y en el fold de control ago-2016 si T-032 existe); si empata, menos tiempo; otra semilla",
       "deps": [],
       "created": "2026-10-17T11:05:52+02:00",
-      "updated": "2026-10-17T17:12:44+02:00",
+      "updated": "2026-10-17T17:18:28+02:00",
       "started_at": "2026-10-17T17:11:47+02:00",
       "finished_at": "2026-10-17T17:12:44+02:00",
       "log": [
@@ -2054,6 +2054,26 @@
           "t": "2026-10-17T17:12:44+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-012 implementada (24 cortes + peso exponencial, vida media 120 d); prueba rápida fold 1 = 0.3922, tests en verde; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-17T17:12:47+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T17:17:51+02:00",
+          "by": "tester",
+          "msg": "V-012 (24 cortes, vida media 120 d): CV 0.3919 s42 / 0.3928 s1 (base-v3 0.3904): mejora f1,f2 y control c1 (0.7596 vs 0.7696), empeora f3 +0.006, f4 +0.005; 102 s vs 25 s → RECHAZADA"
+        },
+        {
+          "t": "2026-10-17T17:18:23+02:00",
+          "by": "tester",
+          "msg": "RECHAZADA: CV 0.3919 (s1 0.3928) vs base-v3 0.3904; 2/4 folds"
+        },
+        {
+          "t": "2026-10-17T17:18:28+02:00",
+          "by": "tester",
+          "msg": "DONE: V-012 RECHAZADA: CV 0.3919 (semilla 1: 0.3928) frente a 0.3904 de base-v3; mejora 2/4 folds y tarda 4 veces más."
         }
       ],
       "runs": [
@@ -2066,8 +2086,19 @@
           "tokens": 95247,
           "cost_usd": 0.07961009999999999,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T17:18:28+02:00",
+          "min": 5.7,
+          "turns": 21,
+          "tokens": 181290,
+          "cost_usd": 0.1180115,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T17:12:47+02:00"
     },
     {
       "id": "T-035",
@@ -2114,6 +2145,35 @@
           "t": "2026-10-17T11:05:56+02:00",
           "by": "investigador",
           "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-037",
+      "title": "Promover V-009 (media directo+recursivo) a base-v4 y preparar envío v0.4",
+      "owner": "consultor",
+      "status": "doing",
+      "priority": "alta",
+      "estimate_min": 10.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "models/base = V-009 con MODE=avg; base-v4 (CV + control c1), holdout, dist/submission-base-v4.csv, tag v0.4",
+      "deps": [],
+      "created": "2026-10-17T17:15:24+02:00",
+      "updated": "2026-10-17T17:15:24+02:00",
+      "started_at": "2026-10-17T17:15:24+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T17:15:24+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:15:24+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
         }
       ]
     }
