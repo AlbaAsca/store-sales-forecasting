@@ -130,9 +130,10 @@ def progreso():
     for key, label, col, mk in (("holdout", "examen final (holdout)", WARN, "s"),
                                 ("lb", "Kaggle (nota oficial)", INK, "o"),
                                 ("cv", "prácticas (media de 4 folds)", ACCENT, "D")):
-        ys = [s[key] for s in subs]
+        ys = [s[key] if s[key] is not None else np.nan for s in subs]  # nota de Kaggle aún pendiente = hueco
         ax.plot(x, ys, marker=mk, color=col, lw=2, label=label)
-        ax.annotate(f"{ys[-1]:.4f}", (len(x) - 1, ys[-1]), xytext=(8, 0), textcoords="offset points",
+        last = max(i for i, v in enumerate(ys) if not np.isnan(v))
+        ax.annotate(f"{ys[last]:.4f}", (last, ys[last]), xytext=(8, 0), textcoords="offset points",
                     va="center", fontsize=9, color=col)
     ax.set_ylabel("RMSLE (↓ mejor)")
     ax.set_title("Cada envío a Kaggle: las tres medidas bajan juntas desde v0.4", loc="left")
