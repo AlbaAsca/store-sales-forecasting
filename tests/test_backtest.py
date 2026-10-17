@@ -87,3 +87,20 @@ def test_control_fold_aparte_de_la_media(tmp_path, monkeypatch):
     assert s["mean"] == s0["mean"] and [r["id"] for r in s["control"]] == ["c1"] and "control" not in s0
     r = results.compare(s, s)
     assert [k for k, _, _ in r["control"]] == ["c1"] and [k for k, _, _ in r["folds"]] == ["f1"]
+
+
+def test_open_mask_excluye_tiendas_cerradas():
+    dates = pd.date_range("2016-08-01", periods=4)
+    rows = [dict(date=d, store_nbr=s, family="A", sales=0.0 if (s == 1 or (s == 2 and i < 2)) else 5.0)
+            for i, d in enumerate(dates) for s in (1, 2, 3)]
+    m = backtest.open_mask(pd.DataFrame(rows))
+    df = pd.DataFrame(rows)
+    assert set(df["store_nbr"][~m]) == {1, 2}   # 100 % y 50 % de días a 0
+    assert set(df["store_nbr"][m]) == {3}
+
+
+def test_control_open_en_compare():
+    a = {"folds": [{"id": "f1", "rmsle": 0.5, "by_family": {}}], "control": [{"id": "c1", "rmsle": 0.7, "rmsle_open": 0.4}]}
+    b = {"folds": [{"id": "f1", "rmsle": 0.5, "by_family": {}}], "control": [{"id": "c1", "rmsle": 0.6, "rmsle_open": 0.3}]}
+    assert results.compare(a, b)["control_open"] == [("c1", 0.4, 0.3)]
+    assert results.compare(summ([0.5]), summ([0.5]))["control_open"] == []

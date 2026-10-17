@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:42:53+02:00",
+  "updated": "2026-10-17T18:43:26+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-049",
-    "heartbeat": "2026-10-17T18:31:56+02:00",
-    "message": "tester con T-049",
+    "current": "T-048",
+    "heartbeat": "2026-10-17T18:42:56+02:00",
+    "message": "desarrollador con T-048",
     "pid": 19976,
-    "agent": "tester",
-    "started": "2026-10-17T18:31:56+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T18:42:56+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-049-tester-20261017-183156.jsonl"
+    "live": "live-T-048-desarrollador-20261017-184256.jsonl"
   },
   "agents": [
     {
@@ -2949,18 +2949,18 @@
       "id": "T-048",
       "title": "Medir la quincena de control sin las tiendas que cerraron",
       "owner": "desarrollador",
-      "status": "next",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 15.0,
-      "actual_min": 0.8,
+      "actual_min": 1.3,
       "auto": true,
       "manual": null,
       "desc": "Teníamos una prueba extra con la quincena de la vuelta al cole de 2016 que salía muy mal, y creíamos que era por el material escolar. El modelador ha descubierto que no: dos tiendas (la 18 y la 25) cerraron justo esos días y vendieron cero. Eso explica casi tres cuartas partes del error, y un cierre no se puede prever.\n\nQueremos que esa prueba también se muestre sin esas tiendas cerradas, para que mida lo que de verdad nos interesa.\n\nCómo sabremos que funciona: al comparar variantes aparece el resultado de esa prueba con y sin tiendas cerradas, y los tests siguen en verde.\n\n## Técnico\n- Medido en T-041 con preds de base-v4: c1 = 0.755; sin tiendas 18 y 25 = 0.3902. Las dos explican el 74 % del error cuadrático.\n- Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con >= 50 % de días a 0 en la ventana; mostrarlo en compare.",
       "deps": [],
       "created": "2026-10-17T18:06:38+02:00",
-      "updated": "2026-10-17T18:31:22+02:00",
-      "started_at": "2026-10-17T18:29:15+02:00",
-      "finished_at": "2026-10-17T18:30:03+02:00",
+      "updated": "2026-10-17T18:43:26+02:00",
+      "started_at": "2026-10-17T18:42:56+02:00",
+      "finished_at": "2026-10-17T18:43:26+02:00",
       "log": [
         {
           "t": "2026-10-17T18:06:38+02:00",
@@ -2996,6 +2996,16 @@
           "t": "2026-10-17T18:31:22+02:00",
           "by": "consultor",
           "msg": "Falta: test en tests/test_backtest.py para open_mask (tienda con >= 50 % de días a 0 se excluye; tienda normal no) y para control_open en results.compare. Usa Edit/Write, no cat ni heredoc."
+        },
+        {
+          "t": "2026-10-17T18:42:56+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T18:43:26+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: `c1_open` ya se calcula en el backtest y aparece en `compare`; añadidos 2 tests y 42 pasan."
         }
       ],
       "runs": [
@@ -3008,6 +3018,16 @@
           "tokens": 139387,
           "cost_usd": 0.13621500000000003,
           "verdict": "human"
+        },
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T18:43:26+02:00",
+          "min": 0.5,
+          "turns": 7,
+          "tokens": 71528,
+          "cost_usd": 0.08140839999999999,
+          "verdict": "review"
         }
       ]
     },
