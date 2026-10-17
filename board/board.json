@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:27:51+02:00",
+  "updated": "2026-10-17T18:29:12+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-045"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -2710,7 +2710,7 @@
     },
     {
       "id": "T-044",
-      "title": "Runner: avisar en la tarjeta cuando el agente tuvo comandos denegados",
+      "title": "Runner: avisar cuando a un agente le bloquean un comando",
       "owner": "desarrollador",
       "status": "done",
       "priority": "alta",
@@ -2718,7 +2718,7 @@
       "actual_min": 1.3,
       "auto": true,
       "manual": null,
-      "desc": "Auditoría del consultor: en T-040 el investigador encadenó cat + board.py add, el permiso se denegó, las tarjetas no se crearon y aun así cerró la suya como done. En T-021 board.py note falló porque no acepta --msg. Cambios: (1) al terminar cada ejecución, el runner recorre el live-*.jsonl y cuenta los tool_result con 'Permission for this tool use was denied'; si hay alguno, añade a la tarjeta una nota '⚠ N comandos denegados: <primeros 80 caracteres de cada uno>' y, si alguno contenía 'board.py add', el veredicto pasa a blocked en vez de done; (2) board.py note acepta también --msg como alias del texto posicional; (3) en RULES del runner, una línea explícita: los comandos de board.py van solos, nunca después de cat, heredoc, && o ;. Criterio: tests con un live-*.jsonl de ejemplo (denegado → nota y blocked; sin denegaciones → sin nota) y con note --msg; suite en verde; los tests no tocan el board real.",
+      "desc": "Esta mañana un agente intentó crear tarjetas, el sistema se lo impidió y aun así dio su trabajo por terminado; no nos enteramos hasta revisarlo a mano. Queremos que, si a un agente le bloquean algún comando, quede escrito en su tarjeta, y que si lo bloqueado era crear tarjetas, la suya no pase a «Hecho» sino a «Bloqueado».\n\nTambién arreglamos un detalle: dejar una nota con --msg fallaba.\n\nCómo sabremos que funciona: hay una prueba con un registro de ejemplo con un comando bloqueado (la tarjeta recibe el aviso y queda bloqueada) y otra sin bloqueos (no pasa nada).\n\n## Técnico\n- Al terminar cada ejecución, recorrer live-*.jsonl y contar tool_result con «Permission for this tool use was denied».\n- Si hay alguno: nota «⚠ N comandos denegados: <80 primeros caracteres de cada uno>»; si alguno contenía «board.py add», veredicto blocked en vez de done.\n- board.py note acepta --msg como alias del texto.\n- RULES del runner: los comandos de board.py van solos (sin cat, heredoc, && ni ;).\n- Tests con un live-*.jsonl de ejemplo y note --msg; suite en verde; los tests no tocan el board real.",
       "deps": [],
       "created": "2026-10-17T18:03:46+02:00",
       "updated": "2026-10-17T18:18:49+02:00",
@@ -2759,6 +2759,11 @@
           "t": "2026-10-17T18:18:49+02:00",
           "by": "tester",
           "msg": "⚠ 1 comandos denegados: git show 98cb191 -- board/board.py board/runner.py tests"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ],
       "runs": [
@@ -2787,18 +2792,18 @@
     },
     {
       "id": "T-045",
-      "title": "V-016: día del mes y día de paga (dom, is_payday, días desde paga, días a fin de mes) en directo y recursivo",
+      "title": "V-016: tener en cuenta el día de paga y el día del mes",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": 1.5,
       "auto": true,
       "manual": null,
-      "desc": "Hipótesis (T-040 + DISENO-MODELOS T-041): base-v4 tiene sesgo por día del mes (días 1-5 y fin de mes -0.05 en log, resto +0.018); la paga es el 15 y el último día. Cambio: añadir dom, is_payday, dias_desde_paga (0-15), dias_a_fin_mes del día objetivo en _features y _step_feats; nada más. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (repetir con otra semilla), c1 sin tiendas 18/25 no empeora (hoy 0.3902); anotar sesgo por grupo de día del mes y holdout.",
+      "desc": "El modelo no sabe qué día del mes es. Pero en Ecuador mucha gente cobra el 15 y el último día del mes, y se nota: justo después de cobrar el modelo se queda corto (un 4-5 %) y el resto del mes se pasa un poco.\n\nLa idea es darle cuatro datos sobre el calendario: el día del mes, si es día de paga, cuántos días han pasado desde la última paga y cuántos faltan para fin de mes.\n\nCómo sabremos si funciona: el error medio baja frente a la base actual con dos semillas, y ese desfase de después de cobrar se reduce.\n\n## Técnico\n- Fuente: investigador (T-040) y modelador (T-041, DISENO-MODELOS). Sesgo log(pred/real): días 1-5 y fin de mes ≈ −0.05; resto +0.018.\n- Cambio sobre base-v5: dom, is_payday, dias_desde_paga (0-15), dias_a_fin_mes del día objetivo en _features y _step_feats; nada más.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md). Anotar el sesgo por grupo de día del mes.",
       "deps": [],
       "created": "2026-10-17T18:06:29+02:00",
-      "updated": "2026-10-17T18:20:25+02:00",
+      "updated": "2026-10-17T18:29:12+02:00",
       "started_at": "2026-10-17T18:18:52+02:00",
       "finished_at": "2026-10-17T18:20:21+02:00",
       "log": [
@@ -2831,6 +2836,26 @@
           "t": "2026-10-17T18:20:28+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T18:29:04+02:00",
+          "by": "tester",
+          "msg": "CV 0.3878 (sem 42) / 0.3874 (sem 1) vs base-v4 0.3858: empeora f1,f3,f4 (+0.003), mejora f2 -0.0009; c1 0.7574 (peor); LICOR +0.020; tiempo 97→185 s → RECHAZADA. Tests 39 OK (añadido test_v016). Sesgo por grupo de día/holdout no medidos (holdout solo consultor)."
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
+        },
+        {
+          "t": "2026-10-17T18:29:08+02:00",
+          "by": "tester",
+          "msg": "V-016 RECHAZADA: CV 0.3878 (sem 1: 0.3874) vs 0.3858, empeora 3/4 folds"
+        },
+        {
+          "t": "2026-10-17T18:29:12+02:00",
+          "by": "tester",
+          "msg": "DONE: V-016 RECHAZADA: CV 0.3878 (semilla 1: 0.3874) frente a 0.3858 de base-v4, empeora 3 de 4 folds y c1 también empeora."
         }
       ],
       "runs": [
@@ -2843,13 +2868,23 @@
           "tokens": 148163,
           "cost_usd": 0.12260460000000002,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T18:29:12+02:00",
+          "min": 8.7,
+          "turns": 25,
+          "tokens": 227284,
+          "cost_usd": 0.14010350000000002,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-17T18:20:28+02:00"
     },
     {
       "id": "T-046",
-      "title": "V-017: festivo del día objetivo según la tienda (nacional, regional por estado, local por ciudad, trasladados)",
+      "title": "V-017: decirle al modelo qué días son festivos en cada tienda",
       "owner": "desarrollador",
       "status": "backlog",
       "priority": "media",
@@ -2857,7 +2892,7 @@
       "actual_min": null,
       "auto": true,
       "manual": null,
-      "desc": "Hipótesis (chongzhenjie process_holiday; DISENO-MODELOS T-041): ctx holidays/stores no se usan; en folds hay pocos festivos (≈1 % filas) pero sí en el holdout (10-11 ago) y en los cortes de f4. Cambio: 0/1 hol_nat, hol_reg, hol_loc, event_nat del día objetivo cruzando stores.csv (city/state); transferred=True = día normal; Transfer/Bridge/Additional = festivo; Work Day = laborable; en _features y _step_feats. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (otra semilla), c1 sin tiendas 18/25 no empeora; si CV empata, anotar holdout y decide el consultor.",
+      "desc": "El modelo no sabe cuándo es festivo. Hay festivos de todo el país, de una región o de una sola ciudad, y algunos se trasladan a otro día. Queremos decirle, para cada tienda y día, si ese día es festivo donde está la tienda.\n\nEn los exámenes de práctica casi no hay festivos, así que puede que ahí no se note; donde sí hay es en el examen final (el 10 de agosto, trasladado al 11).\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas; si empata, miramos el examen final y decide el consultor.\n\n## Técnico\n- Fuente: notebook chongzhenjie (process_holiday); DISENO-MODELOS (T-041). Festivos ≈ 1 % de filas en folds.\n- Cambio sobre base-v5: 0/1 hol_nat, hol_reg, hol_loc, event_nat del día objetivo cruzando holidays_events.csv con stores.csv (city/state). transferred=True → día normal; Transfer/Bridge/Additional → festivo; Work Day → laborable. En _features y _step_feats.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:06:32+02:00",
       "updated": "2026-10-17T18:06:32+02:00",
@@ -2868,12 +2903,17 @@
           "t": "2026-10-17T18:06:32+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ]
     },
     {
       "id": "T-047",
-      "title": "V-018: cortes de entrenamiento del mismo periodo del año anterior en el directo",
+      "title": "V-018: enseñarle cómo fue la vuelta al cole del año pasado",
       "owner": "desarrollador",
       "status": "backlog",
       "priority": "media",
@@ -2881,7 +2921,7 @@
       "actual_min": null,
       "auto": true,
       "manual": null,
-      "desc": "Hipótesis (ceshine/Favorita eligen cortes por calendario; DISENO-MODELOS T-041): el directo solo ve 8 cortes recientes que nunca contienen un arranque de temporada escolar, así que ly_* casi no se usan; SCHOOL aporta el 8 % del error de f1 (RMSLE 0.637). Cambio: añadir 4 cortes en T-16-364+7j, j=-1..2 (con sus rasgos y objetivos de hace un año) al entrenamiento del directo; el recursivo no cambia. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (otra semilla), c1 sin tiendas 18/25 no empeora; anotar RMSLE de SCHOOL en f1, tiempo y holdout.",
+      "desc": "El modelo aprende de las últimas semanas antes de cada fecha, y en esas semanas nunca hay un arranque de curso escolar. Por eso, aunque le contamos que «el año pasado por estas fechas se vendió mucho material escolar», no sabe qué hacer con ese dato.\n\nLa idea es añadir a sus ejemplos de entrenamiento algunas semanas del mismo periodo del año anterior, para que vea cómo es un arranque de temporada.\n\nCómo sabremos si funciona: el error medio baja con dos semillas y, sobre todo, baja el error del material escolar en la práctica de julio.\n\n## Técnico\n- Fuente: ceshine / Favorita eligen cortes por calendario; DISENO-MODELOS (T-041). SCHOOL AND OFFICE = 8 % del error de f1 (RMSLE 0.637).\n- Cambio sobre base-v5: añadir 4 cortes en T−16−364+7j, j = −1..2 (rasgos y objetivos de hace un año) al entrenamiento del directo; el recursivo no cambia.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md). Anotar RMSLE de SCHOOL en f1 y el tiempo.",
       "deps": [],
       "created": "2026-10-17T18:06:36+02:00",
       "updated": "2026-10-17T18:06:36+02:00",
@@ -2892,12 +2932,17 @@
           "t": "2026-10-17T18:06:36+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ]
     },
     {
       "id": "T-048",
-      "title": "Backtest: informar c1 también sin tiendas cerradas (18 y 25 explican el 74 % de su error)",
+      "title": "Medir la quincena de control sin las tiendas que cerraron",
       "owner": "arquitecto",
       "status": "backlog",
       "priority": "alta",
@@ -2905,7 +2950,7 @@
       "actual_min": null,
       "auto": true,
       "manual": null,
-      "desc": "Medido en T-041 con preds de base-v4: tienda 18 vende 0 todo c1 y la 25 desde el 22-ago-2016; aportan el 74 % del error cuadrático de c1 (0.755). Sin ellas c1 = 0.3902. Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con ventas reales 0 en toda la ventana o desde mitad de ventana (regla: tienda con >=50 % de días a 0 en el total de la tienda), y mostrarlo en compare. Sin esto el criterio 'no empeora c1' mide cierres imprevisibles. Tests en verde.",
+      "desc": "Teníamos una prueba extra con la quincena de la vuelta al cole de 2016 que salía muy mal, y creíamos que era por el material escolar. El modelador ha descubierto que no: dos tiendas (la 18 y la 25) cerraron justo esos días y vendieron cero. Eso explica casi tres cuartas partes del error, y un cierre no se puede prever.\n\nQueremos que esa prueba también se muestre sin esas tiendas cerradas, para que mida lo que de verdad nos interesa.\n\nCómo sabremos que funciona: al comparar variantes aparece el resultado de esa prueba con y sin tiendas cerradas, y los tests siguen en verde.\n\n## Técnico\n- Medido en T-041 con preds de base-v4: c1 = 0.755; sin tiendas 18 y 25 = 0.3902. Las dos explican el 74 % del error cuadrático.\n- Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con >= 50 % de días a 0 en la ventana; mostrarlo en compare.",
       "deps": [],
       "created": "2026-10-17T18:06:38+02:00",
       "updated": "2026-10-17T18:06:38+02:00",
@@ -2916,12 +2961,17 @@
           "t": "2026-10-17T18:06:38+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ]
     },
     {
       "id": "T-049",
-      "title": "V-019: serie dormida -> 0 duro (post-proceso) sobre base-v4",
+      "title": "V-019: predecir cero en las series que llevan semanas sin vender",
       "owner": "desarrollador",
       "status": "backlog",
       "priority": "alta",
@@ -2929,7 +2979,7 @@
       "actual_min": null,
       "auto": true,
       "manual": null,
-      "desc": "Hipótesis (gersonlramos, LB -0.0153, mayor ganancia individual; Favorita 5.º usa conteo de ceros): si una serie tienda×familia lleva 0 ventas en los últimos N días (probar N=28/56/90 con el corte, sin fugas), predecir 0 en vez de la salida del modelo. Distinto de V-015 (rasgos, rechazada): aquí regla dura posterior. Cambio: variants/V-019 con post-proceso en fit_predict; N elegido con folds solo si es una única constante. Criterio: CV < 0.3858, como mucho 1 fold peor, mejora > variación de semilla (V-015 semilla 0.3854/0.3855), c1 no empeora (leer sin tiendas 18 y 25 cerradas).",
+      "desc": "Algunas combinaciones de tienda y producto llevan semanas sin vender nada. El modelo a veces les predice un poquito de venta, y con esta forma de puntuar eso penaliza bastante.\n\nLa idea es una regla sencilla después del modelo: si una serie lleva muchos días seguidos sin vender, predecir cero. Un notebook público consiguió con esto su mayor mejora.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (LB −0.0153); Favorita 5.º usa conteo de ceros. Distinto de V-015 (eso eran rasgos; esto es una regla dura posterior).\n- Cambio sobre base-v5: post-proceso en fit_predict; N = 28/56/90 días a 0 antes del corte (sin fugas); una sola constante elegida con los folds.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:43+02:00",
       "updated": "2026-10-17T18:16:43+02:00",
@@ -2940,12 +2990,17 @@
           "t": "2026-10-17T18:16:43+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ]
     },
     {
       "id": "T-050",
-      "title": "V-020: peso directo/recursivo por familia en la media de base-v4",
+      "title": "V-020: repartir distinto las dos opiniones según el tipo de producto",
       "owner": "desarrollador",
       "status": "backlog",
       "priority": "media",
@@ -2953,7 +3008,7 @@
       "actual_min": null,
       "auto": true,
       "manual": null,
-      "desc": "Hipótesis (gersonlramos: mezcla 70/30 -0.0051 y pesos por familia en 3 familias -0.0015; M5 1.º promedia directo+recursivo): base-v4 usa 50/50; usar un peso w_f por grupo (como mucho 3-4 grupos de familias, p. ej. estables vs intermitentes) fijado con folds anteriores sin mirar el fold evaluado, para no sobreajustar. Cambio: variants/V-020 con pesos por grupo en la mezcla. Criterio: CV < 0.3858, como mucho 1 fold peor, mejora > variación de semilla, c1 no empeora; si la ganancia < 0.001 rechazar.",
+      "desc": "La base actual hace la media de dos maneras de predecir (los 16 días de golpe y día a día), a partes iguales. Puede que para algunos productos funcione mejor una que otra.\n\nLa idea es dejar que cada grupo de productos tenga su propio reparto (por ejemplo, 70/30 para los estables y 40/60 para los que se venden a ratos), con como mucho 3 o 4 grupos para no pasarnos de ajuste.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (mezcla 70/30 −0.0051; pesos por familia en 3 familias −0.0015); M5 1.º promedia directo y recursivo.\n- Cambio sobre base-v5: peso w por grupo de familias en la mezcla en log, fijado con folds anteriores sin mirar el fold evaluado.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:45+02:00",
       "updated": "2026-10-17T18:16:45+02:00",
@@ -2964,6 +3019,11 @@
           "t": "2026-10-17T18:16:45+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
         }
       ]
     },
@@ -3061,6 +3121,30 @@
           "t": "2026-10-17T18:27:51+02:00",
           "by": "consultor",
           "msg": "base-v5 = V-014: CV 0.3852, c1 0.7526, holdout 0.4179, LB 0.39940; tags base-v5 y v0.5"
+        }
+      ]
+    },
+    {
+      "id": "T-054",
+      "title": "Repescar V-010 y V-015 sobre la base nueva",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 40,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Dos ideas que rechazamos porque mejoraban «demasiado poco» puede que sí valieran: con V-014 nos pasó justo eso, una mejora pequeñísima en casa que en Kaggle fue ocho veces mayor.\n\n- V-010 era hacer la media de varias copias del modelo; mejoraba en las cuatro prácticas, aunque muy poco.\n- V-015 era decirle al modelo qué series se venden a ratos; mejoraba dos prácticas y la de control.\n\nQueremos rehacerlas sobre la base nueva (base-v5) y medirlas con dos semillas, con la regla nueva: se aceptan si mejoran de forma repetida, aunque sea poco.\n\nCómo sabremos si funcionan: cada una baja el error medio de base-v5 con las dos semillas y no empeora más de una práctica.\n\n## Técnico\n- Antes, sobre base-v4 (0.3858; folds 0.3909/0.3754/0.3821/0.3947; c1 0.7552):\n  V-010 0.3856 (0.3908/0.3750/0.3819/0.3945; c1 0.7536), mejora 4/4, ×3 de tiempo.\n  V-015 0.3854 (0.3903/0.3755/0.3823/0.3937; c1 0.7513), mejora 2/4.\n- Rehacer como V-021 (= V-010 sobre base-v5) y V-022 (= V-015 sobre base-v5) con new_variant.py; medir con --seed 42 y --seed 7.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
+      "deps": [],
+      "created": "2026-10-17T18:29:06+02:00",
+      "updated": "2026-10-17T18:29:06+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:29:06+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }

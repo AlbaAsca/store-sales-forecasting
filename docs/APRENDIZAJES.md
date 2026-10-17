@@ -111,6 +111,9 @@ Qué: probar 63 hojas, lr 0.03×700 rondas, min_data 100 (frente a los valores c
 ### V-015 · rasgos de intermitencia (fracción de ceros 14/28/56 d, días desde la última venta) — ❌ RECHAZADA (0.3858 → 0.3854, semilla 1: 0.3855)
 Qué: decirle al modelo cuánto «vende a golpes» cada serie. Una serie **intermitente** es la que tiene muchos días con venta 0 entre días con venta (p. ej. libros en una tienda pequeña). · Pasó: −0.0003 de media, 2 folds mejor y 2 peor, c1 mejora −0.0039; tiempo 97 s → 138 s. · Por qué: el modelo ya deducía la intermitencia de las medias y retardos (m56, lags); los rasgos nuevos repiten esa información y la mejora queda bajo el ruido de semilla (~0.001).
 
+### V-016 · calendario de paga (día del mes, is_payday, días desde la paga, días a fin de mes) — ❌ RECHAZADA (0.3858 → 0.3878, semilla 1: 0.3874)
+Qué: dar al modelo el día del mes y la distancia a la paga (15 y último día) para corregir el sesgo de principio/fin de mes. · Pasó: empeora 3/4 folds (+0.002 de media, ambas semillas), c1 +0.0022; LICOR/VINO/CERVEZA +0.020; tiempo ×1.9. · Por qué: con solo ~4 quincenas por fold, el día del mes es una variable que el árbol puede memorizar (sobreajuste) sin patrón estable; el efecto paga ya lo capturan los retardos y el perfil semanal.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …

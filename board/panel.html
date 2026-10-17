@@ -34,6 +34,11 @@ header h1{font-size:16px;margin:0}
 #liveLog .k{display:inline-block;min-width:92px;color:var(--muted)}
 #liveLog .herramienta .k{color:var(--acc)}#liveLog .piensa{color:var(--muted);font-style:italic}
 #liveLog .error .k{color:var(--bad)}#liveLog .fin{font-weight:600}
+.desc-view{display:grid;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;line-height:1.5}
+.desc-view p{margin:0}.desc-view .muted{color:var(--muted)}
+.desc-view details summary,.desc-edit summary{cursor:pointer;color:var(--muted);font-size:13px}
+.desc-view .tech{white-space:pre-wrap;font:12px/1.5 ui-monospace,Consolas,monospace;color:var(--muted);margin-top:6px}
+.desc-edit textarea{width:100%;min-height:160px;margin-top:6px}
 #runner .info{color:var(--muted);font-size:13px}#runner .info b{color:var(--ink)}
 #agents{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;padding:12px 16px}
 .agent{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;border-top:3px solid var(--c);min-width:0}
@@ -108,7 +113,8 @@ dialog h3{margin:0;grid-column:1/-1;font-size:15px}
     <label>Prioridad <select name="priority"><option>alta</option><option>media</option><option>baja</option></select></label>
     <label>Estimación (min de agente) <input name="estimate_min" type="number" step="1" min="1"></label>
     <label class="full">Depende de <input name="deps" placeholder="T-003, T-007"></label>
-    <label class="full">Descripción <textarea name="desc"></textarea></label>
+    <div class="full desc-view" id="fDesc"></div>
+    <details class="full desc-edit"><summary>Editar descripción</summary><textarea name="desc" aria-label="Descripción"></textarea></details>
     <label class="full">Lo que tienes que hacer tú (vacío = la hacen los agentes solos) <input name="manual"></label>
     <label class="full">Añadir nota <input name="note" placeholder="Opcional: queda en el historial"></label>
     <div class="facts" id="fFacts"></div>
@@ -270,6 +276,14 @@ function card(t) {
   </article>`;
 }
 
+// Descripción: lenguaje llano arriba; lo técnico va debajo de una línea «## Técnico» y se muestra plegado.
+function renderDesc(d) {
+  if (!d) return '<p class="muted">Sin descripción.</p>';
+  const i = d.search(/^##\s*T[eé]cnico\s*$/im);
+  const human = (i < 0 ? d : d.slice(0, i)).trim(), tech = i < 0 ? "" : d.slice(i).replace(/^##\s*T[eé]cnico\s*$/im, "").trim();
+  const paras = human.split(/\n\s*\n/).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
+  return paras + (tech ? `<details><summary>Detalles técnicos</summary><div class="tech">${esc(tech)}</div></details>` : "");
+}
 const f = $("#f");
 function openTask(id) {
   editing = true;
@@ -281,6 +295,8 @@ function openTask(id) {
   $("#fId").textContent = isNew ? "Nueva tarea" : t.id;
   for (const k of ["title", "owner", "status", "priority", "estimate_min", "desc", "manual"]) f[k].value = t[k] ?? "";
   f.deps.value = (t.deps || []).join(", "); f.note.value = "";
+  $("#fDesc").innerHTML = renderDesc(t.desc);
+  $(".desc-edit").open = isNew;
   const runs = t.runs || [];
   $("#fFacts").innerHTML = isNew ? "" : [
     `Estimado <b>${fmtMin(t.estimate_min)}</b>`, `Real <b>${fmtMin(realMin(t))}</b>`,

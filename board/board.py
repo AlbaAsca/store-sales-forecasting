@@ -8,6 +8,7 @@ CLI:
   python board/board.py add "Título" --owner desarrollador --est 15 [--prio alta] [--desc ".."] [--manual "qué debe hacer el responsable"] [--deps T-001,T-002]
   python board/board.py move T-012 doing [--by desarrollador] [--msg ".."]
   python board/board.py note T-012 "texto" [--by X]
+  python board/board.py desc T-012 "texto"   (descripción: lenguaje llano arriba; datos técnicos bajo una línea «## Técnico»)
   python board/board.py estimate T-012 20
   python board/board.py check
 """
@@ -183,6 +184,7 @@ def main():
     a.add_argument("--by", default="consultor"); a.add_argument("--deps", default="", help="T-001,T-002")
     n = sp.add_parser("note"); n.add_argument("id"); n.add_argument("text", nargs="?"); n.add_argument("--msg")
     n.add_argument("--by", default="consultor")
+    d = sp.add_parser("desc"); d.add_argument("id"); d.add_argument("text"); d.add_argument("--by", default="consultor")
     e = sp.add_parser("estimate"); e.add_argument("id"); e.add_argument("minutes", type=float)
     sp.add_parser("check")
     o = p.parse_args()
@@ -210,6 +212,10 @@ def main():
         if not text:
             p.error("note necesita el texto (posicional o --msg)")
         update(lambda b: log(task(b, o.id), o.by, text)); return
+    if o.cmd == "desc":
+        def g(b):
+            t = task(b, o.id); t["desc"], t["updated"] = o.text, now(); log(t, o.by, "descripción reescrita")
+        update(g); return
     if o.cmd == "estimate":
         def f(b):
             t = task(b, o.id); t["estimate_min"] = o.minutes; log(t, "consultor", f"estimación {o.minutes:g} min")
