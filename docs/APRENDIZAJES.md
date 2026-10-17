@@ -14,6 +14,9 @@ puede dejar de predecir el leaderboard cuando el modelo cambia de tipo; hay que 
 Qué: recortar promo_day y promo_ratio por familia al percentil 99 visto, para que el pico de promos del 16-ago (fuera de rango) no se extrapole. · Pasó: el CV queda igual (folds +0.0020/−0.0004/+0.0002/−0.0005), pero el 16-ago sigue
 disparado frente al 17-ago: SCHOOL ×3.06 (antes ×3.29), LAWN ×2.77 (×3.91), LINGERIE ×1.84 (×2.32); el criterio pedía ≤ ×1.5. · Por qué: recortar ayuda algo, pero el salto lo siguen empujando otros rasgos (calendario, retardos); los árboles no extrapolan, así que el problema no era solo el valor extremo de la promo. Idea: atacar el pico por otro lado (p. ej. rasgo de día concreto o tope de predicción).
 
+### V-008 · 16 modelos directos (uno por horizonte) — ❌ RECHAZADA (RMSLE 0.3904 → 0.4833, empeora 4/4 folds)
+Qué: estrategia multi-paso *directa*: en vez de un LightGBM con h como rasgo, 16 modelos, cada uno entrenado solo con su día de horizonte. · Pasó: 0.4793 / 0.4636 / 0.4835 / 0.5068 (semilla 7: 0.4817, variación 0.0016); peor sobre todo en LIQUOR/WINE/BEER, LAWN AND GARDEN, LADIESWEAR. · Por qué: cada modelo ve 1/16 de las filas (8 cortes × 1782 series) y sobreajusta; el modelo único comparte lo aprendido entre horizontes, y con pocos cortes eso pesa más que la especialización.
+
 ### V-007 · objetivo tweedie sobre ventas crudas — ❌ RECHAZADA (RMSLE 0.3904 → 0.4094, empeora 4/4 folds)
 Qué: cambiar la función de pérdida del LightGBM de L2 sobre log1p(ventas) a tweedie (p=1.3) sobre ventas crudas. · Pasó: 0.4075 / 0.3885 / 0.4113 / 0.4304;
 semilla 7 igual (0.4094): la variación es ~0.000, el empeoramiento (+0.019) es real. Peor en LAWN AND GARDEN +0.072, LADIESWEAR +0.046, SEAFOOD +0.043; 3× más lento. ·

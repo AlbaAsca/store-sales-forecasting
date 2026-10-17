@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:17:02+02:00",
+  "updated": "2026-10-17T11:21:08+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-021",
-    "heartbeat": "2026-10-17T11:15:48+02:00",
-    "message": "desarrollador con T-021",
+    "heartbeat": "2026-10-17T11:17:06+02:00",
+    "message": "tester con T-021",
     "pid": 22556,
-    "agent": "desarrollador",
-    "started": "2026-10-17T11:15:48+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T11:17:06+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-021-desarrollador-20261017-111548.jsonl"
+    "live": "live-T-021-tester-20261017-111706.jsonl"
   },
   "agents": [
     {
@@ -1226,7 +1226,7 @@
       "id": "T-021",
       "title": "V-008: 16 modelos directos (uno por horizonte h) frente a h como rasgo",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 40.0,
       "actual_min": 1.2,
@@ -1237,7 +1237,7 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T11:17:02+02:00",
+      "updated": "2026-10-17T11:21:08+02:00",
       "started_at": "2026-10-17T11:15:48+02:00",
       "finished_at": "2026-10-17T11:17:02+02:00",
       "log": [
@@ -1260,6 +1260,26 @@
           "t": "2026-10-17T11:17:02+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-008 (16 modelos por horizonte) implementada, el backtest rápido corre (fold 1: 0.4793) y los tests pasan; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-17T11:17:06+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T11:20:34+02:00",
+          "by": "tester",
+          "msg": "CV 0.4833 (semilla 42) / 0.4817 (semilla 7) vs base-v3 0.3904: peor 4/4 folds (+0.09); peor en LIQUOR/WINE/BEER, LAWN AND GARDEN, LADIESWEAR → RECHAZADA. Variación entre semillas 0.0016 << 0.09"
+        },
+        {
+          "t": "2026-10-17T11:20:57+02:00",
+          "by": "tester",
+          "msg": "RECHAZADA: CV 0.4833/0.4817 (2 semillas) vs 0.3904, peor 4/4 folds"
+        },
+        {
+          "t": "2026-10-17T11:21:08+02:00",
+          "by": "tester",
+          "msg": "DONE: V-008 RECHAZADA: CV 0.4833 (semilla 42) y 0.4817 (semilla 7) frente a 0.3904 de base-v3, peor en 4/4 folds."
         }
       ],
       "runs": [
@@ -1272,8 +1292,19 @@
           "tokens": 123797,
           "cost_usd": 0.0973642,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T11:21:08+02:00",
+          "min": 4.0,
+          "turns": 19,
+          "tokens": 197823,
+          "cost_usd": 0.1252922,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T11:17:06+02:00"
     },
     {
       "id": "T-022",
