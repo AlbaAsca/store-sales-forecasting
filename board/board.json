@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:06:57+02:00",
+  "updated": "2026-10-17T18:08:29+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-041",
-    "heartbeat": "2026-10-17T18:03:02+02:00",
-    "message": "modelador con T-041",
+    "current": "T-042",
+    "heartbeat": "2026-10-17T18:07:00+02:00",
+    "message": "desarrollador con T-042",
     "pid": 24832,
-    "agent": "modelador",
-    "started": "2026-10-17T18:03:02+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T18:07:00+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-041-modelador-20261017-180302.jsonl"
+    "live": "live-T-042-desarrollador-20261017-180700.jsonl"
   },
   "agents": [
     {
@@ -2594,23 +2594,45 @@
       "id": "T-042",
       "title": "V-015: variables de intermitencia (fracción de ceros 14/28/56 d y días desde la última venta)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 1.5,
       "auto": true,
       "manual": null,
       "desc": "Propuesta del investigador (T-040, docs/NOTAS-investigador.md). Hipótesis: los ceros son el 8 % de las filas y el 22 % del error (ANALISIS-ERRORES #2); el modelo no sabe si una serie es intermitente. Cambio sobre base-v4: añadir zfrac14/28/56 y since_nz a _features y _step_feats. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora mayor que la variación de semilla (~0.001), no empeora el control c1; anotar RMSLE en filas con venta real 0 y el holdout. Explicar en APRENDIZAJES qué es una serie intermitente.",
       "deps": [],
       "created": "2026-10-17T18:01:45+02:00",
-      "updated": "2026-10-17T18:01:45+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T18:08:29+02:00",
+      "started_at": "2026-10-17T18:07:00+02:00",
+      "finished_at": "2026-10-17T18:08:29+02:00",
       "log": [
         {
           "t": "2026-10-17T18:01:45+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:07:00+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T18:08:29+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-015 implementada (rasgos de intermitencia), quick fold1 0.3903, tests en verde; falta medición completa del tester y commit (git add denegado)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T18:08:29+02:00",
+          "min": 1.5,
+          "turns": 11,
+          "tokens": 136118,
+          "cost_usd": 0.097497,
+          "verdict": "review"
         }
       ]
     },
