@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:14:52+02:00",
+  "updated": "2026-10-17T11:15:37+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-033",
-    "heartbeat": "2026-10-17T11:14:27+02:00",
-    "message": "tester con T-033",
+    "current": "T-025",
+    "heartbeat": "2026-10-17T11:14:56+02:00",
+    "message": "arquitecto con T-025",
     "pid": 22556,
-    "agent": "tester",
-    "started": "2026-10-17T11:14:27+02:00",
+    "agent": "arquitecto",
+    "started": "2026-10-17T11:14:55+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-033-tester-20261017-111427.jsonl"
+    "live": "live-T-025-arquitecto-20261017-111456.jsonl"
   },
   "agents": [
     {
@@ -1343,18 +1343,18 @@
       "id": "T-025",
       "title": "Ordenar APRENDIZAJES (más reciente arriba) y resumen del README",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 0.7,
       "auto": true,
       "manual": null,
       "desc": "APRENDIZAJES tiene las entradas desordenadas (V-005/V-006 debajo de V-001, V-004 al final). Reordenar sin cambiar texto; comprobar que la tabla de resultados y el resumen de cabecera del README reflejan base-v3 y v0.3.",
       "deps": [],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T11:15:37+02:00",
+      "started_at": "2026-10-17T11:14:55+02:00",
+      "finished_at": "2026-10-17T11:15:37+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
@@ -1365,6 +1365,28 @@
           "t": "2026-10-17T11:11:27+02:00",
           "by": "tú",
           "msg": "editada: priority"
+        },
+        {
+          "t": "2026-10-17T11:14:55+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-17T11:15:37+02:00",
+          "by": "arquitecto",
+          "msg": "DONE: APRENDIZAJES ordenado de más reciente a más antiguo sin cambiar texto, y contador del README corregido a 5 aceptados · 3 rechazados."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-17T11:15:37+02:00",
+          "min": 0.7,
+          "turns": 9,
+          "tokens": 143112,
+          "cost_usd": 0.1320404,
+          "verdict": "done"
         }
       ]
     },
