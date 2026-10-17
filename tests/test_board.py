@@ -43,3 +43,22 @@ def test_api(board, monkeypatch):
     assert any(t["id"] == tid and t["status"] == "next" for t in c.get("/api/board").json()["tasks"])
     assert c.post("/api/board/runner", json={"enabled": True}).json()["enabled"] is True
     assert c.delete(f"/api/board/task/{tid}").json()["ok"]
+
+
+def test_control_del_runner(board, monkeypatch):
+    import os
+    from fastapi.testclient import TestClient
+    sys.path.insert(0, str(board))
+    import importlib
+    import server
+    importlib.reload(server)
+    assert server.pid_alive(os.getpid()) and not server.pid_alive(None)
+    c = TestClient(server.app)
+    tid = c.post("/api/board/task", json={"title": "En curso", "owner": "desarrollador"}).json()["id"]
+    c.patch(f"/api/board/task/{tid}", json={"status": "doing"})
+    assert c.post("/api/runner/stop").json()["ok"]
+    b = c.get("/api/board").json()
+    assert next(t for t in b["tasks"] if t["id"] == tid)["status"] == "next"
+    assert b["runner"]["state"] == "stopped" and b["runner"]["alive"] is False
+    s = c.get("/api/runner/schedule").json()
+    assert "exists" in s and (not s["exists"] or "next" in s)

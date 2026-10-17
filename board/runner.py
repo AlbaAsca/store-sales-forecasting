@@ -8,7 +8,7 @@ Se pausa desde el panel (botón Pausar) o creando el archivo board/STOP.
 Con --contribute, si no hay tareas ejecutables, un agente (por turnos: modelador, investigador, experto, arquitecto) revisa
 el estado del proyecto y aporta algo pequeño o registra tarjetas; como mucho una vez cada --contrib-every horas.
 
-Uso: python board/runner.py [--once] [--contribute] [--contrib-every H] [--dry-run] [--claude RUTA]
+Uso: python board/runner.py [--once | --until-idle] [--contribute] [--contrib-every H] [--dry-run] [--claude RUTA]
 """
 import argparse
 import json
@@ -259,6 +259,7 @@ def main():
     ap.add_argument("--claude", default=os.environ.get("CLAUDE_BIN") or shutil.which("claude") or "claude")
     ap.add_argument("--idle", type=int, default=30, help="segundos de espera cuando no hay tareas")
     ap.add_argument("--contribute", action="store_true", help="sin tareas: ronda de aportación de un agente")
+    ap.add_argument("--until-idle", action="store_true", help="trabaja tarea tras tarea y sale cuando no quedan")
     ap.add_argument("--contrib-every", type=float, default=6, help="horas mínimas entre rondas de aportación")
     o = ap.parse_args()
     LOGDIR.mkdir(exist_ok=True)
@@ -296,7 +297,7 @@ def main():
                 set_runner(state="idle", current=None, message="Sin tareas ejecutables")
                 if o.contribute and contribute(o) and o.dry_run:
                     break
-                if o.once:
+                if o.once or o.until_idle:
                     break
                 time.sleep(o.idle)
                 continue
