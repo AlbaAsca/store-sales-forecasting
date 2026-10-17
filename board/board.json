@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:03:46+02:00",
+  "updated": "2026-10-17T18:06:57+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -98,8 +98,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "working",
-      "current": "T-041"
+      "status": "idle",
+      "current": null
     }
   ],
   "tasks": [
@@ -2538,18 +2538,18 @@
       "id": "T-041",
       "title": "Plan de variables nuevas: festivos, día de paga y vuelta al cole",
       "owner": "modelador",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 3.9,
       "auto": true,
       "manual": null,
       "desc": "Petición de Alba. V-010, V-012, V-013 y V-014 (variaciones del mismo modelo) no aportan: el siguiente salto debe venir de información nueva. Estudiar con datos y código de referencia: (1) festivos de holidays_events.csv (nacionales/regionales/locales por ciudad de la tienda, transferidos, puentes, Carnaval) como variables del día objetivo; (2) día de paga (15 y último día del mes, y los días siguientes); (3) vuelta al cole (SCHOOL AND OFFICE SUPPLIES; Sierra en agosto-septiembre, Costa en abril), que es donde más falla el control c1 (0.755 vs 0.386 de media). Revisar antes docs/ANALISIS-ERRORES.md, docs/REVISION-RUMBO.md y la ronda de aportación del investigador (T-040) para no duplicar. Entregable: sección nueva en docs/DISENO-MODELOS.md ordenada por ganancia esperada/coste, explicada para quien aprende, y como mucho 3 tarjetas V-xxx sobre base-v4 con criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora mayor que la variación de semilla (~0.001) y no empeora el control c1; anotar también el holdout.",
       "deps": [],
       "created": "2026-10-17T18:00:35+02:00",
-      "updated": "2026-10-17T18:03:02+02:00",
+      "updated": "2026-10-17T18:06:57+02:00",
       "started_at": "2026-10-17T18:03:02+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T18:06:57+02:00",
       "log": [
         {
           "t": "2026-10-17T18:00:35+02:00",
@@ -2565,6 +2565,28 @@
           "t": "2026-10-17T18:03:02+02:00",
           "by": "runner",
           "msg": "empieza modelador"
+        },
+        {
+          "t": "2026-10-17T18:06:45+02:00",
+          "by": "modelador",
+          "msg": "Sección T-041 en DISENO-MODELOS.md. Hallazgo: c1 0.755 se debe a cierres de tiendas 18/25 (74 % del error; sin ellas 0.3902), no a la vuelta al cole. Tarjetas: V-016 (T-045), V-017 (T-046), V-018 (T-047) + herramienta c1_open (T-048)."
+        },
+        {
+          "t": "2026-10-17T18:06:57+02:00",
+          "by": "modelador",
+          "msg": "DONE: Plan T-041 en DISENO-MODELOS.md, 3 variantes (T-045 a T-047) y una tarjeta de herramienta (T-048), porque el error de c1 se debe al cierre de las tiendas 18 y 25."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "modelador",
+          "mode": "work",
+          "at": "2026-10-17T18:06:57+02:00",
+          "min": 3.9,
+          "turns": 33,
+          "tokens": 969703,
+          "cost_usd": 1.0746914,
+          "verdict": "done"
         }
       ]
     },
@@ -2636,6 +2658,102 @@
         {
           "t": "2026-10-17T18:03:46+02:00",
           "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-045",
+      "title": "V-016: día del mes y día de paga (dom, is_payday, días desde paga, días a fin de mes) en directo y recursivo",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 20.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (T-040 + DISENO-MODELOS T-041): base-v4 tiene sesgo por día del mes (días 1-5 y fin de mes -0.05 en log, resto +0.018); la paga es el 15 y el último día. Cambio: añadir dom, is_payday, dias_desde_paga (0-15), dias_a_fin_mes del día objetivo en _features y _step_feats; nada más. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (repetir con otra semilla), c1 sin tiendas 18/25 no empeora (hoy 0.3902); anotar sesgo por grupo de día del mes y holdout.",
+      "deps": [],
+      "created": "2026-10-17T18:06:29+02:00",
+      "updated": "2026-10-17T18:06:29+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:06:29+02:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-046",
+      "title": "V-017: festivo del día objetivo según la tienda (nacional, regional por estado, local por ciudad, trasladados)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (chongzhenjie process_holiday; DISENO-MODELOS T-041): ctx holidays/stores no se usan; en folds hay pocos festivos (≈1 % filas) pero sí en el holdout (10-11 ago) y en los cortes de f4. Cambio: 0/1 hol_nat, hol_reg, hol_loc, event_nat del día objetivo cruzando stores.csv (city/state); transferred=True = día normal; Transfer/Bridge/Additional = festivo; Work Day = laborable; en _features y _step_feats. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (otra semilla), c1 sin tiendas 18/25 no empeora; si CV empata, anotar holdout y decide el consultor.",
+      "deps": [],
+      "created": "2026-10-17T18:06:32+02:00",
+      "updated": "2026-10-17T18:06:32+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:06:32+02:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-047",
+      "title": "V-018: cortes de entrenamiento del mismo periodo del año anterior en el directo",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (ceshine/Favorita eligen cortes por calendario; DISENO-MODELOS T-041): el directo solo ve 8 cortes recientes que nunca contienen un arranque de temporada escolar, así que ly_* casi no se usan; SCHOOL aporta el 8 % del error de f1 (RMSLE 0.637). Cambio: añadir 4 cortes en T-16-364+7j, j=-1..2 (con sus rasgos y objetivos de hace un año) al entrenamiento del directo; el recursivo no cambia. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (otra semilla), c1 sin tiendas 18/25 no empeora; anotar RMSLE de SCHOOL en f1, tiempo y holdout.",
+      "deps": [],
+      "created": "2026-10-17T18:06:36+02:00",
+      "updated": "2026-10-17T18:06:36+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:06:36+02:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-048",
+      "title": "Backtest: informar c1 también sin tiendas cerradas (18 y 25 explican el 74 % de su error)",
+      "owner": "arquitecto",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 15.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Medido en T-041 con preds de base-v4: tienda 18 vende 0 todo c1 y la 25 desde el 22-ago-2016; aportan el 74 % del error cuadrático de c1 (0.755). Sin ellas c1 = 0.3902. Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con ventas reales 0 en toda la ventana o desde mitad de ventana (regla: tienda con >=50 % de días a 0 en el total de la tienda), y mostrarlo en compare. Sin esto el criterio 'no empeora c1' mide cierres imprevisibles. Tests en verde.",
+      "deps": [],
+      "created": "2026-10-17T18:06:38+02:00",
+      "updated": "2026-10-17T18:06:38+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:06:38+02:00",
+          "by": "modelador",
           "msg": "creada"
         }
       ]
