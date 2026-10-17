@@ -1,7 +1,7 @@
-# V-002: media y perfil semanal en escala log
+# V-006 — estacionalidad anual (retardo 364) en el LightGBM global
 
-La métrica (RMSLE) mide error en log, pero la base promediaba ventas en bruto: los días de pico inflaban la media y
-sesgaba al alza (+0.10), sobre todo en series intermitentes con ceros.
-Cambio: se promedia log1p de las ventas (14 d) y se suma el perfil del día de la semana también en log (8 semanas,
-por tienda×familia); se deshace con expm1 y se recorta a 0.
-Construida sobre base-v0 (V-001 aún no es base); sustituye por completo el perfil multiplicativo de V-001.
+Sobre V-005 (aceptada). Añade 3 rasgos: log1p de ventas del mismo día objetivo hace 364 d (mismo día de la semana), media de su ventana ±3 d,
+y la diferencia entre esa ventana y la media log de los 14 d previos a ese día (cuánto subió el año pasado respecto a su nivel normal).
+Por qué: ninguna media reciente ve picos anuales (p. ej. vuelta al cole, tienda 45). Nada más cambia.
+Sin fuga: el retardo 364 d siempre queda antes del corte (horizonte 16). Sin historia previa → NaN (LightGBM lo gestiona).
+Mirar SCHOOL AND OFFICE SUPPLIES. Medición y veredicto: tester.
