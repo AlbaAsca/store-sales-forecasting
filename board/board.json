@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:44:23+02:00",
+  "updated": "2026-10-17T17:09:48+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-024",
-    "heartbeat": "2026-10-17T11:41:25+02:00",
+    "heartbeat": "2026-10-17T17:09:29+02:00",
     "message": "tester con T-024",
-    "pid": 3916,
+    "pid": 15036,
     "agent": "tester",
-    "started": "2026-10-17T11:41:25+02:00",
+    "started": "2026-10-17T17:09:29+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-024-tester-20261017-114125.jsonl"
+    "live": "live-T-024-tester-20261017-170929.jsonl"
   },
   "agents": [
     {
@@ -1425,7 +1425,7 @@
       "id": "T-024",
       "title": "Runner: el límite de uso de Claude no es un fallo",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 15.0,
       "actual_min": 1.7,
@@ -1434,7 +1434,7 @@
       "desc": "El 15-oct dos rondas acabaron en blocked/interrumpidas porque la salida era 'You've hit your weekly limit'. Detectar ese texto: no marcar blocked ni contar como fallo, devolver la tarea a su estado y anotar 'límite de uso, reintenta tras el reset'. Test en tests/test_runner.py.",
       "deps": [],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T11:44:23+02:00",
+      "updated": "2026-10-17T17:09:48+02:00",
       "started_at": "2026-10-17T11:39:15+02:00",
       "finished_at": "2026-10-17T11:40:55+02:00",
       "log": [
@@ -1467,6 +1467,31 @@
           "t": "2026-10-17T11:44:23+02:00",
           "by": "tester",
           "msg": "límite de uso, reintenta tras el reset"
+        },
+        {
+          "t": "2026-10-17T13:30:02+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T16:30:02+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T17:09:29+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T17:09:45+02:00",
+          "by": "tester",
+          "msg": "Reverificado: 28 tests en verde, test_limite_de_uso_no_es_fallo presente → ACEPTADA"
+        },
+        {
+          "t": "2026-10-17T17:09:48+02:00",
+          "by": "tester",
+          "msg": "DONE: T-024 ACEPTADA: el runner detecta el límite de uso y no lo trata como fallo, con test propio y 28 tests en verde."
         }
       ],
       "runs": [
@@ -1479,9 +1504,19 @@
           "tokens": 119653,
           "cost_usd": 0.1305118,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T17:09:48+02:00",
+          "min": 0.3,
+          "turns": 4,
+          "tokens": 41619,
+          "cost_usd": 0.044883000000000006,
+          "verdict": "done"
         }
       ],
-      "verify_started": "2026-10-17T11:41:25+02:00"
+      "verify_started": "2026-10-17T17:09:29+02:00"
     },
     {
       "id": "T-025",
@@ -1839,23 +1874,43 @@
       "id": "T-032",
       "title": "Fold de control de vuelta al cole (2016-08-16..31) y 'start' robusto al 25-dic en el backtest",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "next",
       "priority": "media",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 219.4,
       "auto": true,
       "manual": null,
       "desc": "Motivo (T-027): los 4 folds son de mayo-julio y el test de Kaggle es 16-31 ago (vuelta al cole Sierra, SCHOOL 37% de la diferencia v2-v3); el CV no ve esa estación. · Cambio: añadir en eval/folds.json un fold de control 'c1' 2016-08-16..2016-08-31 que backtest.py y results.py compare reporten APARTE (no entra en la media ni en el criterio por defecto, para no romper la comparabilidad con bases anteriores). Además documentar/avisar: si history.max()+1 != future.date.min() (caso 25-dic, train no tiene esa fecha) los modelos que calculan start así dejan el último día sin predicción (ventana 26-dic: 10-ene predicho 0); añadir test que lo detecte. · Criterio: tests verdes, base-v3 medido con c1 y anotado; la media de los 4 folds no cambia.",
       "deps": [],
       "created": "2026-10-17T10:40:19+02:00",
-      "updated": "2026-10-17T10:40:19+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T17:09:29+02:00",
+      "started_at": "2026-10-17T16:30:02+02:00",
+      "finished_at": "2026-10-17T17:09:29+02:00",
       "log": [
         {
           "t": "2026-10-17T10:40:19+02:00",
           "by": "experto",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T13:30:02+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-17T16:30:02+02:00",
+          "by": "runner",
+          "msg": "interrumpida (runner reiniciado); se reintentará"
+        },
+        {
+          "t": "2026-10-17T16:30:02+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-17T17:09:29+02:00",
+          "by": "runner",
+          "msg": "interrumpida (runner reiniciado); se reintentará"
         }
       ]
     },
@@ -2008,5 +2063,27 @@
         }
       ]
     }
-  ]
+  ],
+  "runners": {
+    "think": {
+      "state": "working",
+      "current": "T-032",
+      "message": "arquitecto con T-032",
+      "pid": 21016,
+      "heartbeat": "2026-10-17T16:30:02+02:00",
+      "agent": "arquitecto",
+      "started": "2026-10-17T16:30:02+02:00",
+      "live": "live-T-032-arquitecto-20261017-163002.jsonl"
+    },
+    "measure": {
+      "state": "working",
+      "current": "T-024",
+      "message": "tester con T-024",
+      "pid": 8,
+      "heartbeat": "2026-10-17T16:30:02+02:00",
+      "agent": "tester",
+      "started": "2026-10-17T16:30:02+02:00",
+      "live": "live-T-024-tester-20261017-163002.jsonl"
+    }
+  }
 }
