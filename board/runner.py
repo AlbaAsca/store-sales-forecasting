@@ -485,7 +485,7 @@ def main():
             set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent} con {tid}")
 
             est = t.get("estimate_min") or 15
-            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(60, max(15, est * 4)) * 60), tag=tid)
+            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(120, max(15, est * 4)) * 60), tag=tid)
             (LOGDIR / f"{tid}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
                 f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
             new, verdict, summary = finish(tid, mode, agent, r)
