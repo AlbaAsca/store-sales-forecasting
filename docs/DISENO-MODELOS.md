@@ -100,3 +100,30 @@ gana, las siguientes se rehacen sobre la nueva base.
 - Para fechas usa `days.append(fdates)` (igual que `dow_all`); la columna `origin + j` es el día objetivo `j`.
 - Criterio común: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (repetir con otra semilla), c1 **sin las
   tiendas 18 y 25** no empeora (hoy 0.3902); anotar el RMSLE de SCHOOL AND OFFICE en f1 y el holdout (lo mide el consultor).
+
+## 2026-10-17 · ronda T-065 · lo que aún no ve el modelo (base vigente: base-v7 = V-026, CV 0.3838/0.3836)
+
+**Contexto.** Rechazadas desde la última ronda: V-015 (intermitencia), V-016 (paga), V-017 (festivos), V-020 (reparto por familia).
+Aceptadas: V-018/V-025 (cortes del año anterior, sin cierres) y V-019/V-023 (cero en series muertas). Releyendo el código de
+`models/base/model.py` (`_features` / `_step_feats`) frente a Favorita 1.º/ceshine, hay **dos familias de rasgos que todo el top
+de Favorita usa y nosotros no**: (1) promos del *resto* de la ventana futura (no solo del día objetivo) y (2) rasgos agregados
+de otras series (la tienda entera, la familia en todas las tiendas). Cada rasgo de hoy mira **solo su propia serie**.
+
+| # | Técnica | Dónde la vi | Qué hacemos hoy | Cambio propuesto | Ganancia esperada | Coste CPU | Qué se aprende | Estado |
+|---|---|---|---|---|---|---|---|---|
+| 1 | **Promos de toda la ventana futura** | [ceshine/lgbm-starter](https://www.kaggle.com/code/ceshine/lgbm-starter) (`promo_{i}` de los 16 días futuros como 16 columnas en cada fila), [Favorita 1.º](https://www.kaggle.com/competitions/favorita-grocery-sales-forecasting/discussion/47582) (`sum of promo in next 16 days`, «días hasta/desde la próxima promo») | Solo `promo_day` (el día objetivo) y la suma de los 14 días **pasados** | En el directo: `promo_fut16` = suma de `onpromotion` en los 16 días a predecir; `promo_prev_day`/`promo_next_day` (promo del día anterior y siguiente al objetivo, dentro de la ventana; el día −1 sale del pasado). Recursivo igual con lo que haya en `P` | −0.001…−0.004 (promos fue la mayor ganancia que tuvimos con rasgos, V-005 −0.011; el investigador cita −0.04 con futuras desde un baseline flojo) | igual | Una promo cambia también los días de alrededor (adelantar o retrasar la compra), no solo su día | 🃏 V-027 |
+| 2 | **Rasgos agregados: tienda entera y familia en todas las tiendas** | Favorita 1.º y 2.º (rasgos a nivel `store` y a nivel `item` agregados sobre todas las tiendas); M5 1.º (modelos por tienda/tienda×categoría = misma idea de compartir señal de grupo) | Ninguno: cada fila solo ve su serie (más `store_nbr`/`family` como categóricas, que son constantes y no dicen *cómo va* la tienda ahora) | `st_m7`, `st_m28`: media log de las 33 familias de la tienda en 7/28 d; `fam_m7`, `fam_m28`: media log de la familia en las 54 tiendas; y `st_trend = st_m7 − st_m28`. Mismos cortes, sin fuga (solo fechas `< corte`). En `_features` **y** `_step_feats` | −0.001…−0.003; más en series ruidosas/pequeñas (la tienda da un nivel más estable que la propia serie) | +s (agregar matriz) | Modelo global ≠ ver a los vecinos: hay que darle explícitamente cómo va el grupo | 🃏 V-028 |
+| 3 | Medias por día de semana de varias semanas (`mean_4_dow`, `mean_20_dow`) | ceshine | `prof` con `PROFILE_DAYS` fijo | Dos perfiles (4 y 20 semanas) | ≈0…−0.001 | igual | — | — (solo si 1-2 dan señal) |
+| 4 | Reparar el terremoto (abr-may 2016) en la historia | investigador T-043 («reparar el panel» mejor que flag) | Nada | Sustituir 16-abr…15-may-2016 por interpolación | ≈0 en folds; afecta a `ly_*` de cortes de 2017 | igual | — | — |
+
+**Orden recomendado**: V-027 (solo cambia promos, enseña «efecto alrededor de la promo») → V-028 (agregados). Independientes: si
+ambas ganan, juntarlas en una tercera.
+
+### Notas para el desarrollador (V-027, V-028)
+- `P` ya tiene las 16 columnas futuras (`P[:, origin:origin+16]`): `promo_fut16 = P[:, origin:origin+HORIZON].sum(1)` repetido
+  en el horizonte. `promo_prev_day[:, j] = P[:, origin+j-1]`, `promo_next_day[:, j] = P[:, origin+j+1]` (para j=15 usar 0 o NaN:
+  el día 17 no está en `test.csv`; mejor NaN en todos los cortes para que entrenamiento y predicción coincidan).
+- Agregados: `M` es (series, días) en log1p; agrupar filas por `store` / `fam` (los arrays que ya se pasan a `_step_feats`) con
+  `np.add.at` o pandas `groupby` sobre la ventana `[origin−w, origin)` y volver a expandir a series. Las tiendas cerradas (0) bajan
+  la media de su tienda: es justo la señal útil.
+- Criterio común (CLAUDE.md): CV medio < base-v7 con 2 semillas, empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18/25.

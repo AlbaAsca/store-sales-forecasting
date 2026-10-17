@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T21:20:30+02:00",
+  "updated": "2026-10-17T22:31:32+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -36,8 +36,8 @@
     "state": "stopped",
     "current": null,
     "heartbeat": "2026-10-17T21:06:31+02:00",
-    "message": "Runner parado",
-    "pid": 4780,
+    "message": "Runner parado (pid muerto)",
+    "pid": null,
     "agent": "tester",
     "started": "2026-10-17T20:51:08+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
@@ -3974,25 +3974,74 @@
           "msg": "creada"
         }
       ]
+    },
+    {
+      "id": "T-065",
+      "title": "Ronda de aportación: modelador",
+      "owner": "modelador",
+      "status": "done",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 1.5,
+      "auto": true,
+      "manual": null,
+      "desc": "Sigue tu definición (.claude/agents/modelador.md): compara models/base/ con el código de soluciones de referencia y actualiza docs/DISENO-MODELOS.md con las técnicas que nos faltan.",
+      "deps": [],
+      "created": "2026-10-17T22:30:03+02:00",
+      "updated": "2026-10-17T22:31:32+02:00",
+      "started_at": "2026-10-17T22:30:03+02:00",
+      "finished_at": "2026-10-17T22:31:32+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T22:30:03+02:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T22:30:03+02:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-17T22:31:32+02:00",
+          "by": "modelador",
+          "msg": "DONE: DISENO-MODELOS.md con ronda T-065 (promociones de la ventana futura, rasgos de tienda y familia); tarjetas V-027 y V-028 redactadas en NOTAS-modelador.md porque el permiso bloqueó `board.py add`"
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "modelador",
+          "mode": "contrib",
+          "at": "2026-10-17T22:31:32+02:00",
+          "min": 1.5,
+          "turns": 15,
+          "tokens": 306738,
+          "cost_usd": 0.5145524,
+          "verdict": "done"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
+      "state": "idle",
       "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-17T16:30:02+02:00",
-      "agent": "arquitecto",
-      "started": "2026-10-17T16:30:02+02:00",
-      "live": "live-T-032-arquitecto-20261017-163002.jsonl"
+      "message": "aportación modelador (T-065): DISENO-MODELOS.md con ronda T-065 (promociones de la ventana futura, rasgos de tienda y familia); tarjetas V-027 y V-028 redactadas en NOTAS-modelador.md porque el permiso bloqueó `board.py add`",
+      "pid": 3376,
+      "heartbeat": "2026-10-17T22:31:32+02:00",
+      "agent": "modelador",
+      "started": "2026-10-17T22:30:03+02:00",
+      "live": "live-T-065-modelador-20261017-223003.jsonl",
+      "contrib_at": "2026-10-17T22:31:32+02:00",
+      "contrib_agent": "modelador"
     },
     "measure": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-17T16:30:02+02:00",
+      "message": "Runner parado",
+      "pid": 1832,
+      "heartbeat": "2026-10-17T22:30:02+02:00",
       "agent": "tester",
       "started": "2026-10-17T16:30:02+02:00",
       "live": "live-T-024-tester-20261017-163002.jsonl"
