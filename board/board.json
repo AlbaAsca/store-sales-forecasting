@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:21:08+02:00",
+  "updated": "2026-10-17T11:27:47+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-021",
-    "heartbeat": "2026-10-17T11:17:06+02:00",
-    "message": "tester con T-021",
+    "current": "T-022",
+    "heartbeat": "2026-10-17T11:21:17+02:00",
+    "message": "desarrollador con T-022",
     "pid": 22556,
-    "agent": "tester",
-    "started": "2026-10-17T11:17:06+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:21:17+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-021-tester-20261017-111706.jsonl"
+    "live": "live-T-022-desarrollador-20261017-112117.jsonl"
   },
   "agents": [
     {
@@ -1310,10 +1310,10 @@
       "id": "T-022",
       "title": "V-009: estrategia recursiva y promedio directo+recursivo",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 60.0,
-      "actual_min": null,
+      "actual_min": 6.0,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (Holbrook, M5; DISENO-MODELOS #10): el recursivo usa lags cortos (1-7 d) pero acumula error; promediar ambos reduce varianza. Cambio: modelo de 1 paso con lags cortos que se realimenta 16 veces; medir solo recursivo y media con base. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar directo vs recursivo con un dibujo en APRENDIZAJES.",
@@ -1321,9 +1321,9 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T11:27:47+02:00",
+      "started_at": "2026-10-17T11:21:17+02:00",
+      "finished_at": "2026-10-17T11:27:19+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
@@ -1334,6 +1334,33 @@
           "t": "2026-10-17T10:17:23+02:00",
           "by": "consultor",
           "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
+        },
+        {
+          "t": "2026-10-17T11:21:17+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:27:19+02:00",
+          "by": "desarrollador",
+          "msg": "V-009 implementada (modos rec/avg vía V009_MODE). Quick fold1: rec 0.3965, avg 0.3909. Falta medición completa + otra semilla (tester) y el dibujo directo vs recursivo en APRENDIZAJES al cerrar."
+        },
+        {
+          "t": "2026-10-17T11:27:47+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-009 implementada (recursivo y media con directo), tests en verde; en el fold 1 sale rec 0.3965 y avg 0.3909, pendiente de medición completa por el tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:27:47+02:00",
+          "min": 6.5,
+          "turns": 12,
+          "tokens": 190637,
+          "cost_usd": 0.1448177,
+          "verdict": "review"
         }
       ]
     },
