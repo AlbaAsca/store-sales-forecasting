@@ -5,6 +5,13 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### V-026 · año anterior sin cierres + cero en series muertas — ✅ ACEPTADA, nueva base-v7 (0.3852 → 0.3838 / 0.3836)
+Qué: juntar V-025 (aprender del mismo periodo del año anterior quitando las tiendas cerradas entonces) y V-023 (predecir cero en las
+series que llevan dos meses sin vender, salvo las de temporada). · Pasó: prácticas 0.3838/0.3836 con dos semillas (V-025 sola:
+0.3841/0.3839), examen final 0.4179 → 0.4139, control sin cerradas 0.3927 → 0.3857. En el test, las tiendas 18 y 25 quedan como en
+base-v5 (−0.0005 en log), al revés que en v0.6. · Por qué: cada idea corrige un error distinto y no se pisan. El material escolar que
+la regla pone a cero es de tiendas de la Costa, donde el curso empieza en abril: en agosto no venden, tampoco en 2016.
+
 ### v0.6 · la vuelta al cole del año anterior empeora en Kaggle — 🏁 LB 0.40871 (se vuelve a base-v5)
 Qué: subir base-v6 (V-018), que entrena también con el mismo periodo del año anterior. · Pasó: mejoraba en todo lo local (prácticas
 0.3852 → 0.3839, examen final 0.4179 → 0.4148, control sin cerradas 0.3927 → 0.3865), pero Kaggle empeoró de 0.39940 a 0.40871.

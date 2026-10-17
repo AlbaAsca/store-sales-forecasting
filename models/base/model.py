@@ -1,4 +1,5 @@
-"""V-009: estrategia recursiva (1 paso, lags cortos, se realimenta 16 veces) y media con el directo (V-006).
+"""V-026 = V-025 (año anterior sin cierres) + V-023 (cero en series muertas salvo temporada).
+V-009: estrategia recursiva (1 paso, lags cortos, se realimenta 16 veces) y media con el directo (V-006).
 MODE (env V009_MODE): rec | avg (media en log de recursivo y directo) | direct.
 
 Base V-006:
@@ -178,6 +179,25 @@ def fit_predict(history, future, ctx):
         X, y = build(o, dow0, True)
         Xs.append(X)
         ys.append(y)
+    # V-025: cortes del año anterior (como V-018) sin tiendas cerradas (>=50% dias con venta
+    # total 0 en la ventana objetivo) ni series a 0 toda la ventana que vendian las 8 semanas previas
+    st = series["store_nbr"].to_numpy()
+    for j in range(-1, 3):
+        o = T - HORIZON - 364 + 7 * j
+        if o - PROFILE_DAYS < 0 or o + HORIZON > T:
+            continue
+        dow0 = (start.dayofweek - HORIZON + 7 * j) % 7
+        X, y = build(o, dow0, True)
+        W = M[:, o:o + HORIZON]
+        keep = np.ones(n, bool)
+        for s_ in np.unique(st):
+            idx = st == s_
+            if (W[idx].sum(0) == 0).mean() >= 0.5:
+                keep[idx] = False
+        keep &= ~((W.max(1) == 0) & (M[:, max(0, o - 56):o].max(1) > 0))
+        km = np.repeat(keep, HORIZON)
+        Xs.append(X[km])
+        ys.append(y[km])
     pred = None
     if mode in ("direct", "avg"):
         X = pd.concat(Xs, ignore_index=True)
@@ -190,6 +210,16 @@ def fit_predict(history, future, ctx):
         dow_all = np.asarray(days.append(fdates).dayofweek)
         rec = _recursive(M, P, dow_all, store[:, 0], fam[:, 0], int(ctx.get("seed", 0) or 0))
         pred = rec if pred is None else 0.5 * (pred + rec)
+    # V-023: series con >= ZERO_N dias a 0 antes del corte -> 0, salvo si vendieron en el mismo
+    # tramo del año anterior (+-7 dias): productos de temporada. Solo datos previos al corte.
+    zn = int(os.environ.get("ZERO_N", 56))
+    if zn > 0 and T >= zn:
+        dead = (M[:, -zn:] == 0).all(axis=1)
+        a = T - 364 - 7
+        if a >= 0:
+            b = min(T - 364 + HORIZON + 7, T)
+            dead &= ~(M[:, a:b] > 0).any(axis=1)
+        pred = np.where(dead[:, None], 0.0, pred)
     lookup = pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
     lookup.index.names = keys + ["date"]
     fut = future[keys + ["date"]].copy()
