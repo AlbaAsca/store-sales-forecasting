@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:04:38+02:00",
+  "updated": "2026-10-17T11:06:09+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -42,7 +42,7 @@
     "started": "2026-10-17T11:04:38+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-020-tester-20261017-110118.jsonl"
+    "live": "live-T-030-investigador-20261017-110438.jsonl"
   },
   "agents": [
     {
@@ -82,8 +82,8 @@
       "name": "Investigador",
       "role": "Busca técnicas en la discusión de Kaggle, papers y blogs",
       "color": "#0891b2",
-      "status": "working",
-      "current": "T-030"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "experto",
@@ -1545,18 +1545,18 @@
       "id": "T-030",
       "title": "Revisión de rumbo: ¿vamos por buen camino o hay formas mejores de abordar el problema?",
       "owner": "investigador",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 1.5,
       "auto": true,
       "manual": null,
       "desc": "Petición de Alba. Leer README, docs/APRENDIZAJES.md, docs/DISENO-MODELOS.md, docs/ANALISIS-ERRORES.md (incl. diagnóstico T-027 si ya está) y eval/results. Contrastar con: soluciones top y discusión de Store Sales (qué RMSLE consiguen y con qué), ganadores de Favorita 2018 y M5, y enfoques alternativos (modelos por familia/tienda, reconciliación jerárquica, estadísticos clásicos ETS/ARIMA vía statsforecast, redes globales N-BEATS/TFT, ensembles). Responder en docs/REVISION-RUMBO.md, en lenguaje para alguien que aprende: (1) dónde estamos frente a lo habitual en el LB (0.413 hoy; ¿qué es bueno?); (2) qué hacemos bien y qué mal en método (backtest de 4 folds, holdout, criterio, variantes encadenadas); (3) 3-5 cambios de enfoque ordenados por ganancia esperada × aprendizaje / coste (CPU vs GPU, horas de GPU si aplica); (4) qué tarjetas existentes (T-020..T-023) sobran o cambiarían. Máx. 3 tarjetas nuevas con criterio. No tocar models/base ni el holdout.",
       "deps": [],
       "created": "2026-10-17T10:35:39+02:00",
-      "updated": "2026-10-17T11:04:38+02:00",
+      "updated": "2026-10-17T11:06:09+02:00",
       "started_at": "2026-10-17T11:04:38+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T11:06:09+02:00",
       "log": [
         {
           "t": "2026-10-17T10:35:39+02:00",
@@ -1567,6 +1567,23 @@
           "t": "2026-10-17T11:04:38+02:00",
           "by": "runner",
           "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-17T11:06:09+02:00",
+          "by": "investigador",
+          "msg": "DONE: Revisión en docs/REVISION-RUMBO.md: 0.413 es sólido; el mayor fallo de método es el backtest de una sola estación (subir T-032); cancelar T-021 y T-022, adelantar T-023; tarjetas T-034 (V-012), T-035 (V-013), T-036 (V-014)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "work",
+          "at": "2026-10-17T11:06:09+02:00",
+          "min": 1.5,
+          "turns": 16,
+          "tokens": 199310,
+          "cost_usd": 0.31579769999999996,
+          "verdict": "done"
         }
       ]
     },
@@ -1638,6 +1655,78 @@
         {
           "t": "2026-10-17T11:03:38+02:00",
           "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-034",
+      "title": "V-012: más cortes de entrenamiento (8→24-40) y peso a lo reciente en el LightGBM",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (Favorita/M5, docs/REVISION-RUMBO.md): más cortes semanales dan más ejemplos por serie; ponderar lo reciente mantiene frescura · Cambio: variar nº de cortes (16, 24, 40) y peso exponencial por antigüedad, sin tocar rasgos · Criterio: RMSLE medio < base-v3 (0.3904) y mejora en ≥ 3/4 folds (y en el fold de control ago-2016 si T-032 existe); si empata, menos tiempo; otra semilla",
+      "deps": [],
+      "created": "2026-10-17T11:05:52+02:00",
+      "updated": "2026-10-17T11:05:52+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T11:05:52+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-035",
+      "title": "V-013: mezcla ponderada de base-v3 (LightGBM) y base-v2 (estadístico) en log",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 20.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (ensembles de Favorita/M5, T-027): v2 falla distinto que v3 y no extrapola promos; mezclar en log reduce varianza · Cambio: pred = w·v3 + (1-w)·v2 en log1p, w en {0.6,0.7,0.8,0.9} elegido en folds, sin tocar los modelos · Criterio: RMSLE medio < 0.3904 y no empeora más de 1 fold; reportar también ventana 16-ago-2016 y 28-feb (Carnaval); si w óptimo es 1.0, RECHAZADA",
+      "deps": [],
+      "created": "2026-10-17T11:05:54+02:00",
+      "updated": "2026-10-17T11:05:54+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T11:05:54+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-036",
+      "title": "V-014: afinado básico de hiperparámetros del LightGBM (hojas, lr, rondas, min_data)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (ceshine params sin afinar, docs/REVISION-RUMBO.md): los valores copiados no son óptimos aquí · Cambio: rejilla pequeña num_leaves {15,31,63}, lr/rondas {0.05x400, 0.03x700}, min_data {20,50,100}; rondas fijas, sin early stopping en el fold · Criterio: RMSLE medio < 0.3904 en ≥ 3/4 folds con otra semilla; si la mejora < 0.002, RECHAZADA (ruido) y anotar sensibilidad",
+      "deps": [],
+      "created": "2026-10-17T11:05:56+02:00",
+      "updated": "2026-10-17T11:05:56+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T11:05:56+02:00",
+          "by": "investigador",
           "msg": "creada"
         }
       ]
