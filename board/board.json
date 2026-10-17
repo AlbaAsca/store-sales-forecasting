@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:11:45+02:00",
+  "updated": "2026-10-17T17:12:44+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-032",
-    "heartbeat": "2026-10-17T17:09:51+02:00",
-    "message": "arquitecto con T-032",
+    "current": "T-034",
+    "heartbeat": "2026-10-17T17:11:47+02:00",
+    "message": "desarrollador con T-034",
     "pid": 15036,
-    "agent": "arquitecto",
-    "started": "2026-10-17T17:09:50+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T17:11:47+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-032-arquitecto-20261017-170951.jsonl"
+    "live": "live-T-034-desarrollador-20261017-171147.jsonl"
   },
   "agents": [
     {
@@ -2027,23 +2027,45 @@
       "id": "T-034",
       "title": "V-012: más cortes de entrenamiento (8→24-40) y peso a lo reciente en el LightGBM",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 0.9,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (Favorita/M5, docs/REVISION-RUMBO.md): más cortes semanales dan más ejemplos por serie; ponderar lo reciente mantiene frescura · Cambio: variar nº de cortes (16, 24, 40) y peso exponencial por antigüedad, sin tocar rasgos · Criterio: RMSLE medio < base-v3 (0.3904) y mejora en ≥ 3/4 folds (y en el fold de control ago-2016 si T-032 existe); si empata, menos tiempo; otra semilla",
       "deps": [],
       "created": "2026-10-17T11:05:52+02:00",
-      "updated": "2026-10-17T11:05:52+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T17:12:44+02:00",
+      "started_at": "2026-10-17T17:11:47+02:00",
+      "finished_at": "2026-10-17T17:12:44+02:00",
       "log": [
         {
           "t": "2026-10-17T11:05:52+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:11:47+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T17:12:44+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-012 implementada (24 cortes + peso exponencial, vida media 120 d); prueba rápida fold 1 = 0.3922, tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T17:12:44+02:00",
+          "min": 0.9,
+          "turns": 9,
+          "tokens": 95247,
+          "cost_usd": 0.07961009999999999,
+          "verdict": "review"
         }
       ]
     },
