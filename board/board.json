@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:01:15+02:00",
+  "updated": "2026-10-17T11:01:18+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,11 +35,11 @@
     "enabled": true,
     "state": "working",
     "current": "T-020",
-    "heartbeat": "2026-10-17T11:00:24+02:00",
-    "message": "desarrollador con T-020",
+    "heartbeat": "2026-10-17T11:01:18+02:00",
+    "message": "tester con T-020",
     "pid": 20528,
-    "agent": "desarrollador",
-    "started": "2026-10-17T11:00:24+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T11:01:18+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
     "live": "live-T-020-desarrollador-20261017-110024.jsonl"
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-020"
     },
     {
       "id": "investigador",
@@ -1176,6 +1176,11 @@
           "t": "2026-10-17T11:01:15+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-007 (tweedie sobre ventas crudas) implementada; quick fold1 RMSLE 0.4075, tests en verde, falta la medición completa y la semilla alternativa del tester."
+        },
+        {
+          "t": "2026-10-17T11:01:18+02:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -1189,7 +1194,8 @@
           "cost_usd": 0.13216969999999997,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T11:01:18+02:00"
     },
     {
       "id": "T-021",
