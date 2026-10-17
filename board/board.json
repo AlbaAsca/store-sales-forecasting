@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:06:09+02:00",
+  "updated": "2026-10-17T11:06:12+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-030",
-    "heartbeat": "2026-10-17T11:04:38+02:00",
-    "message": "investigador con T-030",
+    "current": "T-031",
+    "heartbeat": "2026-10-17T11:06:12+02:00",
+    "message": "desarrollador con T-031",
     "pid": 20528,
-    "agent": "investigador",
-    "started": "2026-10-17T11:04:38+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:06:12+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
     "live": "live-T-030-investigador-20261017-110438.jsonl"
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-031"
     },
     {
       "id": "tester",
@@ -1591,7 +1591,7 @@
       "id": "T-031",
       "title": "V-011: acotar los rasgos de promoción al rango visto en entrenamiento (sin extrapolar picos)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": null,
@@ -1600,14 +1600,19 @@
       "desc": "Hipótesis (T-027, ANALISIS-ERRORES 2026-10-17): el test de Kaggle trae el 16-ago un pico de promos fuera de rango (LAWN 842 vs máx histórico 212; total 30.5k vs mediana 11.7k) y v3 triplica la venta de SCHOOL/LAWN/LINGERIE ese día; en train un salto de promo ×4 sube la venta solo ×1.11. Estimado ≈+0.025 RMSLE perdido. · Cambio: en _features, recortar promo_day y promo_ratio por familia al percentil 99 de los cortes de entrenamiento (o log1p(promo_day) recortado); nada más. · Criterio fijado antes de medir: CV medio ≤ base-v3 + 0.001 y ningún fold empeora > 0.003 (los folds no tienen el pico, solo debe no estropear); y en dist/ la predicción del 16-ago de SCHOOL/LAWN/LINGERIE queda ≤ ×1.5 de la del 17-ago (comprueba solo predicciones, sin labels). Si pasa, se acepta aunque el CV empate.",
       "deps": [],
       "created": "2026-10-17T10:40:15+02:00",
-      "updated": "2026-10-17T10:40:15+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T11:06:12+02:00",
+      "started_at": "2026-10-17T11:06:12+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T10:40:15+02:00",
           "by": "experto",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T11:06:12+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
