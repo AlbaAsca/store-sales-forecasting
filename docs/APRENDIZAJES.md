@@ -114,6 +114,9 @@ Qué: decirle al modelo cuánto «vende a golpes» cada serie. Una serie **inter
 ### V-016 · calendario de paga (día del mes, is_payday, días desde la paga, días a fin de mes) — ❌ RECHAZADA (0.3858 → 0.3878, semilla 1: 0.3874)
 Qué: dar al modelo el día del mes y la distancia a la paga (15 y último día) para corregir el sesgo de principio/fin de mes. · Pasó: empeora 3/4 folds (+0.002 de media, ambas semillas), c1 +0.0022; LICOR/VINO/CERVEZA +0.020; tiempo ×1.9. · Por qué: con solo ~4 quincenas por fold, el día del mes es una variable que el árbol puede memorizar (sobreajuste) sin patrón estable; el efecto paga ya lo capturan los retardos y el perfil semanal.
 
+### V-019 · predecir cero en series con ≥56 días seguidos sin vender — ✅ ACEPTADA (0.3852 → 0.3849 / 0.3850, mejora mínima)
+Qué: regla dura tras el modelo: si una serie tienda×familia lleva 56 días a 0 justo antes del corte, se predice 0 en vez de «un poquito». · Pasó: −0.0003 (sem 42, 4/4 folds) y −0.0002 (sem 7, 3/4 folds); c1 −0.0003/−0.0015; BOOKS −0.005. Solo se midió N=56 (28 y 90 sin probar: el runner no deja fijar la variable ZERO_N). · Por qué: expm1 de una predicción pequeña no es cero y el RMSLE castiga ese error en series muertas; pocas series se ven afectadas, por eso la ganancia es pequeña pero consistente en dirección.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …

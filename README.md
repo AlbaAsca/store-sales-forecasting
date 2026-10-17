@@ -166,6 +166,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | V-014 | afinado de hiperparámetros LightGBM (63 hojas, lr 0.03×700, min_data 100) | media 0.3853 ± 0.0073 (sem 7); sem 11: 0.3851 | −0.0005/−0.0007 vs base-v4 (4/4, pero <0.002 = ruido); tiempo ×3 | ❌ RECHAZADA |
 | V-015 | rasgos de intermitencia (fracción de ceros 14/28/56 d, días desde última venta) | media 0.3854 ± 0.0071; sem 1: 0.3855 | −0.0003 vs base-v4 (2/4 folds, <ruido); c1 0.7513 vs 0.7552; tiempo ×1.4 | ❌ RECHAZADA |
 | V-016 | calendario de paga (día del mes, is_payday, días desde paga, días a fin de mes) | media 0.3878 ± 0.0092; sem 1: 0.3874 | +0.0020 vs base-v4 (empeora 3/4 folds); c1 0.7574 vs 0.7552; tiempo ×1.9 | ❌ RECHAZADA |
+| V-019 | predecir 0 si la serie lleva ≥56 días sin vender | media 0.3849 (sem 42); 0.3850 (sem 7) | −0.0003/−0.0002 vs base-v5 (mejor 4/4 y 3/4 folds); c1 0.7523/0.7511 vs 0.7526 | ✅ ACEPTADA |
 | V-013 | mezcla en log 0.8·base-v3 + 0.2·base-v2 | 0.3893 ± 0.0078 (f1 0.3929 · f2 0.3788 · f3 0.3858 · f4 0.3996); s1 0.3891 | −0.0012 vs base-v3 (4/4) pero +0.0035 vs base-v4 (peor 4/4); control ago-2016 0.7704 | ❌ RECHAZADA |
 | V-012 | base-v3 con 24 cortes (en vez de 8) y peso exponencial a lo reciente (vida media 120 d) | 0.3919 ± 0.0116 (f1 0.3922 · f2 0.3751 · f3 0.3924 · f4 0.4079); s1 0.3928 | +0.0015 vs base-v3 (2/4); control ago-2016 mejora (0.7596 vs 0.7696); 4× más lento | ❌ RECHAZADA |
 

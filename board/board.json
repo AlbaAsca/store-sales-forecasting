@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:31:54+02:00",
+  "updated": "2026-10-17T18:42:53+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-049",
-    "heartbeat": "2026-10-17T18:30:06+02:00",
-    "message": "desarrollador con T-049",
+    "heartbeat": "2026-10-17T18:31:56+02:00",
+    "message": "tester con T-049",
     "pid": 19976,
-    "agent": "desarrollador",
-    "started": "2026-10-17T18:30:06+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T18:31:56+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-049-desarrollador-20261017-183006.jsonl"
+    "live": "live-T-049-tester-20261017-183156.jsonl"
   },
   "agents": [
     {
@@ -3015,7 +3015,7 @@
       "id": "T-049",
       "title": "V-019: predecir cero en las series que llevan semanas sin vender",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": 1.8,
@@ -3024,7 +3024,7 @@
       "desc": "Algunas combinaciones de tienda y producto llevan semanas sin vender nada. El modelo a veces les predice un poquito de venta, y con esta forma de puntuar eso penaliza bastante.\n\nLa idea es una regla sencilla después del modelo: si una serie lleva muchos días seguidos sin vender, predecir cero. Un notebook público consiguió con esto su mayor mejora.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (LB −0.0153); Favorita 5.º usa conteo de ceros. Distinto de V-015 (eso eran rasgos; esto es una regla dura posterior).\n- Cambio sobre base-v5: post-proceso en fit_predict; N = 28/56/90 días a 0 antes del corte (sin fugas); una sola constante elegida con los folds.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:43+02:00",
-      "updated": "2026-10-17T18:31:54+02:00",
+      "updated": "2026-10-17T18:42:53+02:00",
       "started_at": "2026-10-17T18:30:06+02:00",
       "finished_at": "2026-10-17T18:31:54+02:00",
       "log": [
@@ -3047,6 +3047,26 @@
           "t": "2026-10-17T18:31:54+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-019 implementada (ceros tras ≥ZERO_N días sin ventas, por defecto 56), corre en quick (0.3899 en el fold 1) y los tests pasan; falta que el tester elija N y mida con 2 semillas."
+        },
+        {
+          "t": "2026-10-17T18:31:56+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T18:42:36+02:00",
+          "by": "tester",
+          "msg": "N=56 (único valor medible: el tester no puede fijar ZERO_N por entorno en este runner; 28/90 sin probar). Semilla 42: 0.3849 (base 0.3852), 4/4 folds mejor. Semilla 7: 0.3850, 3/4 mejor (f1 +0.0002). c1 sin tiendas 18/25/52: 0.3914 (s7). Ganancia -0.0002/-0.0003 en la misma dirección con 2 semillas → ACEPTADA (mejora mínima). Holdout no medido (solo consultor). Test tests/test_v019.py añadido, 40 tests OK. Resultado s42 guardado como V-019-n28-s42 (nombre erróneo, es N=56)."
+        },
+        {
+          "t": "2026-10-17T18:42:53+02:00",
+          "by": "tester",
+          "msg": "DONE: V-019 ACEPTADA (RMSLE 0.3849 con semilla 42 y 0.3850 con semilla 7, frente a 0.3852 de base-v5; solo N=56 medido, 28 y 90 sin probar); tests en verde con el nuevo test_v019.py."
+        },
+        {
+          "t": "2026-10-17T18:42:53+02:00",
+          "by": "tester",
+          "msg": "⚠ 1 comandos denegados: ZERO_N=28 python scripts/backtest.py --src variants/V-019 --name V-019-n28-s42 -"
         }
       ],
       "runs": [
@@ -3059,8 +3079,19 @@
           "tokens": 82330,
           "cost_usd": 0.0773414,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T18:42:53+02:00",
+          "min": 10.9,
+          "turns": 26,
+          "tokens": 337999,
+          "cost_usd": 0.19249480000000002,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T18:31:56+02:00"
     },
     {
       "id": "T-050",
