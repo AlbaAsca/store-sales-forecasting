@@ -14,6 +14,10 @@ ROOT = Path(__file__).parents[1]
 def board(tmp_path, monkeypatch):
     d = tmp_path / "board"
     shutil.copytree(ROOT / "board", d, ignore=shutil.ignore_patterns("runs", "__pycache__", ".lock"))
+    # la copia no debe apuntar al runner real: «Parar» en un test mataría al agente que está trabajando
+    b = json.loads((d / "board.json").read_text(encoding="utf-8"))
+    b.setdefault("runner", {}).update(pid=None, state="stopped", current=None)
+    (d / "board.json").write_text(json.dumps(b, ensure_ascii=False), encoding="utf-8")
     return d
 
 
