@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:18:14+02:00",
+  "updated": "2026-10-17T18:18:49+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-044",
-    "heartbeat": "2026-10-17T18:16:55+02:00",
-    "message": "desarrollador con T-044",
-    "pid": 24832,
-    "agent": "desarrollador",
-    "started": "2026-10-17T18:16:55+02:00",
+    "heartbeat": "2026-10-17T18:18:17+02:00",
+    "message": "tester con T-044",
+    "pid": 16672,
+    "agent": "tester",
+    "started": "2026-10-17T18:18:17+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-044-desarrollador-20261017-181655.jsonl"
+    "live": "live-T-044-tester-20261017-181817.jsonl"
   },
   "agents": [
     {
@@ -50,8 +50,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-051"
     },
     {
       "id": "arquitecto",
@@ -2712,7 +2712,7 @@
       "id": "T-044",
       "title": "Runner: avisar en la tarjeta cuando el agente tuvo comandos denegados",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": 1.3,
@@ -2721,7 +2721,7 @@
       "desc": "Auditoría del consultor: en T-040 el investigador encadenó cat + board.py add, el permiso se denegó, las tarjetas no se crearon y aun así cerró la suya como done. En T-021 board.py note falló porque no acepta --msg. Cambios: (1) al terminar cada ejecución, el runner recorre el live-*.jsonl y cuenta los tool_result con 'Permission for this tool use was denied'; si hay alguno, añade a la tarjeta una nota '⚠ N comandos denegados: <primeros 80 caracteres de cada uno>' y, si alguno contenía 'board.py add', el veredicto pasa a blocked en vez de done; (2) board.py note acepta también --msg como alias del texto posicional; (3) en RULES del runner, una línea explícita: los comandos de board.py van solos, nunca después de cat, heredoc, && o ;. Criterio: tests con un live-*.jsonl de ejemplo (denegado → nota y blocked; sin denegaciones → sin nota) y con note --msg; suite en verde; los tests no tocan el board real.",
       "deps": [],
       "created": "2026-10-17T18:03:46+02:00",
-      "updated": "2026-10-17T18:18:14+02:00",
+      "updated": "2026-10-17T18:18:49+02:00",
       "started_at": "2026-10-17T18:16:55+02:00",
       "finished_at": "2026-10-17T18:18:14+02:00",
       "log": [
@@ -2739,6 +2739,26 @@
           "t": "2026-10-17T18:18:14+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: runner avisa de comandos denegados (y bloquea si fue un `board.py add`), `board.py note` acepta `--msg`, regla añadida a RULES y tests en verde."
+        },
+        {
+          "t": "2026-10-17T18:18:17+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T18:18:45+02:00",
+          "by": "tester",
+          "msg": "Verificado: diff leído, 38 tests en verde (denegado→nota+blocked, sin denegados→sin nota, note --msg), read_denied probado con un live-*.jsonl real; tests no tocan el board real."
+        },
+        {
+          "t": "2026-10-17T18:18:49+02:00",
+          "by": "tester",
+          "msg": "DONE: T-044 verificada: aviso de comandos denegados con paso a blocked si fue un `board.py add`, `note --msg` y regla en RULES funcionan; 38 tests en verde."
+        },
+        {
+          "t": "2026-10-17T18:18:49+02:00",
+          "by": "tester",
+          "msg": "⚠ 1 comandos denegados: git show 98cb191 -- board/board.py board/runner.py tests"
         }
       ],
       "runs": [
@@ -2751,8 +2771,19 @@
           "tokens": 200543,
           "cost_usd": 0.200676,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T18:18:49+02:00",
+          "min": 0.5,
+          "turns": 8,
+          "tokens": 98313,
+          "cost_usd": 0.0743655,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T18:18:17+02:00"
     },
     {
       "id": "T-045",
@@ -2895,6 +2926,35 @@
           "t": "2026-10-17T18:16:45+02:00",
           "by": "investigador",
           "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-051",
+      "title": "Envío experimental v0.4.1: V-014 (rechazada por mejora < ruido) para ver si Kaggle la nota",
+      "owner": "consultor",
+      "status": "doing",
+      "priority": "media",
+      "estimate_min": 10.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Experimento de aprendizaje pedido por Alba: ¿una mejora local de 0.0005 (bajo el ruido de semilla) se ve en Kaggle? No cambia la base (sigue base-v4). Holdout + dist/submission-V-014.csv + tag v0.4.1-exp.",
+      "deps": [],
+      "created": "2026-10-17T18:18:38+02:00",
+      "updated": "2026-10-17T18:18:39+02:00",
+      "started_at": "2026-10-17T18:18:39+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:18:38+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:18:39+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
         }
       ]
     }
