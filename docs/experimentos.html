@@ -1,0 +1,393 @@
+<title>Árbol de experimentos de Store Sales</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: una columna de lectura; el árbol es un tronco vertical (lo aceptado) con ramas a la derecha (lo rechazado). Los números van en ticket de caja. */
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #15211f;
+  --muted: #5b6b68;
+  --line: #d3dedb;
+  --accent: #0f6e64;
+  --accent-soft: #dcefeb;
+  --ok: #1f7a3d;
+  --ok-soft: #e1f3e6;
+  --bad: #b3361f;
+  --bad-soft: #fbe6e1;
+  --wait: #8a6a00;
+  --wait-soft: #fbf1cf;
+  --paper: #fffef8;
+  --flag: #3949ab;
+  --flag-soft: #e6e8f8;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1615; --surface: #17211f; --ink: #e5eeec; --muted: #9db0ac; --line: #2c3c39;
+    --accent: #5cc4b6; --accent-soft: #173a35; --ok: #6fd18f; --ok-soft: #173322; --bad: #f08a72; --bad-soft: #3a1d17;
+    --wait: #e3c35a; --wait-soft: #352c10; --paper: #1d2826; --flag: #9fa9f0; --flag-soft: #22264a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1615; --surface: #17211f; --ink: #e5eeec; --muted: #9db0ac; --line: #2c3c39;
+  --accent: #5cc4b6; --accent-soft: #173a35; --ok: #6fd18f; --ok-soft: #173322; --bad: #f08a72; --bad-soft: #3a1d17;
+  --wait: #e3c35a; --wait-soft: #352c10; --paper: #1d2826; --flag: #9fa9f0; --flag-soft: #22264a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.6 var(--f-body); }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; display: grid; gap: 64px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 5.2vw, 3.4rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; }
+h3 { font-size: 1.2rem; font-weight: 700; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font: 600 0.78rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.15rem; color: var(--muted); }
+section { display: grid; gap: 20px; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Cabecera con ticket */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr); gap: 40px; align-items: start; }
+.hero-text { display: grid; gap: 18px; min-width: 0; }
+.ticket { background: var(--paper); border: 1px solid var(--line); padding: 22px 22px 26px; font: 14px/1.5 var(--f-mono); position: relative; min-width: 0;
+  -webkit-mask: radial-gradient(circle 7px at 50% 100%, transparent 98%, #000) 0 0 / 18px 100% repeat-x; mask: radial-gradient(circle 7px at 50% 100%, transparent 98%, #000) 0 0 / 18px 100% repeat-x; }
+.ticket h3 { font: 600 14px/1.3 var(--f-mono); text-align: center; letter-spacing: 0.06em; }
+.ticket .sub { text-align: center; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.ticket .rows { display: grid; gap: 3px; margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--muted); }
+.ticket .row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.ticket .row span:first-child { min-width: 0; }
+.ticket .row.minus span:last-child { color: var(--ok); }
+.ticket .row.total { border-top: 1px dashed var(--muted); margin-top: 8px; padding-top: 8px; font-weight: 600; }
+.ticket .foot { margin-top: 12px; color: var(--muted); font-size: 12px; text-align: center; }
+
+.scores { display: flex; flex-wrap: wrap; gap: 12px; }
+.score { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; min-width: 0; flex: 1 1 180px; }
+.score b { font: 700 1.6rem/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.score small { color: var(--muted); font-size: 0.85rem; line-height: 1.35; }
+
+/* Reglas */
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.rule .tag { font: 600 0.75rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.rule p { font-size: 0.97rem; }
+.timeline { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.timeline svg { display: block; min-width: 640px; width: 100%; height: auto; }
+
+/* Árbol */
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 0.92rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid; }
+.dot.ok { background: var(--ok-soft); border-color: var(--ok); }
+.dot.bad { background: var(--bad-soft); border-color: var(--bad); border-radius: 3px; }
+.dot.wait { background: var(--wait-soft); border-color: var(--wait); border-style: dashed; border-radius: 3px; }
+.dot.flag { background: var(--flag-soft); border-color: var(--flag); border-radius: 3px; }
+.tree { display: grid; gap: 0; }
+.tier { display: grid; grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1.15fr); column-gap: 18px; position: relative; padding-bottom: 22px; }
+.tier .spine { position: relative; }
+.tier .spine::before { content: ""; position: absolute; left: 27px; top: 0; bottom: 0; width: 4px; background: var(--ok); border-radius: 2px; opacity: 0.55; }
+.tier:first-child .spine::before { top: 26px; }
+.tier:last-child .spine::before { bottom: auto; height: 26px; }
+.tier .knot { position: absolute; left: 14px; top: 12px; width: 30px; height: 30px; border-radius: 50%; background: var(--ok-soft); border: 3px solid var(--ok); display: grid; place-items: center; font: 700 12px/1 var(--f-mono); color: var(--ok); }
+.tier.current .knot { background: var(--ok); color: var(--surface); box-shadow: 0 0 0 6px var(--ok-soft); }
+.node { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 4px; text-align: left; font: inherit; color: inherit; cursor: pointer; align-self: start; width: 100%; }
+.node:hover, .chip:hover { border-color: var(--accent); }
+.node .id { font: 600 0.8rem/1 var(--f-mono); color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.node .name { font: 700 1.05rem/1.3 var(--f-display); }
+.node .num { font: 600 0.9rem/1.3 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ok); }
+.tier.current .node { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok); }
+.badge { font: 600 0.72rem/1 var(--f-mono); padding: 4px 7px; border-radius: 999px; background: var(--flag-soft); color: var(--flag); letter-spacing: 0.02em; }
+.badge.now { background: var(--ok); color: var(--surface); }
+.branches { display: flex; flex-direction: column; gap: 8px; align-self: start; position: relative; padding-left: 18px; border-left: 2px dashed var(--line); min-height: 44px; }
+.branches.empty { border-left-color: transparent; }
+.branches .none { color: var(--muted); font-size: 0.9rem; font-style: italic; padding-top: 10px; }
+.chip { background: var(--bad-soft); border: 1px solid var(--bad); border-radius: 8px; padding: 8px 12px; display: grid; gap: 2px; text-align: left; font: inherit; color: inherit; cursor: pointer; position: relative; }
+.chip::before { content: ""; position: absolute; left: -20px; top: 50%; width: 18px; border-top: 2px dashed var(--line); }
+.chip .id { font: 600 0.78rem/1 var(--f-mono); color: var(--bad); }
+.chip .name { font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+.chip .num { font: 0.82rem/1.3 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip.wait { background: var(--wait-soft); border-color: var(--wait); border-style: dashed; }
+.chip.wait .id { color: var(--wait); }
+.colhead { display: grid; grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1.15fr); column-gap: 18px; font: 600 0.75rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-bottom: 12px; }
+
+/* Fichas */
+.cards { display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; display: grid; gap: 12px; scroll-margin-top: 24px; transition: box-shadow .3s; }
+.card.hl { box-shadow: 0 0 0 3px var(--accent); }
+.card header { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+.state { font: 600 0.75rem/1 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 8px; border-radius: 6px; }
+.state.ok { background: var(--ok-soft); color: var(--ok); }
+.state.bad { background: var(--bad-soft); color: var(--bad); }
+.state.wait { background: var(--wait-soft); color: var(--wait); }
+.state.base { background: var(--accent-soft); color: var(--accent); }
+.card .cid { font: 600 0.85rem/1 var(--f-mono); color: var(--muted); }
+.card dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 16px; margin: 0; }
+.card dt { font: 600 0.78rem/1.6 var(--f-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.card dd { margin: 0; max-width: 70ch; }
+.card .result { font-family: var(--f-mono); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.concept { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: 0.97rem; max-width: 80ch; }
+.concept b { color: var(--accent); }
+
+.lessons { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.lesson { border-top: 4px solid var(--accent); background: var(--surface); padding: 16px 18px; border-radius: 0 0 12px 12px; display: grid; gap: 8px; align-content: start; }
+.gloss { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px 28px; margin: 0; }
+.gloss div { display: grid; gap: 2px; }
+.gloss dt { font-weight: 700; }
+.gloss dd { margin: 0; color: var(--muted); }
+footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); padding-top: 18px; }
+
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; }
+  .tier, .colhead { grid-template-columns: 40px minmax(0, 1fr); }
+  .colhead span:last-child { display: none; }
+  .tier .branches { grid-column: 2; margin-top: 10px; }
+  .branches.empty { display: none; }
+  .tier .spine { grid-row: span 2; }
+  .tier .spine::before { left: 18px; }
+  .tier .knot { left: 6px; width: 28px; height: 28px; }
+  .card dl { grid-template-columns: 1fr; gap: 2px; }
+  .card dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-text">
+    <span class="eyebrow">Proyecto de aprendizaje · Kaggle Store Sales</span>
+    <h1>¿Cuánto venderá mañana un supermercado?</h1>
+    <p class="lead">Una cadena de supermercados de Ecuador tiene 54 tiendas y vende 33 tipos de productos. Cada combinación de tienda y producto es una lista de ventas diarias: 1.782 listas en total. El reto es adivinar qué venderá cada una en los próximos 16 días.</p>
+    <p>Esta página cuenta, sin tecnicismos, todas las ideas que probamos para acertar más: las que funcionaron forman el tronco del árbol y las que no, sus ramas. Cada idea se trató como un experimento con una regla fijada antes de mirar el resultado.</p>
+    <div class="scores">
+      <div class="score"><small>Error al empezar</small><b>0,4745</b><small>la predicción se desviaba de lo real en torno a un 60 % en una serie típica</small></div>
+      <div class="score"><small>Error hoy</small><b>0,3858</b><small>en torno a un 47 %; cuanto más bajo, mejor</small></div>
+      <div class="score"><small>Nota oficial en Kaggle</small><b>0,40327</b><small>empezamos en 0,45751</small></div>
+    </div>
+  </div>
+  <aside class="ticket" aria-label="Ticket con lo que ha bajado el error cada idea aceptada">
+    <h3>SUPER PREVISIÓN S.A.</h3>
+    <div class="sub">ticket del error · práctica de 4 quincenas</div>
+    <div class="rows">
+      <div class="row"><span>Punto de partida (media 14 días)</span><span>0,4745</span></div>
+      <div class="row minus"><span>V-001 día de la semana</span><span>−0,0441</span></div>
+      <div class="row minus"><span>V-002 calcular en proporciones</span><span>−0,0150</span></div>
+      <div class="row minus"><span>V-004 modelo que aprende</span><span>−0,0097</span></div>
+      <div class="row minus"><span>V-005 promociones</span><span>−0,0111</span></div>
+      <div class="row minus"><span>V-006 el año pasado</span><span>−0,0042</span></div>
+      <div class="row minus"><span>V-009 dos opiniones</span><span>−0,0046</span></div>
+      <div class="row total"><span>TOTAL</span><span>0,3858</span></div>
+    </div>
+    <div class="foot">6 ideas aceptadas · 7 rechazadas · 1 en curso<br>¡Gracias por su experimento!</div>
+  </aside>
+</header>
+
+<section id="reglas">
+  <span class="eyebrow">Antes del árbol</span>
+  <h2>Las reglas del juego</h2>
+  <p>Para saber si una idea mejora de verdad hace falta ponerle un examen que no pueda hacer trampa. Usamos tres niveles, como un estudiante que se prepara para una oposición.</p>
+  <div class="rules">
+    <div class="rule"><span class="tag">1 · Exámenes de práctica</span><h3>4 quincenas del pasado</h3><p>Nos colocamos en una fecha de 2017, le damos al modelo solo lo vendido <em>antes</em> y le pedimos los 16 días siguientes. Lo hacemos en cuatro fechas distintas y miramos la media. Así se decide cada idea.</p></div>
+    <div class="rule"><span class="tag">2 · Examen final guardado</span><h3>Los últimos 16 días</h3><p>Una quincena que nadie mira mientras prueba ideas. Solo se abre antes de enviar a Kaggle, para confirmar. Si la usáramos para decidir, acabaríamos aprendiéndonos ese examen de memoria.</p></div>
+    <div class="rule"><span class="tag">3 · Nota oficial</span><h3>Kaggle</h3><p>La web de la competición tiene las ventas reales del 16 al 31 de agosto de 2017, que nosotros no vemos. Le mandamos nuestra predicción y nos devuelve la nota.</p></div>
+    <div class="rule"><span class="tag">La regla de aceptar</span><h3>Escrita antes de medir</h3><p>Una idea se acepta si baja el error medio de los exámenes de práctica <strong>y</strong> no empeora más de uno de los cuatro. Si empata, gana la más rápida.</p></div>
+  </div>
+  <div class="timeline" role="img" aria-label="Línea de tiempo: cuatro exámenes de práctica entre mayo y julio de 2017, el examen final del 31 de julio al 15 de agosto y la nota de Kaggle del 16 al 31 de agosto">
+    <svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="IBM Plex Mono, monospace" font-size="12">
+        <line x1="20" y1="118" x2="740" y2="118" stroke="var(--line)" stroke-width="2"/>
+        <text x="20" y="140" fill="var(--muted)">may 2017</text><text x="250" y="140" fill="var(--muted)">jun</text><text x="420" y="140" fill="var(--muted)">jul</text><text x="600" y="140" fill="var(--muted)">ago</text>
+        <rect x="150" y="84" width="80" height="22" rx="4" fill="var(--accent)"/><text x="190" y="99" fill="var(--surface)" text-anchor="middle">práctica 4</text>
+        <rect x="240" y="60" width="80" height="22" rx="4" fill="var(--accent)"/><text x="280" y="75" fill="var(--surface)" text-anchor="middle">práctica 3</text>
+        <rect x="330" y="36" width="80" height="22" rx="4" fill="var(--accent)"/><text x="370" y="51" fill="var(--surface)" text-anchor="middle">práctica 2</text>
+        <rect x="420" y="12" width="80" height="22" rx="4" fill="var(--accent)"/><text x="460" y="27" fill="var(--surface)" text-anchor="middle">práctica 1</text>
+        <rect x="510" y="84" width="80" height="22" rx="4" fill="var(--bad)"/><text x="550" y="99" fill="var(--surface)" text-anchor="middle">final</text>
+        <rect x="600" y="84" width="80" height="22" rx="4" fill="var(--flag)"/><text x="640" y="99" fill="var(--surface)" text-anchor="middle">Kaggle</text>
+        <text x="20" y="30" fill="var(--muted)">cada examen solo</text><text x="20" y="46" fill="var(--muted)">ve lo de su izquierda</text>
+      </g>
+    </svg>
+  </div>
+  <p>Hay una cuarta medida de control: la misma quincena que Kaggle, pero de 2016 (16–31 de agosto, la vuelta al cole). No cuenta para aceptar, pero avisa si una idea falla justo en esas fechas.</p>
+</section>
+
+<section id="arbol">
+  <span class="eyebrow">El árbol</span>
+  <h2>Qué se aceptó y qué se rechazó</h2>
+  <p>El tronco es la cadena de ideas aceptadas: cada una se construye sobre la anterior. A la derecha de cada nudo cuelgan las ideas que se probaron sobre él y no mejoraron. Pulsa cualquier idea para leer su ficha.</p>
+  <div class="legend">
+    <span><i class="dot ok"></i>aceptada (tronco)</span>
+    <span><i class="dot bad"></i>rechazada (rama)</span>
+    <span><i class="dot wait"></i>en curso</span>
+    <span><i class="dot flag"></i>enviada a Kaggle</span>
+  </div>
+  <div>
+    <div class="colhead"><span></span><span>Aceptadas</span><span>Probadas aquí y rechazadas</span></div>
+    <div class="tree" id="tree"></div>
+  </div>
+</section>
+
+<section id="fichas">
+  <span class="eyebrow">Las fichas</span>
+  <h2>Cada idea, explicada</h2>
+  <p>En orden cronológico. Los números son el error medio en los exámenes de práctica: más bajo es mejor.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section id="lecciones">
+  <span class="eyebrow">Lo que nos llevamos</span>
+  <h2>Cuatro lecciones</h2>
+  <div class="lessons">
+    <div class="lesson"><h3>Las ideas sencillas dan más</h3><p>Fijarse en el día de la semana bajó el error más que todo lo demás junto. Antes de sofisticar, hay que mirar los patrones obvios.</p></div>
+    <div class="lesson"><h3>Mide como te van a medir</h3><p>La nota de Kaggle castiga los errores en proporción. Cuando calculamos así (V-002) mejoramos; cuando entrenamos con otra vara (V-007), empeoramos.</p></div>
+    <div class="lesson"><h3>Un solo examen engaña</h3><p>El examen final y la nota de v0.3 contaban historias distintas. Una mejora solo es fiable si se ve en las prácticas, el final y el control a la vez, como pasó con v0.4.</p></div>
+    <div class="lesson"><h3>Rechazar también es avanzar</h3><p>Siete de trece ideas no funcionaron. Cada rechazo dejó escrito por qué, y eso orientó la siguiente idea.</p></div>
+  </div>
+</section>
+
+<section id="glosario">
+  <span class="eyebrow">Diccionario</span>
+  <h2>Las palabras raras</h2>
+  <dl class="gloss">
+    <div><dt>Serie temporal</dt><dd>Una lista de datos ordenada en el tiempo, como las ventas de pan de una tienda día a día. El orden importa: no se puede barajar.</dd></div>
+    <div><dt>Error (RMSLE)</dt><dd>La nota de la competición. Mide cuánto nos desviamos en proporción: predecir el doble de lo real cuesta igual si se venden 10 panes que 10.000.</dd></div>
+    <div><dt>Fuga de información</dt><dd>Cuando el modelo «copia» del futuro sin querer, por ejemplo usando ventas posteriores al día que predice. Saca buena nota en casa y suspende de verdad.</dd></div>
+    <div><dt>Línea base</dt><dd>La predicción más simple razonable. Sirve de vara de medir: lo que no le gana no aporta.</dd></div>
+    <div><dt>Modelo</dt><dd>Una receta que convierte datos del pasado en una predicción. Puede ser una media o algo que aprende solo.</dd></div>
+    <div><dt>LightGBM</dt><dd>Un modelo que hace cientos de preguntas de sí o no («¿es sábado?», «¿hay promoción?») y combina las respuestas. Cada nueva tanda de preguntas corrige los fallos de la anterior.</dd></div>
+    <div><dt>Variable (rasgo)</dt><dd>Cada pista que le damos al modelo: el día de la semana, las promociones, lo vendido el año pasado.</dd></div>
+    <div><dt>Semilla</dt><dd>El punto de partida del azar dentro del modelo. Repetimos con otra semilla para comprobar que una mejora no es suerte.</dd></div>
+  </dl>
+</section>
+
+<footer>Datos: competición <a href="https://www.kaggle.com/competitions/store-sales-time-series-forecasting">Store Sales – Time Series Forecasting</a> de Kaggle (Corporación Favorita). Resultados del backtest de 4 quincenas, del examen final y de Kaggle a 17 de octubre de 2026. El detalle técnico de cada experimento está en <code>docs/APRENDIZAJES.md</code> del repositorio.</footer>
+</div>
+
+<script>
+const E = [
+  { id: "base-v0", tier: 0, state: "base", name: "Repetir la media de las dos últimas semanas", num: "0,4745", kaggle: "v0.1 · 0,45751",
+    idea: "Para cada tienda y producto, predecimos para los 16 días siguientes la media de lo vendido en los últimos 14 días.",
+    like: "Como decir «mañana hará el tiempo que ha hecho estas dos semanas».",
+    result: "Error 0,4745 en las prácticas. En Kaggle, 0,45751.",
+    why: "No sabe nada de fines de semana, promociones ni fechas especiales. Por eso es el punto de partida: cualquier idea tiene que ganarle.",
+    concept: "<b>Línea base.</b> Empezar por lo más tonto que funcione dice cuánto vale cada mejora posterior." },
+  { id: "V-001", tier: 1, state: "ok", name: "Tener en cuenta el día de la semana", num: "0,4745 → 0,4304",
+    idea: "Multiplicamos la media por un factor que dice cuánto se vende cada día de la semana en esa tienda y producto (por ejemplo, el sábado ×1,3).",
+    like: "El panadero que hornea más los sábados porque sabe que ese día vienen más clientes.",
+    result: "El error baja de 0,4745 a 0,4304 y mejora en las 4 prácticas. Es la mayor mejora de todo el proyecto.",
+    why: "Las ventas siguen un ritmo semanal muy marcado y la media plana lo ignoraba: el fallo era sistemático, no mala suerte.",
+    concept: "<b>Estacionalidad.</b> Un patrón que se repite cada cierto tiempo: la semana, el mes o el año." },
+  { id: "V-002", tier: 2, state: "ok", name: "Calcular en proporciones", num: "0,4304 → 0,4154", kaggle: "v0.2 · 0,41457",
+    idea: "En vez de promediar unidades vendidas, promediamos en una escala que trabaja con proporciones (logaritmos) y al final volvemos a unidades.",
+    like: "Si un día vendes 1 y otro 100, la media normal dice 50, que no se parece a ninguno de los dos. En proporciones sale 10, un valor «típico» más sensato.",
+    result: "Baja a 0,4154 y mejora las 4 prácticas. En Kaggle, de 0,45751 a 0,41457.",
+    why: "La nota de la competición mide errores en proporción. Si calculamos igual que nos van a evaluar, acertamos más.",
+    concept: "<b>Alinear con la métrica.</b> Entrena y calcula con la misma vara con la que te van a medir." },
+  { id: "V-003", tier: 2, state: "bad", name: "Ajustar a mano por promociones", num: "0,4154 → 0,4571",
+    idea: "Calculamos para cada tipo de producto cuánto suben las ventas con una promoción y sumamos ese efecto a la predicción.",
+    like: "Ver que se venden más paraguas los días con anuncios de paraguas y concluir que el anuncio trae la lluvia.",
+    result: "Empeora a 0,4571 en las 4 prácticas. En frutas y verduras el error se dispara.",
+    why: "Las promociones coinciden con otras cosas (Navidad, temporadas) y la fórmula les atribuía efectos que no eran suyos.",
+    concept: "<b>Correlación no es causa.</b> Que dos cosas pasen juntas no quiere decir que una provoque la otra." },
+  { id: "V-004", tier: 3, state: "ok", name: "Un modelo que aprende de todas las tiendas a la vez", num: "0,4154 → 0,4057",
+    idea: "Pasamos de fórmulas fijas a un modelo que aprende solo (LightGBM). Ve las 1.782 series juntas y aprende cómo reacciona cada tipo de producto a lo que ha pasado en las últimas semanas.",
+    like: "Un encargado con experiencia en muchas tiendas, que reconoce situaciones que ya vio en otras.",
+    result: "Baja a 0,4057 y mejora 3 de las 4 prácticas. Con otra semilla da 0,4046: no es suerte.",
+    why: "Compartir lo aprendido entre series ayuda: lo que pasa con la leche en una tienda dice algo de la leche en otra.",
+    concept: "<b>Modelo global.</b> Un único modelo para muchas series en lugar de una receta por serie." },
+  { id: "V-005", tier: 4, state: "ok", name: "Darle las promociones como pista", num: "0,4057 → 0,3946",
+    idea: "Al modelo le añadimos cuántos productos estarán en promoción el día a predecir, y cuántos lo estuvieron antes.",
+    like: "Avisar al encargado: «la semana que viene hay oferta en detergente».",
+    result: "Baja a 0,3946 en las 4 prácticas. Material escolar y cosmética son los que más mejoran.",
+    why: "Esta vez no imponemos una fórmula: el modelo descubre solo cuánto pesa la promoción en cada caso, separándola de otros efectos. Es lo que falló en V-003.",
+    concept: "<b>Variables conocidas del futuro.</b> Algunas cosas del futuro sí se saben de antemano, como las promociones planificadas, y se pueden usar sin trampa." },
+  { id: "V-006", tier: 5, state: "ok", name: "Recordar lo que pasó hace un año", num: "0,3946 → 0,3904", kaggle: "v0.3 · 0,41341",
+    idea: "Le damos al modelo lo vendido el mismo día del año anterior y los días de alrededor.",
+    like: "Mirar el calendario del año pasado para saber que se acerca la vuelta al cole.",
+    result: "Baja a 0,3904 en las 4 prácticas. En Kaggle apenas se notó: de 0,41457 a 0,41341.",
+    why: "Las medias recientes no ven los picos anuales. Por qué Kaggle no lo reflejó lo investigó el analista: el 16 de agosto hubo un pico de promociones mayor que nada visto antes.",
+    concept: "<b>Retardo (lag).</b> Usar el valor de hace N días como pista. Hay que elegirlo para no mirar el futuro." },
+  { id: "V-007", tier: 5, state: "bad", name: "Entrenar con otra forma de puntuar", num: "0,3904 → 0,4094",
+    idea: "Cambiamos la manera en que el modelo se corrige mientras aprende por otra muy usada en ventas con muchos ceros (tweedie).",
+    like: "Estudiar para un examen tipo test cuando el examen será de desarrollo.",
+    result: "Empeora a 0,4094 en las 4 prácticas.",
+    why: "Esa forma de puntuar se fija en las unidades, pero nuestra nota mide proporciones. El modelo aprendía a contentar a otro examinador.",
+    concept: "<b>Función de pérdida.</b> La regla con la que el modelo se corrige al aprender. Tiene que parecerse a la nota final." },
+  { id: "V-008", tier: 5, state: "bad", name: "Un modelo distinto para cada uno de los 16 días", num: "0,3904 → 0,4833",
+    idea: "En lugar de un modelo que predice los 16 días, entrenamos 16 especialistas: uno para mañana, otro para pasado mañana…",
+    like: "Repartir a los alumnos de una clase en 16 grupos: cada profesor tiene muchos menos ejemplos con los que enseñar.",
+    result: "Empeora mucho, a 0,4833, en las 4 prácticas.",
+    why: "Cada especialista aprende con 16 veces menos ejemplos, y el error apenas cambia de un día a otro del horizonte, así que especializar no compensa.",
+    concept: "<b>Estrategia directa por horizonte.</b> Útil cuando cada día futuro se comporta muy distinto; aquí no era el caso." },
+  { id: "V-011", tier: 5, state: "bad", name: "Poner tope a las promociones", num: "0,3904 → 0,3908",
+    idea: "Si el día a predecir trae más promociones que nada visto al entrenar, las recortamos al máximo conocido para que el modelo no invente.",
+    like: "No dejar que alguien opine de algo muy por encima de lo que ha vivido.",
+    result: "Prácticamente igual: 0,3908, dentro del margen del azar.",
+    why: "En las prácticas casi nunca aparecen picos tan grandes, así que el tope casi no actúa. Es una idea pensada para el examen de Kaggle que las prácticas no pueden comprobar.",
+    concept: "<b>Extrapolar.</b> Predecir fuera de lo que se ha visto. Los modelos de árboles se quedan en el último valor conocido." },
+  { id: "V-012", tier: 5, state: "bad", name: "Más ejemplos de entrenamiento, con más peso a lo reciente", num: "0,3904 → 0,3919",
+    idea: "Triplicamos las fechas pasadas de las que aprende el modelo (de 8 a 24) y damos más importancia a las más recientes.",
+    like: "Leer más apuntes, aunque muchos repiten lo mismo.",
+    result: "Peor de media (0,3919): mejora dos prácticas y empeora otras dos. Además, tarda 4 veces más.",
+    why: "Las fechas añadidas solapan casi la misma información. Mejoró algo el control de agosto de 2016, una pista que quizá merezca otro intento.",
+    concept: "<b>Más datos no siempre es mejor.</b> Si los datos nuevos repiten lo que ya sabes, solo cuestan tiempo." },
+  { id: "V-009r", tier: 5, state: "bad", name: "Predecir día a día, solo", num: "0,3904 → 0,3894",
+    idea: "Predecimos mañana, usamos esa predicción como si fuera real para predecir pasado mañana, y así hasta el día 16.",
+    like: "Planear un viaje etapa a etapa: si te equivocas en la primera, arrastras el error.",
+    result: "0,3894: mejora tan pequeña que entra en el margen del azar. Rechazada sola, pero vale como pieza de la siguiente idea.",
+    why: "Usa información muy reciente, que ayuda, pero acumula errores al reutilizar sus propias predicciones.",
+    concept: "<b>Estrategia recursiva.</b> Predecir paso a paso realimentándose. Su rival es la directa: predecir los 16 días de golpe." },
+  { id: "V-009", tier: 6, state: "ok", name: "Pedir dos opiniones y hacer la media", num: "0,3904 → 0,3858", kaggle: "v0.4 · 0,40327", current: true,
+    idea: "Combinamos dos maneras de predecir: los 16 días de golpe y día a día. La predicción final es la media de las dos.",
+    like: "Preguntar a dos expertos que razonan distinto y quedarse con el punto medio.",
+    result: "Baja a 0,3858 en las 4 prácticas, en el examen final (0,4378 → 0,4187) y en el control (0,7696 → 0,7552). En Kaggle, el mayor salto desde v0.2: 0,40327.",
+    why: "Cada método se equivoca en sitios distintos, y al promediarlos los errores se compensan en parte.",
+    concept: "<b>Ensemble.</b> Combinar modelos diferentes suele ganar a cualquiera de ellos por separado." },
+  { id: "V-013", tier: 6, state: "bad", name: "Mezclar con el modelo sencillo de V-002", num: "0,3858 → 0,3893",
+    idea: "Hacemos una media ponderada entre el modelo que aprende (80 %) y la fórmula sencilla de V-002 (20 %).",
+    like: "Pedirle una tercera opinión a alguien que sabe bastante menos.",
+    result: "Mejora un poco al modelo de V-006, pero pierde contra la base actual en las 4 prácticas y en el control.",
+    why: "La base actual ya combina dos opiniones fuertes. Añadir una más débil resta más de lo que suma.",
+    concept: "<b>Diversidad con calidad.</b> En una combinación, cada miembro tiene que aportar algo que los demás no tengan." },
+  { id: "V-014", tier: 6, state: "wait", name: "Afinar los ajustes del modelo", num: "en curso",
+    idea: "Probar distintos valores en los ajustes internos del LightGBM: cuántas preguntas hace, a qué ritmo aprende y cuántos ejemplos pide como mínimo.",
+    like: "Ajustar la temperatura y el tiempo de una receta que ya funciona.",
+    result: "Pendiente de medir.",
+    why: "Los ajustes actuales se copiaron de un ejemplo público y nunca se afinaron para estos datos.",
+    concept: "<b>Hiperparámetros.</b> Los ajustes que decide la persona, no el modelo. Se afinan probando y midiendo." }
+];
+const label = { base: "punto de partida", ok: "aceptada", bad: "rechazada", wait: "en curso" };
+const $ = (s) => document.querySelector(s);
+const tiers = [...new Set(E.map((e) => e.tier))];
+const goTo = (id) => {
+  const c = document.getElementById("f-" + id);
+  if (!c) return;
+  c.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  c.classList.add("hl"); setTimeout(() => c.classList.remove("hl"), 1600);
+};
+$("#tree").innerHTML = tiers.map((t, i) => {
+  const main = E.find((e) => e.tier === t && (e.state === "ok" || e.state === "base"));
+  const side = E.filter((e) => e.tier === t && e !== main);
+  const node = `<button class="node" data-go="${main.id}">
+      <span class="id">${main.id}${main.kaggle ? `<span class="badge">Kaggle ${main.kaggle}</span>` : ""}${main.current ? '<span class="badge now">modelo actual</span>' : ""}</span>
+      <span class="name">${main.name}</span><span class="num">${main.num}</span></button>`;
+  const chips = side.map((e) => `<button class="chip ${e.state === "wait" ? "wait" : ""}" data-go="${e.id}">
+      <span class="id">${e.id.replace("V-009r", "V-009")} · ${label[e.state]}</span><span class="name">${e.name}</span><span class="num">${e.num}</span></button>`).join("");
+  return `<div class="tier ${main.current ? "current" : ""}"><div class="spine"><span class="knot">${i}</span></div>${node}
+    <div class="branches ${side.length ? "" : "empty"}">${chips || '<span class="none">ninguna rechazada aquí</span>'}</div></div>`;
+}).join("");
+$("#cards").innerHTML = E.map((e) => `<article class="card" id="f-${e.id}">
+  <header><span class="state ${e.state}">${label[e.state]}</span><span class="cid">${e.id.replace("V-009r", "V-009 (variante recursiva)")}</span><h3>${e.name}</h3></header>
+  <dl>
+    <dt>La idea</dt><dd>${e.idea}</dd>
+    <dt>Como si…</dt><dd>${e.like}</dd>
+    <dt>Qué pasó</dt><dd class="result">${e.result}</dd>
+    <dt>Por qué</dt><dd>${e.why}</dd>
+  </dl>
+  <div class="concept">${e.concept}</div></article>`).join("");
+document.addEventListener("click", (ev) => { const b = ev.target.closest("[data-go]"); if (b) goTo(b.dataset.go); });
+</script>
