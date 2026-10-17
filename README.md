@@ -162,6 +162,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | V-008 | base-v3 con 16 modelos directos (uno por horizonte h) | 0.4833 ± 0.0155 (f1 0.4793 · f2 0.4636 · f3 0.4835 · f4 0.5068) | +0.093 vs base-v3 (0/4) | ❌ RECHAZADA |
 | V-009 | base-v3 + modelo recursivo (1 paso); media en log con el directo | media 0.3860 ± 0.0077 (f1 0.3912 · f2 0.3754 · f3 0.3822 · f4 0.3952); s1 0.3856. Solo recursivo: 0.3894 | −0.0045 vs base-v3 (4/4) media; recursivo solo −0.0010 (3/4) | ✅ ACEPTADA (media) · ❌ recursivo solo |
 | V-011 | base-v3 con promo_day/promo_ratio recortados al p99 por familia | 0.3908 ± 0.0088 (f1 0.3953 · f2 0.3792 · f3 0.3863 · f4 0.4023) | +0.0003 vs base-v3 (2/4); 16-ago aún ×2.8–3.1 el 17-ago | ❌ RECHAZADA |
+| V-010 | base-v4 promediando 3 semillas × 2 ventanas (todo / desde 2015) en log | 0.3856 ± 0.0076 (f1 0.3908 · f2 0.3750 · f3 0.3819 · f4 0.3945); s7 0.3854; c1 0.7536 | −0.0002 vs base-v4 (4/4) < variación ~0.001; tiempo ×3 (97→312 s) | ❌ RECHAZADA |
 | V-013 | mezcla en log 0.8·base-v3 + 0.2·base-v2 | 0.3893 ± 0.0078 (f1 0.3929 · f2 0.3788 · f3 0.3858 · f4 0.3996); s1 0.3891 | −0.0012 vs base-v3 (4/4) pero +0.0035 vs base-v4 (peor 4/4); control ago-2016 0.7704 | ❌ RECHAZADA |
 | V-012 | base-v3 con 24 cortes (en vez de 8) y peso exponencial a lo reciente (vida media 120 d) | 0.3919 ± 0.0116 (f1 0.3922 · f2 0.3751 · f3 0.3924 · f4 0.4079); s1 0.3928 | +0.0015 vs base-v3 (2/4); control ago-2016 mejora (0.7596 vs 0.7696); 4× más lento | ❌ RECHAZADA |
 

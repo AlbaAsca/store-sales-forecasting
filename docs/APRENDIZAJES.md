@@ -25,6 +25,9 @@ media:      exp(½·log directo + ½·log recursivo)
 ```
 El recursivo solo apenas mejora (−0.001, lo que varía la semilla; peor en f1) porque acumula error; pero se equivoca de otra forma que el directo, y promediarlos en log baja la varianza: −0.0045 y 4/4 folds (coste: tiempo ×2.4). Ojo al promover: `MODE` por defecto en model.py es `rec`; hay que fijar `avg`.
 
+### V-010 · ensemble de 3 semillas × 2 ventanas de entrenamiento — ❌ RECHAZADA (CV 0.3858 → 0.3856, semilla 7: 0.3854)
+Se promediaron en log 6 modelos (semillas 0-2; historia completa y desde 2015). Mejora 4/4 folds pero solo −0.0002, menos que lo que ya varía entre semillas (~0.001), con el tiempo ×3 (97 → 312 s). Por qué: la base ya promedia directo+recursivo y 8 cortes, así que la varianza que quedaba por quitar era mínima; y con datos desde 2017 en los folds la ventana «desde 2015» apenas cambia nada. Más modelos del mismo tipo no sustituyen a información nueva.
+
 ### V-013 · mezcla en log de base-v3 (LightGBM) y base-v2 (estadístico) — ❌ RECHAZADA (CV 0.3893 con w=0.8 vs base-v4 0.3858)
 Qué: pred = w·v3 + (1−w)·v2 en log1p, w ∈ {0.6…0.9}. · Pasó: curva suave con mínimo en w=0.8 (0.6→0.3912, 0.7→0.3899, 0.8→0.3893, 0.9→0.3895, 1.0→0.3904; semilla 1: 0.3891). Gana 0.0012 a v3 en 4/4 folds, pero pierde con base-v4 en 4/4 folds (+0.0035) y en el control de ago-2016 (+0.015, SCHOOL SUPPLIES +0.018). · Por qué: el estadístico aporta algo de varianza reducida, pero el promedio directo+recursivo de v4 ya capta casi todo eso con más calidad; v2 no sabe de promos ni de la vuelta al cole. El Carnaval (28-feb) no está en los folds, no se pudo medir.
 
