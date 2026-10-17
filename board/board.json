@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:43:59+02:00",
+  "updated": "2026-10-17T18:52:54+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-048",
-    "heartbeat": "2026-10-17T18:43:28+02:00",
-    "message": "tester con T-048",
+    "current": "T-054",
+    "heartbeat": "2026-10-17T18:44:02+02:00",
+    "message": "desarrollador con T-054",
     "pid": 19976,
-    "agent": "tester",
-    "started": "2026-10-17T18:43:28+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T18:44:02+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-048-tester-20261017-184328.jsonl"
+    "live": "live-T-054-desarrollador-20261017-184402.jsonl"
   },
   "agents": [
     {
@@ -3269,23 +3269,60 @@
       "id": "T-054",
       "title": "Repescar V-010 y V-015 sobre la base nueva",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 40,
-      "actual_min": null,
+      "actual_min": 8.9,
       "auto": true,
       "manual": null,
       "desc": "Dos ideas que rechazamos porque mejoraban «demasiado poco» puede que sí valieran: con V-014 nos pasó justo eso, una mejora pequeñísima en casa que en Kaggle fue ocho veces mayor.\n\n- V-010 era hacer la media de varias copias del modelo; mejoraba en las cuatro prácticas, aunque muy poco.\n- V-015 era decirle al modelo qué series se venden a ratos; mejoraba dos prácticas y la de control.\n\nQueremos rehacerlas sobre la base nueva (base-v5) y medirlas con dos semillas, con la regla nueva: se aceptan si mejoran de forma repetida, aunque sea poco.\n\nCómo sabremos si funcionan: cada una baja el error medio de base-v5 con las dos semillas y no empeora más de una práctica.\n\n## Técnico\n- Antes, sobre base-v4 (0.3858; folds 0.3909/0.3754/0.3821/0.3947; c1 0.7552):\n  V-010 0.3856 (0.3908/0.3750/0.3819/0.3945; c1 0.7536), mejora 4/4, ×3 de tiempo.\n  V-015 0.3854 (0.3903/0.3755/0.3823/0.3937; c1 0.7513), mejora 2/4.\n- Rehacer como V-021 (= V-010 sobre base-v5) y V-022 (= V-015 sobre base-v5) con new_variant.py; medir con --seed 42 y --seed 7.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:29:06+02:00",
-      "updated": "2026-10-17T18:29:06+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T18:52:54+02:00",
+      "started_at": "2026-10-17T18:44:02+02:00",
+      "finished_at": "2026-10-17T18:52:54+02:00",
       "log": [
         {
           "t": "2026-10-17T18:29:06+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:44:02+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T18:44:08+02:00",
+          "by": "desarrollador",
+          "msg": "Empiezo V-021 y V-022"
+        },
+        {
+          "t": "2026-10-17T18:52:48+02:00",
+          "by": "desarrollador",
+          "msg": "V-021 (V-010 sobre base-v5) y V-022 (V-015 sobre base-v5) creadas; corren (--quick fold1: ambas 0.3906; V-021 402 s, V-022 69 s). Falta medir 4 folds con seed 42 y 7 (tester)."
+        },
+        {
+          "t": "2026-10-17T18:52:54+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-021 y V-022 creadas sobre base-v5 y corren en --quick (ambas 0.3906 en el último fold); faltan la medición completa con semillas 42 y 7 y el commit, que se denegó."
+        },
+        {
+          "t": "2026-10-17T18:52:54+02:00",
+          "by": "desarrollador",
+          "msg": "⚠ 1 comandos denegados: git add variants/V-021 variants/V-022"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T18:52:54+02:00",
+          "min": 8.9,
+          "turns": 22,
+          "tokens": 287211,
+          "cost_usd": 0.20121899999999998,
+          "verdict": "review"
         }
       ]
     }
