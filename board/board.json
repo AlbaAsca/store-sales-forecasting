@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T19:54:25+02:00",
+  "updated": "2026-10-17T19:59:29+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-056",
-    "heartbeat": "2026-10-17T19:53:00+02:00",
-    "message": "desarrollador con T-056",
+    "heartbeat": "2026-10-17T19:54:28+02:00",
+    "message": "tester con T-056",
     "pid": 9572,
-    "agent": "desarrollador",
-    "started": "2026-10-17T19:53:00+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T19:54:28+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-056-desarrollador-20261017-195300.jsonl"
+    "live": "live-T-056-tester-20261017-195428.jsonl"
   },
   "agents": [
     {
@@ -3395,7 +3395,7 @@
       "id": "T-056",
       "title": "V-023: la regla de «cero» sin tocar productos de temporada",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "blocked",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": 1.4,
@@ -3404,7 +3404,7 @@
       "desc": "La regla de predecir cero en las series que llevan dos meses sin vender (V-019) mejoraba un poquito en las prácticas, pero en el examen final salió bastante peor. El motivo: el material escolar de algunas tiendas no se vende en todo el año y de golpe arranca con la vuelta al cole. La regla lo daba por muerto justo cuando empieza a venderse, y el test de Kaggle cae precisamente en la vuelta al cole.\n\nLa idea es aplicar la regla solo a las series que de verdad están muertas: si una serie vendió algo en esas mismas fechas el año anterior, no se toca.\n\nCómo sabremos si funciona: mejora las prácticas con dos semillas como antes, y en el examen final ya no empeora frente a la base actual (lo mide el consultor).\n\n## Técnico\n- V-019 sobre base-v5: CV 0.3849/0.3850 (sem 42/7) vs 0.3852; c1 sin cerradas 0.3921 vs 0.3927; holdout 0.4227 vs 0.4179.\n- Holdout: 1430 filas / 98 series a 0; 29 filas con venta real > 0. Casi todo el daño en SCHOOL AND OFFICE SUPPLIES de tiendas 19, 13, 15 y 10 (Δ error cuadrático ≈ 35/35/32/19).\n- Cambio (variants/V-023 = V-019 + excepción): no poner a 0 si la serie tuvo ventas > 0 en [corte−364−7, corte−364+16+7] (mismo tramo del año anterior ± 1 semana). Sin fugas: solo datos anteriores al corte.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas, empeora como mucho 1 de 4 folds; c1 sin cerradas no empeora. El holdout lo mira solo el consultor antes de enviar.",
       "deps": [],
       "created": "2026-10-17T19:03:36+02:00",
-      "updated": "2026-10-17T19:54:25+02:00",
+      "updated": "2026-10-17T19:59:29+02:00",
       "started_at": "2026-10-17T19:53:00+02:00",
       "finished_at": "2026-10-17T19:54:25+02:00",
       "log": [
@@ -3422,6 +3422,26 @@
           "t": "2026-10-17T19:54:25+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-023 (regla de cero con excepción de temporada) implementada; fold 1 da 0.3900 y los tests pasan; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-17T19:54:28+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T19:59:14+02:00",
+          "by": "tester",
+          "msg": "CV 0.3849 (sem 42) / 0.3850 (sem 7) vs base-v5 0.3852: mejora 4/4 folds; c1 sin cerradas 0.3922/0.3914 vs 0.3927; sin familias que empeoren (+0.000). Test tests/test_v023.py añadido, 44 tests OK. ACEPTADA (holdout lo mira el consultor)"
+        },
+        {
+          "t": "2026-10-17T19:59:29+02:00",
+          "by": "tester",
+          "msg": "BLOCKED: V-023 ACEPTADA: CV 0.3849/0.3850 (semillas 42/7) frente a 0.3852, mejora 4/4 folds y c1 sin cerradas no empeora. La tarjeta de promoción para el consultor no se pudo crear porque el sistema denegó el comando."
+        },
+        {
+          "t": "2026-10-17T19:59:29+02:00",
+          "by": "tester",
+          "msg": "⚠ 1 comandos denegados: python board/board.py add \"Promover V-023 a base y preparar envío a Kaggle\" --ow"
         }
       ],
       "runs": [
@@ -3434,8 +3454,19 @@
           "tokens": 110231,
           "cost_usd": 0.0836071,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T19:59:29+02:00",
+          "min": 5.0,
+          "turns": 18,
+          "tokens": 287306,
+          "cost_usd": 0.1798686,
+          "verdict": "blocked"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T19:54:28+02:00"
     }
   ],
   "runners": {

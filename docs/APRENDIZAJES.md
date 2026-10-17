@@ -118,6 +118,9 @@ Qué: dar al modelo el día del mes y la distancia a la paga (15 y último día)
 Qué: regla dura tras el modelo: si una serie tienda×familia lleva 56 días a 0 justo antes del corte, se predice 0 en vez de «un poquito». · Pasó: −0.0003 (sem 42, 4/4 folds) y −0.0002 (sem 7, 3/4 folds); c1 −0.0003/−0.0015; BOOKS −0.005. Solo se midió N=56 (28 y 90 sin probar: el runner no deja fijar la variable ZERO_N). · Por qué: expm1 de una predicción pequeña no es cero y el RMSLE castiga ese error en series muertas; pocas series se ven afectadas, por eso la ganancia es pequeña pero consistente en dirección.
 **Revisión del consultor: no se promueve.** En el examen final empeora (0.4179 → 0.4227): la regla da por muerto el material escolar de las tiendas 10, 13, 15 y 19, que no vende en todo el año y arranca con la vuelta al cole, justo las fechas del test de Kaggle. Lección: una regla dura (poner a 0) es peligrosa con productos de temporada; las prácticas de mayo-julio no lo podían ver. Se corrige en V-023.
 
+### V-023 · regla de cero con excepción de temporada — ✅ ACEPTADA en prácticas (0.3852 → 0.3849 / 0.3850; examen final pendiente del consultor)
+Qué: igual que V-019, pero no se pone a 0 una serie que vendió algo en las mismas fechas del año anterior (±1 semana). · Pasó: −0.0002 de media, 4/4 folds mejor con semilla 42 y 7 (0.3849/0.3850); c1 sin cerradas 0.3922/0.3914 (base 0.3927); tiempo 299 s → 106 s. · Por qué: la excepción protege el material escolar que despierta en agosto y mantiene el beneficio de la regla en las series realmente muertas. Falta confirmar en el holdout que ya no empeora.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …
