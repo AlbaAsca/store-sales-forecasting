@@ -25,6 +25,14 @@ def cli(d, *args):
     return subprocess.run([sys.executable, str(d / "board.py"), *args], capture_output=True, text=True, check=True).stdout
 
 
+def test_note_acepta_msg(board):
+    tid = cli(board, "add", "N", "--owner", "desarrollador", "--est", "1").strip().split()[-1]
+    cli(board, "note", tid, "--msg", "hola", "--by", "tester")
+    cli(board, "note", tid, "posicional")
+    log = next(t for t in json.loads((board / "board.json").read_text(encoding="utf-8"))["tasks"] if t["id"] == tid)["log"]
+    assert [l["msg"] for l in log][-2:] == ["hola", "posicional"]
+
+
 def test_flujo_de_tarea(board):
     tid = cli(board, "add", "Probar el panel", "--owner", "desarrollador", "--est", "10", "--prio", "alta").strip().split()[-1]
     cli(board, "move", tid, "doing", "--by", "desarrollador")

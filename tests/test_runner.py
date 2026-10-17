@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 from pathlib import Path
 
@@ -99,3 +100,33 @@ def test_limite_de_uso_no_es_fallo(monkeypatch):
     assert (new, verdict) == ("next", "limit") and "reintenta tras el reset" in summary
     assert fake["tasks"][0]["status"] == "next" and calls == [runner.LIMIT_MSG]
     assert fake["agents"][0]["status"] == "idle"
+
+
+def _live(denied):
+    use = {"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "id": "a", "name": "Bash", "input": {"command": "cat x && python board/board.py add T"}}]}}
+    txt = "Permission for this tool use was denied" if denied else "ok"
+    res = {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "a", "content": txt}]}}
+    return [json.dumps(use), json.dumps(res)]
+
+
+def _finish(monkeypatch, denied):
+    fake = {"tasks": [{"id": "T-1", "owner": "investigador", "status": "doing", "log": []}], "agents": []}
+    monkeypatch.setattr(runner.bd, "update", lambda f: f(fake))
+    monkeypatch.setattr(runner.bd, "task", lambda b, tid: b["tasks"][0])
+    monkeypatch.setattr(runner.bd, "set_status", lambda b, t, s, by, msg: t.update(status=s))
+    monkeypatch.setattr(runner.bd, "log", lambda t, by, msg: t["log"].append(msg))
+    r = dict(text="RESULT: done — listo", err="", code=0, secs=5, turns=1, cost=None, usage={}, is_error=False,
+             denied=runner.denied_commands(_live(denied)))
+    return fake["tasks"][0], runner.finish("T-1", "work", "investigador", r)
+
+
+def test_denegados_avisan_y_bloquean(monkeypatch):
+    t, (new, verdict, _) = _finish(monkeypatch, True)
+    assert (new, verdict) == ("blocked", "blocked")
+    assert t["log"][0].startswith("⚠ 1 comandos denegados: cat x && python board/board.py add")
+
+
+def test_sin_denegados_sin_nota(monkeypatch):
+    t, (new, verdict, _) = _finish(monkeypatch, False)
+    assert (new, verdict) == ("done", "done") and t["log"] == []

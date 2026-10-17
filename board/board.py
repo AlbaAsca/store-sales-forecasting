@@ -181,7 +181,8 @@ def main():
     a.add_argument("--prio", default="media", choices=list(PRIO)); a.add_argument("--desc", default="")
     a.add_argument("--status", default="backlog", choices=STATES); a.add_argument("--manual")
     a.add_argument("--by", default="consultor"); a.add_argument("--deps", default="", help="T-001,T-002")
-    n = sp.add_parser("note"); n.add_argument("id"); n.add_argument("msg"); n.add_argument("--by", default="consultor")
+    n = sp.add_parser("note"); n.add_argument("id"); n.add_argument("text", nargs="?"); n.add_argument("--msg")
+    n.add_argument("--by", default="consultor")
     e = sp.add_parser("estimate"); e.add_argument("id"); e.add_argument("minutes", type=float)
     sp.add_parser("check")
     o = p.parse_args()
@@ -205,7 +206,10 @@ def main():
     if o.cmd == "move":
         update(lambda b: set_status(b, task(b, o.id), o.status, o.by, o.msg)); return
     if o.cmd == "note":
-        update(lambda b: log(task(b, o.id), o.by, o.msg)); return
+        text = o.text or o.msg
+        if not text:
+            p.error("note necesita el texto (posicional o --msg)")
+        update(lambda b: log(task(b, o.id), o.by, text)); return
     if o.cmd == "estimate":
         def f(b):
             t = task(b, o.id); t["estimate_min"] = o.minutes; log(t, "consultor", f"estimación {o.minutes:g} min")

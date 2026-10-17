@@ -66,6 +66,7 @@ RULES = """Reglas (modo autónomo, permisos: solo código y tests):
 - Comandos permitidos: python (scripts, pytest, board.py), git status/diff/log, ls/cat/head/tail/diff, mkdir y
   `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
   (sin `cd ... &&`, `;` ni `|`), o se denegará. Nunca toques models/base/ (la base vigente) ni eval/holdout.json.
+- Los comandos de board.py van solos, nunca después de cat, heredoc, && o ;: si no, se deniegan y la tarjeta no se crea.
 - Si cierras un experimento V-xxx (aceptado o rechazado), añade 2-3 líneas a docs/APRENDIZAJES.md: qué se probó, qué pasó
   y por qué, en lenguaje llano. Si aparece un concepto nuevo, explícalo en una frase la primera vez.
 - NO instales software ni dependencias, no descargues binarios, no hagas git push. Si la tarea lo
@@ -249,9 +250,40 @@ def run_claude(claude, prompt, agent, timeout_s, tag="run"):
     if killed:
         err, code = "timeout", -1
     text = data.get("result") if isinstance(data.get("result"), str) else "".join(lines[-20:])
-    return dict(text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
+    return dict(denied=denied_commands(lines), text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
                 turns=data.get("num_turns"), cost=data.get("total_cost_usd"),
                 usage=data.get("usage") or {}, is_error=data.get("is_error", code != 0))
+
+
+DENIED_MARK = "Permission for this tool use was denied"
+
+
+def denied_commands(lines):
+    """Comandos (o herramientas) cuyo tool_result del live-*.jsonl dice que el permiso fue denegado."""
+    uses, out = {}, []
+    for line in lines:
+        try:
+            ev = json.loads(line)
+        except (json.JSONDecodeError, TypeError):
+            continue
+        msg = ev.get("message") if isinstance(ev, dict) else None
+        content = msg.get("content") if isinstance(msg, dict) else None
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict):
+                continue
+            if c.get("type") == "tool_use":
+                inp = c.get("input") or {}
+                uses[c.get("id")] = str(inp.get("command") or inp.get("file_path") or c.get("name") or "")
+            elif c.get("type") == "tool_result" and DENIED_MARK in json.dumps(c.get("content"), ensure_ascii=False):
+                out.append(uses.get(c.get("tool_use_id"), "?"))
+    return out
+
+
+def read_denied(path):
+    """Lo mismo, leyendo un fichero live-*.jsonl."""
+    return denied_commands(Path(path).read_text(encoding="utf-8", errors="replace").splitlines())
 
 
 LIMIT_RE = re.compile(r"you.?ve hit your (weekly |daily |monthly |usage |session |5-hour )?limit|usage limit reached", re.I)
@@ -281,6 +313,10 @@ def finish(tid, mode, agent, r):
             break
     verdict = m.group(1).lower() if m else ("blocked" if r["is_error"] else "review")
     summary = (m.group(2).strip() if m else (r["err"] or r["text"][-300:]).strip())[:400] or "sin resumen"
+    denied = r.get("denied") or []
+    if any("board.py add" in d for d in denied) and verdict in ("done", "review"):
+        verdict = "blocked"  # las tarjetas que debía crear no existen
+    warn = (f"⚠ {len(denied)} comandos denegados: " + " | ".join(" ".join(d.split())[:80] for d in denied)) if denied else None
     u = r["usage"]
     toks = (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0) + (u.get("cache_read_input_tokens") or 0) \
         + (u.get("cache_creation_input_tokens") or 0)
@@ -301,6 +337,8 @@ def finish(tid, mode, agent, r):
         if verdict == "human" and summary:
             t["manual"], t["auto"] = summary, False
         bd.set_status(b, t, new, agent, f"{verdict.upper()}: {summary}")
+        if warn:
+            bd.log(t, agent, warn)
         return new
     return bd.update(f), verdict, summary
 
