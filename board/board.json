@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:49:12+02:00",
+  "updated": "2026-10-17T20:51:05+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-058",
-    "heartbeat": "2026-10-17T20:49:01+02:00",
-    "message": "tester con T-058",
+    "current": "T-060",
+    "heartbeat": "2026-10-17T20:49:15+02:00",
+    "message": "desarrollador con T-060",
     "pid": 4780,
-    "agent": "tester",
-    "started": "2026-10-17T20:49:01+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T20:49:15+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-058-tester-20261017-204901.jsonl"
+    "live": "live-T-060-desarrollador-20261017-204915.jsonl"
   },
   "agents": [
     {
@@ -3786,23 +3786,45 @@
       "id": "T-060",
       "title": "V-025: aprender del año anterior sin copiar sus cierres",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 30,
-      "actual_min": null,
+      "actual_min": 1.8,
       "auto": true,
       "manual": null,
       "desc": "Enseñarle al modelo cómo fue el mismo periodo del año anterior (V-018) mejoraba mucho en casa, pero en Kaggle empeoró. El motivo: en agosto de 2016 dos tiendas estuvieron cerradas, y el modelo aprendió que en esas fechas se hunden, cuando en 2017 venden con normalidad.\n\nLa idea es usar el año anterior, pero quitando de esos ejemplos las tiendas o series que estaban cerradas o anómalas entonces.\n\nCómo sabremos si funciona: mejora las prácticas frente a base-v5 con dos semillas, y en el test de Kaggle sus predicciones para las tiendas 18 y 25 ya no salen hundidas frente a base-v5.\n\n## Técnico\n- V-025 = V-018 (variants/V-018) + filtro: en los cortes de hace un año, excluir las filas de tiendas con >= 50 % de días a venta total 0 en la ventana objetivo de ese corte, y las series con 0 en toda esa ventana si vendían en las 8 semanas previas (cierres y huecos de datos).\n- Datos: tienda 18 = 0 del 16 al 31-ago-2016 y ~10 200/día en jul-ago 2017; tienda 25 = 2 634/día vs 9 088. v6 − v5 en el test: −0.178 en log para 18/25, +0.002 resto.\n- Criterio: RMSLE medio < base-v5 (0.3852) con semillas 42 y 7, ≤ 1 fold peor; c1 sin cerradas no empeora; además, diferencia media en log de predicciones del test frente a base-v5 en tiendas 18 y 25 > −0.03 (python, sin enviar nada).",
       "deps": [],
       "created": "2026-10-17T20:47:06+02:00",
-      "updated": "2026-10-17T20:47:06+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T20:51:05+02:00",
+      "started_at": "2026-10-17T20:49:15+02:00",
+      "finished_at": "2026-10-17T20:51:05+02:00",
       "log": [
         {
           "t": "2026-10-17T20:47:06+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T20:49:15+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T20:51:05+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-025 implementada (V-018 sin tiendas cerradas ni series a 0 en los cortes del año anterior), corre en la prueba rápida (f1 0.3898) y los tests pasan; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T20:51:05+02:00",
+          "min": 1.8,
+          "turns": 11,
+          "tokens": 115592,
+          "cost_usd": 0.09745120000000002,
+          "verdict": "review"
         }
       ]
     },
