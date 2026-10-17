@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:06:12+02:00",
+  "updated": "2026-10-17T11:07:04+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -42,7 +42,7 @@
     "started": "2026-10-17T11:06:12+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-030-investigador-20261017-110438.jsonl"
+    "live": "live-T-031-desarrollador-20261017-110612.jsonl"
   },
   "agents": [
     {
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-031"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -1591,18 +1591,18 @@
       "id": "T-031",
       "title": "V-011: acotar los rasgos de promoción al rango visto en entrenamiento (sin extrapolar picos)",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 0.9,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (T-027, ANALISIS-ERRORES 2026-10-17): el test de Kaggle trae el 16-ago un pico de promos fuera de rango (LAWN 842 vs máx histórico 212; total 30.5k vs mediana 11.7k) y v3 triplica la venta de SCHOOL/LAWN/LINGERIE ese día; en train un salto de promo ×4 sube la venta solo ×1.11. Estimado ≈+0.025 RMSLE perdido. · Cambio: en _features, recortar promo_day y promo_ratio por familia al percentil 99 de los cortes de entrenamiento (o log1p(promo_day) recortado); nada más. · Criterio fijado antes de medir: CV medio ≤ base-v3 + 0.001 y ningún fold empeora > 0.003 (los folds no tienen el pico, solo debe no estropear); y en dist/ la predicción del 16-ago de SCHOOL/LAWN/LINGERIE queda ≤ ×1.5 de la del 17-ago (comprueba solo predicciones, sin labels). Si pasa, se acepta aunque el CV empate.",
       "deps": [],
       "created": "2026-10-17T10:40:15+02:00",
-      "updated": "2026-10-17T11:06:12+02:00",
+      "updated": "2026-10-17T11:07:04+02:00",
       "started_at": "2026-10-17T11:06:12+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T11:07:04+02:00",
       "log": [
         {
           "t": "2026-10-17T10:40:15+02:00",
@@ -1613,6 +1613,23 @@
           "t": "2026-10-17T11:06:12+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:07:04+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-011 implementada (promos recortadas al p99 por familia), corre en quick (0.3953) y tests en verde; falta la medición completa y la comprobación del 16-ago por el tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:07:04+02:00",
+          "min": 0.9,
+          "turns": 8,
+          "tokens": 81230,
+          "cost_usd": 0.0792198,
+          "verdict": "review"
         }
       ]
     },
