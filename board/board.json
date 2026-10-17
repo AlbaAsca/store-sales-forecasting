@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:18:49+02:00",
+  "updated": "2026-10-17T18:19:48+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-044",
-    "heartbeat": "2026-10-17T18:18:17+02:00",
-    "message": "tester con T-044",
+    "current": "T-045",
+    "heartbeat": "2026-10-17T18:18:52+02:00",
+    "message": "desarrollador con T-045",
     "pid": 16672,
-    "agent": "tester",
-    "started": "2026-10-17T18:18:17+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T18:18:52+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-044-tester-20261017-181817.jsonl"
+    "live": "live-T-045-desarrollador-20261017-181852.jsonl"
   },
   "agents": [
     {
@@ -50,8 +50,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "working",
-      "current": "T-051"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "arquitecto",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-045"
     },
     {
       "id": "tester",
@@ -2789,7 +2789,7 @@
       "id": "T-045",
       "title": "V-016: día del mes y día de paga (dom, is_payday, días desde paga, días a fin de mes) en directo y recursivo",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": null,
@@ -2798,14 +2798,24 @@
       "desc": "Hipótesis (T-040 + DISENO-MODELOS T-041): base-v4 tiene sesgo por día del mes (días 1-5 y fin de mes -0.05 en log, resto +0.018); la paga es el 15 y el último día. Cambio: añadir dom, is_payday, dias_desde_paga (0-15), dias_a_fin_mes del día objetivo en _features y _step_feats; nada más. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (repetir con otra semilla), c1 sin tiendas 18/25 no empeora (hoy 0.3902); anotar sesgo por grupo de día del mes y holdout.",
       "deps": [],
       "created": "2026-10-17T18:06:29+02:00",
-      "updated": "2026-10-17T18:06:29+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T18:18:59+02:00",
+      "started_at": "2026-10-17T18:18:52+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T18:06:29+02:00",
           "by": "modelador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:18:52+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T18:18:59+02:00",
+          "by": "desarrollador",
+          "msg": "empiezo"
         }
       ]
     },
@@ -2933,18 +2943,18 @@
       "id": "T-051",
       "title": "Envío experimental v0.4.1: V-014 (rechazada por mejora < ruido) para ver si Kaggle la nota",
       "owner": "consultor",
-      "status": "doing",
+      "status": "done",
       "priority": "media",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 1.1,
       "auto": true,
       "manual": null,
       "desc": "Experimento de aprendizaje pedido por Alba: ¿una mejora local de 0.0005 (bajo el ruido de semilla) se ve en Kaggle? No cambia la base (sigue base-v4). Holdout + dist/submission-V-014.csv + tag v0.4.1-exp.",
       "deps": [],
       "created": "2026-10-17T18:18:38+02:00",
-      "updated": "2026-10-17T18:18:39+02:00",
+      "updated": "2026-10-17T18:19:48+02:00",
       "started_at": "2026-10-17T18:18:39+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T18:19:48+02:00",
       "log": [
         {
           "t": "2026-10-17T18:18:38+02:00",
@@ -2955,6 +2965,35 @@
           "t": "2026-10-17T18:18:39+02:00",
           "by": "consultor",
           "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-17T18:19:48+02:00",
+          "by": "consultor",
+          "msg": "V-014 holdout 0.4179 (base-v4 0.4187); dist/submission-V-014.csv; tag v0.4.1-exp"
+        }
+      ]
+    },
+    {
+      "id": "T-052",
+      "title": "Subir v0.4.1-exp (V-014) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 3.0,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-V-014.csv con el mensaje: v0.4.1-exp · V-014 afinado · backtest 0.3853 · holdout 0.4179 · experimento (no es base). Pasar la puntuación al consultor.",
+      "desc": "Base-v4 dio 0.40327. ¿Se nota una mejora local de 0.0005?",
+      "deps": [],
+      "created": "2026-10-17T18:19:48+02:00",
+      "updated": "2026-10-17T18:19:48+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:19:48+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }
