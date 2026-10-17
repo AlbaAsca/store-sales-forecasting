@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:31:22+02:00",
+  "updated": "2026-10-17T18:31:54+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-049"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -3015,18 +3015,18 @@
       "id": "T-049",
       "title": "V-019: predecir cero en las series que llevan semanas sin vender",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 1.8,
       "auto": true,
       "manual": null,
       "desc": "Algunas combinaciones de tienda y producto llevan semanas sin vender nada. El modelo a veces les predice un poquito de venta, y con esta forma de puntuar eso penaliza bastante.\n\nLa idea es una regla sencilla después del modelo: si una serie lleva muchos días seguidos sin vender, predecir cero. Un notebook público consiguió con esto su mayor mejora.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (LB −0.0153); Favorita 5.º usa conteo de ceros. Distinto de V-015 (eso eran rasgos; esto es una regla dura posterior).\n- Cambio sobre base-v5: post-proceso en fit_predict; N = 28/56/90 días a 0 antes del corte (sin fugas); una sola constante elegida con los folds.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:43+02:00",
-      "updated": "2026-10-17T18:30:06+02:00",
+      "updated": "2026-10-17T18:31:54+02:00",
       "started_at": "2026-10-17T18:30:06+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T18:31:54+02:00",
       "log": [
         {
           "t": "2026-10-17T18:16:43+02:00",
@@ -3042,6 +3042,23 @@
           "t": "2026-10-17T18:30:06+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T18:31:54+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-019 implementada (ceros tras ≥ZERO_N días sin ventas, por defecto 56), corre en quick (0.3899 en el fold 1) y los tests pasan; falta que el tester elija N y mida con 2 semillas."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T18:31:54+02:00",
+          "min": 1.8,
+          "turns": 9,
+          "tokens": 82330,
+          "cost_usd": 0.0773414,
+          "verdict": "review"
         }
       ]
     },
