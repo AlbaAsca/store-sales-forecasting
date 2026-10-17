@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:15:15+02:00",
+  "updated": "2026-10-17T18:16:51+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-042",
-    "heartbeat": "2026-10-17T18:08:32+02:00",
-    "message": "tester con T-042",
+    "current": "T-043",
+    "heartbeat": "2026-10-17T18:15:18+02:00",
+    "message": "investigador con T-043",
     "pid": 24832,
-    "agent": "tester",
-    "started": "2026-10-17T18:08:32+02:00",
+    "agent": "investigador",
+    "started": "2026-10-17T18:15:18+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-042-tester-20261017-180832.jsonl"
+    "live": "live-T-043-investigador-20261017-181518.jsonl"
   },
   "agents": [
     {
@@ -2666,23 +2666,45 @@
       "id": "T-043",
       "title": "Búsqueda web: qué variables y técnicas usan las mejores soluciones de Store Sales",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 1.6,
       "auto": true,
       "manual": null,
       "desc": "La ronda T-040 trabajó solo con documentos propios. Ahora buscar en internet (WebSearch/WebFetch y Kaggle CLI de solo lectura: kernels list --competition store-sales-time-series-forecasting --sort-by voteCount, kernels pull <ref> -p data/kaggle-code/<ref>): (1) qué variables usan los notebooks con mejor puntuación (festivos y traslados, paga, Carnaval, vuelta al cole por región, terremoto 2016, petróleo, transacciones, intermitencia) y qué RMSLE consiguen; (2) soluciones de Favorita 2018 y M5 aplicables; (3) qué no tenemos aún. Contrastar con docs/NOTAS-investigador.md, docs/DISENO-MODELOS.md y las tarjetas T-041/T-042 para no duplicar. Entregable: sección fechada en docs/NOTAS-investigador.md con enlaces a cada fuente y lo no verificado marcado; como mucho 2 tarjetas V-xxx sobre base-v4 con criterio (CV < 0.3858, ≤1 fold peor, mejora > variación de semilla, no empeora c1). IMPORTANTE: cada comando por separado;  solo, sin cat, heredoc, && ni ;. Si una tarjeta no se puede crear, RESULT: blocked indicándolo (no done).",
       "deps": [],
       "created": "2026-10-17T18:03:02+02:00",
-      "updated": "2026-10-17T18:03:02+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T18:16:51+02:00",
+      "started_at": "2026-10-17T18:15:18+02:00",
+      "finished_at": "2026-10-17T18:16:51+02:00",
       "log": [
         {
           "t": "2026-10-17T18:03:02+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:15:18+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-17T18:16:51+02:00",
+          "by": "investigador",
+          "msg": "DONE: notas fechadas con fuentes y lo no verificado marcado (Kaggle CLI denegado, notebooks top sin leer); creadas T-049 (V-019) y T-050 (V-020)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "work",
+          "at": "2026-10-17T18:16:51+02:00",
+          "min": 1.6,
+          "turns": 20,
+          "tokens": 202590,
+          "cost_usd": 0.24714499999999998,
+          "verdict": "done"
         }
       ]
     },
@@ -2802,6 +2824,54 @@
         {
           "t": "2026-10-17T18:06:38+02:00",
           "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-049",
+      "title": "V-019: serie dormida -> 0 duro (post-proceso) sobre base-v4",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 20.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (gersonlramos, LB -0.0153, mayor ganancia individual; Favorita 5.º usa conteo de ceros): si una serie tienda×familia lleva 0 ventas en los últimos N días (probar N=28/56/90 con el corte, sin fugas), predecir 0 en vez de la salida del modelo. Distinto de V-015 (rasgos, rechazada): aquí regla dura posterior. Cambio: variants/V-019 con post-proceso en fit_predict; N elegido con folds solo si es una única constante. Criterio: CV < 0.3858, como mucho 1 fold peor, mejora > variación de semilla (V-015 semilla 0.3854/0.3855), c1 no empeora (leer sin tiendas 18 y 25 cerradas).",
+      "deps": [],
+      "created": "2026-10-17T18:16:43+02:00",
+      "updated": "2026-10-17T18:16:43+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:16:43+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-050",
+      "title": "V-020: peso directo/recursivo por familia en la media de base-v4",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (gersonlramos: mezcla 70/30 -0.0051 y pesos por familia en 3 familias -0.0015; M5 1.º promedia directo+recursivo): base-v4 usa 50/50; usar un peso w_f por grupo (como mucho 3-4 grupos de familias, p. ej. estables vs intermitentes) fijado con folds anteriores sin mirar el fold evaluado, para no sobreajustar. Cambio: variants/V-020 con pesos por grupo en la mezcla. Criterio: CV < 0.3858, como mucho 1 fold peor, mejora > variación de semilla, c1 no empeora; si la ganancia < 0.001 rechazar.",
+      "deps": [],
+      "created": "2026-10-17T18:16:45+02:00",
+      "updated": "2026-10-17T18:16:45+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T18:16:45+02:00",
+          "by": "investigador",
           "msg": "creada"
         }
       ]

@@ -1,17 +1,40 @@
 # Notas del investigador
 
-## 2026-10-17 · ronda de aportación
-Hallazgo (a partir de docs propios, sin búsqueda nueva): el modelo base NO tiene (a) rasgos de intermitencia/ceros ni (b) rasgos de calendario
-(día del mes, paga 15/fin de mes). ANALISIS-ERRORES (#2): los ceros son el 8 % de filas y el 22 % del error; las series intermitentes aportan el 27 %.
-El fold de control c1 (vuelta al cole) da 0.77 frente a 0.39: hay estructura de calendario que el modelo no ve.
-Fuentes: docs/ANALISIS-ERRORES.md, docs/DISENO-MODELOS.md (chongzhenjie: zero_fc_window; M5: tweedie/ceros); la descripción de la competición
-menciona la paga quincenal del sector público (días 15 y último). No verificado con búsqueda web en esta ronda.
+## 2026-10-17 · T-043 búsqueda web: variables y técnicas de las mejores soluciones
+Limitaciones: el Kaggle CLI (`kernels list/pull`) fue **denegado** en la sesión (sin aprobación) y Kaggle no se puede leer con WebFetch,
+así que **no se pudo ordenar los notebooks por votos ni leer los top**. Lo siguiente sale de repos de GitHub/Medium/foros con la misma
+competición o su antecesora (Favorita 2018). Ninguno es «top del leaderboard» verificado. Pendiente (humano): `kaggle kernels list ... --sort-by voteCount`.
 
-Comparación (ganancia / CPU / dificultad / aprendizaje):
-- V-015 rasgos de ceros (fracción de ceros 14/28/56 d, días desde última venta>0): media-alta / ≈0 / baja / intermitencia.
-- V-016 calendario (día del mes, is_payday, días a fin de mes): media (mirar c1) / ≈0 / baja / cuándo ayuda un rasgo de fecha.
-- Hurdle (clasificador de ceros + regresor): en RMSLE la media en log ya estima E[log1p y]; ganancia dudosa → no propuesto.
+### 1. Qué variables usan y qué consiguen (Store Sales 2022+)
+| Fuente | Resultado | Hallazgos útiles |
+|---|---|---|
+| [gersonlramos](https://github.com/gersonlramos/Store-Sales---Time-Series-Forecasting) (LightGBM directo+recursivo) | LB público 0.38924 | Lo más documentado, con rechazos. Ver abajo |
+| [beratmertkayacan](https://github.com/beratmertkayacan/kaggle-store-sales) (LightGBM log1p, 31 rasgos) | val 0.3691 (1 ventana, 15 d; transacciones reales = fuga) | Con transacciones rellenadas con media tienda×día: 0.3751; con 0: 2.76 → las transacciones del futuro no existen, no usar |
+| [fredp-gb](https://github.com/fredp-gb/favorita-store-sales) (LightGBM+TFT) | holdout 0.3886, LB 0.412 | Terremoto como ventana puntual, petróleo efecto pequeño (resumen de búsqueda, no leído a fondo) |
+| [Michael_Ram, Medium](https://medium.com/@Michael_Ram/my-first-foray-into-kaggles-store-sales-forecasting-25e2d2edf366) | — (403 al leerlo) | Petróleo rodante 7/14/28, traslados/puentes, días desde terremoto; lags y medias móviles dominan la importancia (según resumen de búsqueda; **no verificado**) |
 
-Tarjetas pendientes de crear (el comando `board.py add` fue denegado en esta sesión):
-- V-015 (alta, 25 min): añadir zfrac14/28/56 y since_nz a `_features` y `_step_feats`. Criterio: media 4 folds < base, ≤1 fold peor; vigilar RMSLE en filas real=0 y c1.
-- V-016 (media, 20 min): añadir dom, is_payday, dias_a_fin_mes. Criterio: media < base, ≤1 fold peor; c1 debe bajar; si solo mejora c1, anotar sin aceptar.
+Lo que gersonlramos midió (LB público):
+- **Aportó:** modelos por horizonte −0.0096 (en nosotros V-008 empeoró, mucho: no trasladable tal cual); **regla de «serie dormida → 0 duro» −0.0153** (la mayor ganancia
+  individual tras el baseline); mezcla recursivo/directo por familia 70/30 −0.0051; peso de mezcla **según familia** (solo 3 familias) −0.0015; promociones como intensidad relativa por familia/tienda y con futuras conocidas (−0.04, la mayor de todas, pero partía de un baseline flojo 0.55).
+- **Rechazó:** transacciones (+0.003), petróleo (+0.0008; r≈−0.02 sin tendencia), festivo binario (×1.01), festivos regionales (≤5 observaciones por serie), flag de terremoto (peor de 3 tratamientos; mejor «reparar» el panel), vuelta al cole por región (perdió en 3 ventanas), lag_364 (rechazado también en V-006/ nuestra base), tweedie/Poisson (perdió), XGBoost (correlación de residuos 0.97–0.99), corrección de sesgo, dos etapas P(venta)×magnitud (empate).
+- Coincide con nuestro historial: tweedie ❌ (V-007), 16 modelos ❌ (V-008), intermitencia como rasgos ❌ (V-015), mezcla con estadístico ❌ (V-013).
+
+### 2. Favorita 2018 y M5 aplicables
+- Favorita 5.º ([fast.ai foro](https://forums.fast.ai/t/5th-place-solution-of-favorita-grocery-sales-forecasting/10009)): LightGBM con medias/promos/**conteo de ceros** en ventanas deslizantes, partidas por promo/día de semana; 16 modelos; validación empezando en el mismo día de la semana que el test; **varios cortes aleatorios de entrenamiento** (ya lo hace V-012); promedio de semillas. El ganador mezcló GBM y redes ([arXiv 2009.07701](https://arxiv.org/pdf/2009.07701)).
+- M5 1.º (resumen [KAIST](https://dspace.kaist.ac.kr/handle/10203/299580)): media simple de modelos LightGBM directos y recursivos entrenados a varios niveles (pooling parcial). Ya tenemos directo+recursivo (base-v4); el pooling por niveles (modelo por tienda / por familia) **no está probado** y gersonlramos vio que modelos por familia ayudaron al recursivo pero no al directo. No verificado que el 1.º usara tweedie (en nosotros ❌).
+
+### 3. Qué no tenemos aún (descontando T-041/T-042 y backlog T-045/46/47)
+Ya en backlog: paga/día del mes (T-045), festivo por tienda (T-046), cortes del año anterior (T-047). Evidencia web **débil** para festivos y paga (nadie midió ganancia clara; paga solo aparece en proyectos de estudiante). No añado tarjeta.
+Nuevo y con evidencia: (a) **regla de series dormidas → 0** (post-proceso, ≈0 CPU); (b) **peso directo/recursivo por familia** en vez de 50/50.
+
+### Comparación
+| Técnica | Ganancia esperada | CPU | Dificultad | Aprendizaje |
+|---|---|---|---|---|
+| Dormida→0 | media (0.003–0.015; el 22 % del error está en ceros) | ≈0 | baja | intermitencia sin rasgos de modelo |
+| Peso por familia directo/recursivo | baja (0.001–0.002), riesgo de sobreajustar 4 folds | ≈0 si se guardan ambas predicciones | media | mezcla por segmento |
+| Transacciones / petróleo | ≈0 o negativa | bajo | media | no existen en el futuro |
+| Terremoto flag | negativa | — | baja | tratar contaminación en el panel |
+| Festivos binarios / regionales | ≈0 (×1.01) | bajo | media | ya en T-046 |
+
+### Tarjetas creadas
+- V-019 serie dormida → 0 (alta). V-020 peso directo/recursivo por familia (media). Ver panel.
