@@ -124,6 +124,9 @@ Qué: regla dura tras el modelo: si una serie tienda×familia lleva 56 días a 0
 ### V-023 · regla de cero con excepción de temporada — ✅ ACEPTADA en prácticas (0.3852 → 0.3849 / 0.3850; examen final pendiente del consultor)
 Qué: igual que V-019, pero no se pone a 0 una serie que vendió algo en las mismas fechas del año anterior (±1 semana). · Pasó: −0.0002 de media, 4/4 folds mejor con semilla 42 y 7 (0.3849/0.3850); c1 sin cerradas 0.3922/0.3914 (base 0.3927); tiempo 299 s → 106 s. · Por qué: la excepción protege el material escolar que despierta en agosto y mantiene el beneficio de la regla en las series realmente muertas. Falta confirmar en el holdout que ya no empeora.
 
+### V-018 · ejemplos de la vuelta al cole del año anterior en el entrenamiento — ✅ ACEPTADA (0.3852 → 0.3839 / 0.3840 con semillas 42 y 7)
+Qué: añadir al entrenamiento del modelo directo 4 cortes de hace un año (mismo periodo, ±1 semana) para que vea cómo es un arranque de temporada. · Pasó: mejora 4/4 folds (f4 −0.0031), SCHOOL AND OFFICE −0.014, c1 0.7522 (sin cerradas 0.3865/0.3868), tiempo 90 s. · Por qué: ahora el modelo ve ejemplos reales de la subida estacional en vez de solo un rasgo «hace 364 días» que nunca había visto en acción; la ganancia en c1 es pequeña (−0.0005), así que conviene confirmarla en el holdout.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:06:01+02:00",
+  "updated": "2026-10-17T20:10:49+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-047",
-    "heartbeat": "2026-10-17T20:05:13+02:00",
-    "message": "desarrollador con T-047",
+    "heartbeat": "2026-10-17T20:06:04+02:00",
+    "message": "tester con T-047",
     "pid": 9572,
-    "agent": "desarrollador",
-    "started": "2026-10-17T20:05:13+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T20:06:04+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-047-desarrollador-20261017-200513.jsonl"
+    "live": "live-T-047-tester-20261017-200604.jsonl"
   },
   "agents": [
     {
@@ -2968,7 +2968,7 @@
       "id": "T-047",
       "title": "V-018: enseñarle cómo fue la vuelta al cole del año pasado",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "blocked",
       "priority": "media",
       "estimate_min": 30.0,
       "actual_min": 0.8,
@@ -2977,7 +2977,7 @@
       "desc": "El modelo aprende de las últimas semanas antes de cada fecha, y en esas semanas nunca hay un arranque de curso escolar. Por eso, aunque le contamos que «el año pasado por estas fechas se vendió mucho material escolar», no sabe qué hacer con ese dato.\n\nLa idea es añadir a sus ejemplos de entrenamiento algunas semanas del mismo periodo del año anterior, para que vea cómo es un arranque de temporada.\n\nCómo sabremos si funciona: el error medio baja con dos semillas y, sobre todo, baja el error del material escolar en la práctica de julio.\n\n## Técnico\n- Fuente: ceshine / Favorita eligen cortes por calendario; DISENO-MODELOS (T-041). SCHOOL AND OFFICE = 8 % del error de f1 (RMSLE 0.637).\n- Cambio sobre base-v5: añadir 4 cortes en T−16−364+7j, j = −1..2 (rasgos y objetivos de hace un año) al entrenamiento del directo; el recursivo no cambia.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md). Anotar RMSLE de SCHOOL en f1 y el tiempo.",
       "deps": [],
       "created": "2026-10-17T18:06:36+02:00",
-      "updated": "2026-10-17T20:06:01+02:00",
+      "updated": "2026-10-17T20:10:49+02:00",
       "started_at": "2026-10-17T20:05:13+02:00",
       "finished_at": "2026-10-17T20:06:01+02:00",
       "log": [
@@ -3000,6 +3000,26 @@
           "t": "2026-10-17T20:06:01+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-018 implementada y corre en el fold rápido (f1 0.3901, 20 s); pendiente medición completa con 2 semillas por el tester."
+        },
+        {
+          "t": "2026-10-17T20:06:04+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T20:10:32+02:00",
+          "by": "tester",
+          "msg": "CV 0.3839 s42 / 0.3840 s7 (base-v5 0.3852): mejora 4/4 folds (f1 0.3901, f2 0.3746, f3 0.3804, f4 0.3906). SCHOOL AND OFFICE -0.014 (mejor familia). c1 0.7522 (sin cerradas 0.3865 / 0.3868 s7). Tiempo 90 s (base 299 s). Variación de semilla ~0.0001 → ACEPTADA. Test tests/test_v018.py añadido, 47 tests OK."
+        },
+        {
+          "t": "2026-10-17T20:10:49+02:00",
+          "by": "tester",
+          "msg": "BLOCKED: V-018 ACEPTADA (CV 0.3839/0.3840 con semillas 42 y 7 frente a 0.3852, mejora 4/4 folds, SCHOOL −0.014); falta la tarjeta de promoción para el consultor, que el sistema bloqueó."
+        },
+        {
+          "t": "2026-10-17T20:10:49+02:00",
+          "by": "tester",
+          "msg": "⚠ 1 comandos denegados: python board/board.py add \"Promover V-018 a base y preparar envío a Kaggle\" --ow"
         }
       ],
       "runs": [
@@ -3012,8 +3032,19 @@
           "tokens": 75962,
           "cost_usd": 0.071022,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T20:10:49+02:00",
+          "min": 4.7,
+          "turns": 20,
+          "tokens": 212070,
+          "cost_usd": 0.145924,
+          "verdict": "blocked"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T20:06:04+02:00"
     },
     {
       "id": "T-048",
