@@ -67,3 +67,20 @@ def test_commit_solo_con_ficheros_propios(tmp_path, monkeypatch):
     assert files == ["board/board.json", "mio.py", "otro.txt"]
     assert g("show", "--name-only", "--format=", "HEAD").split() == files
     assert "previo.txt" in g("status", "--porcelain")  # sigue sin commitear
+
+
+def test_limite_de_uso_no_es_fallo(monkeypatch):
+    r = dict(text="You've hit your weekly limit · resets Oct 20", err="", code=1, secs=5, turns=1,
+             cost=None, usage={}, is_error=True)
+    assert runner.is_usage_limit(r)
+    assert not runner.is_usage_limit(dict(text="RESULT: blocked — faltan datos", err=""))
+    calls = []
+    fake = {"tasks": [{"id": "T-1", "owner": "desarrollador", "status": "doing"}],
+            "agents": [{"id": "desarrollador", "current": "T-1", "status": "working"}]}
+    monkeypatch.setattr(runner.bd, "update", lambda f: f(fake))
+    monkeypatch.setattr(runner.bd, "task", lambda b, tid: b["tasks"][0])
+    monkeypatch.setattr(runner.bd, "set_status", lambda b, t, s, by, msg: (t.update(status=s), calls.append(msg)))
+    new, verdict, summary = runner.finish("T-1", "work", "desarrollador", r)
+    assert (new, verdict) == ("next", "limit") and "reintenta tras el reset" in summary
+    assert fake["tasks"][0]["status"] == "next" and calls == [runner.LIMIT_MSG]
+    assert fake["agents"][0]["status"] == "idle"

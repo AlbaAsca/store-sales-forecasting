@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:39:06+02:00",
+  "updated": "2026-10-17T11:40:55+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-022",
-    "heartbeat": "2026-10-17T11:28:32+02:00",
-    "message": "tester con T-022",
+    "current": "T-024",
+    "heartbeat": "2026-10-17T11:39:15+02:00",
+    "message": "desarrollador con T-024",
     "pid": 22556,
-    "agent": "tester",
-    "started": "2026-10-17T11:28:32+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:39:15+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-022-tester-20261017-112832.jsonl"
+    "live": "live-T-024-desarrollador-20261017-113915.jsonl"
   },
   "agents": [
     {
@@ -1425,23 +1425,45 @@
       "id": "T-024",
       "title": "Runner: el límite de uso de Claude no es un fallo",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 1.7,
       "auto": true,
       "manual": null,
       "desc": "El 15-oct dos rondas acabaron en blocked/interrumpidas porque la salida era 'You've hit your weekly limit'. Detectar ese texto: no marcar blocked ni contar como fallo, devolver la tarea a su estado y anotar 'límite de uso, reintenta tras el reset'. Test en tests/test_runner.py.",
       "deps": [],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T11:40:55+02:00",
+      "started_at": "2026-10-17T11:39:15+02:00",
+      "finished_at": "2026-10-17T11:40:55+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T11:39:15+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:40:55+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: el runner detecta el límite de uso, devuelve la tarea a su estado previo sin contar fallo y se detiene; test añadido y tests en verde."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:40:55+02:00",
+          "min": 1.7,
+          "turns": 14,
+          "tokens": 119653,
+          "cost_usd": 0.1305118,
+          "verdict": "review"
         }
       ]
     },

@@ -245,7 +245,26 @@ def run_claude(claude, prompt, agent, timeout_s, tag="run"):
                 usage=data.get("usage") or {}, is_error=data.get("is_error", code != 0))
 
 
+LIMIT_RE = re.compile(r"you.?ve hit your (weekly |daily |monthly |usage |session |5-hour )?limit|usage limit reached", re.I)
+LIMIT_MSG = "límite de uso, reintenta tras el reset"
+
+
+def is_usage_limit(r):
+    """La salida de Claude indica que se agotó el límite de uso (no es un fallo de la tarea)."""
+    return bool(LIMIT_RE.search(f"{r.get('text') or ''}\n{r.get('err') or ''}"))
+
+
 def finish(tid, mode, agent, r):
+    if is_usage_limit(r):  # devuelve la tarea a su estado previo; ni blocked ni fallo
+        def back(b):
+            t = bd.task(b, tid)
+            new = "review" if mode == "verify" else "next"
+            bd.set_status(b, t, new, agent, LIMIT_MSG)
+            for a in b["agents"]:
+                if a["id"] == agent and a.get("current") == tid:
+                    a.update(status="idle", current=None)
+            return new
+        return bd.update(back), "limit", LIMIT_MSG
     m = None
     for line in reversed(r["text"].strip().splitlines()):
         m = RESULT_RE.search(line)
@@ -305,6 +324,8 @@ def contribute(o):
               if "RESULT:" in l), None)
     summary = (m.group(2).strip() if m else "sin RESULT")[:300]
     verdict = (m.group(1).lower() if m else "blocked")
+    if is_usage_limit(r):
+        summary, verdict = LIMIT_MSG, "limit"
     u = r["usage"]
     toks = sum(u.get(k) or 0 for k in ("input_tokens", "output_tokens", "cache_read_input_tokens",
                                        "cache_creation_input_tokens")) or None
@@ -315,6 +336,9 @@ def contribute(o):
                                             turns=r["turns"], tokens=toks, cost_usd=r["cost"], verdict=verdict))
         bd.set_status(b, t, "blocked" if verdict == "blocked" else "done", agent, f"{verdict.upper()}: {summary}")
     bd.update(close)
+    if verdict == "limit":
+        set_runner(contrib_at=None, state="idle", current=None, message=LIMIT_MSG)
+        return False
     set_runner(contrib_at=now(), contrib_agent=agent, state="idle", current=None,
                message=f"aportación {agent} ({tid}): {summary}")
     commit_own(before, f"chore(runner): contribution round by {agent}")
@@ -420,6 +444,9 @@ def main():
             git("push", "-q")  # sincroniza con GitHub (lo hace el runner, nunca el agente)
             print(f"  → {new} en {r['secs'] / 60:.1f} min · {summary}")
 
+            if verdict == "limit":  # sin fallo contado; parar hasta el reset (la ejecución programada reintenta)
+                set_runner(state="idle", current=None, message=LIMIT_MSG)
+                break
             fails = fails + 1 if (r["is_error"] or verdict == "blocked") else 0
             if fails >= MAX_FAILS:
                 set_runner(state="paused", current=None, message=f"Pausado tras {MAX_FAILS} fallos seguidos; revisa board/runs/")
