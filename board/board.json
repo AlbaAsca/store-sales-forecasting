@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:41:40+02:00",
+  "updated": "2026-10-17T17:44:23+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-023",
-    "heartbeat": "2026-10-17T17:27:55+02:00",
-    "message": "tester con T-023",
+    "current": "T-036",
+    "heartbeat": "2026-10-17T17:41:43+02:00",
+    "message": "desarrollador con T-036",
     "pid": 23052,
-    "agent": "tester",
-    "started": "2026-10-17T17:27:55+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T17:41:43+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-023-tester-20261017-172755.jsonl"
+    "live": "live-T-036-desarrollador-20261017-174143.jsonl"
   },
   "agents": [
     {
@@ -2264,18 +2264,18 @@
       "id": "T-036",
       "title": "V-014: afinado básico de hiperparámetros del LightGBM (hojas, lr, rondas, min_data)",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "baja",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 2.7,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (ceshine params sin afinar, docs/REVISION-RUMBO.md): los valores copiados no son óptimos aquí · Cambio: rejilla pequeña num_leaves {15,31,63}, lr/rondas {0.05x400, 0.03x700}, min_data {20,50,100}; rondas fijas, sin early stopping en el fold · Criterio: RMSLE medio < 0.3904 en ≥ 3/4 folds con otra semilla; si la mejora < 0.002, RECHAZADA (ruido) y anotar sensibilidad",
       "deps": [],
       "created": "2026-10-17T11:05:56+02:00",
-      "updated": "2026-10-17T11:05:56+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T17:44:23+02:00",
+      "started_at": "2026-10-17T17:41:43+02:00",
+      "finished_at": "2026-10-17T17:44:23+02:00",
       "log": [
         {
           "t": "2026-10-17T11:05:56+02:00",
@@ -2286,6 +2286,28 @@
           "t": "2026-10-17T17:18:52+02:00",
           "by": "consultor",
           "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
+        },
+        {
+          "t": "2026-10-17T17:41:43+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T17:44:23+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-014 lista con hiperparámetros configurables por entorno (defecto 63/0.03×700/100, quick fold1 0.3902); falta que el tester mida la rejilla con otra semilla."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T17:44:23+02:00",
+          "min": 2.7,
+          "turns": 9,
+          "tokens": 73787,
+          "cost_usd": 0.0721299,
+          "verdict": "review"
         }
       ]
     },
