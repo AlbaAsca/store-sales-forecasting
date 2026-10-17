@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:08:29+02:00",
+  "updated": "2026-10-17T18:15:15+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-042",
-    "heartbeat": "2026-10-17T18:07:00+02:00",
-    "message": "desarrollador con T-042",
+    "heartbeat": "2026-10-17T18:08:32+02:00",
+    "message": "tester con T-042",
     "pid": 24832,
-    "agent": "desarrollador",
-    "started": "2026-10-17T18:07:00+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T18:08:32+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-042-desarrollador-20261017-180700.jsonl"
+    "live": "live-T-042-tester-20261017-180832.jsonl"
   },
   "agents": [
     {
@@ -2594,7 +2594,7 @@
       "id": "T-042",
       "title": "V-015: variables de intermitencia (fracción de ceros 14/28/56 d y días desde la última venta)",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": 1.5,
@@ -2603,7 +2603,7 @@
       "desc": "Propuesta del investigador (T-040, docs/NOTAS-investigador.md). Hipótesis: los ceros son el 8 % de las filas y el 22 % del error (ANALISIS-ERRORES #2); el modelo no sabe si una serie es intermitente. Cambio sobre base-v4: añadir zfrac14/28/56 y since_nz a _features y _step_feats. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora mayor que la variación de semilla (~0.001), no empeora el control c1; anotar RMSLE en filas con venta real 0 y el holdout. Explicar en APRENDIZAJES qué es una serie intermitente.",
       "deps": [],
       "created": "2026-10-17T18:01:45+02:00",
-      "updated": "2026-10-17T18:08:29+02:00",
+      "updated": "2026-10-17T18:15:15+02:00",
       "started_at": "2026-10-17T18:07:00+02:00",
       "finished_at": "2026-10-17T18:08:29+02:00",
       "log": [
@@ -2621,6 +2621,21 @@
           "t": "2026-10-17T18:08:29+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-015 implementada (rasgos de intermitencia), quick fold1 0.3903, tests en verde; falta medición completa del tester y commit (git add denegado)."
+        },
+        {
+          "t": "2026-10-17T18:08:32+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T18:15:01+02:00",
+          "by": "tester",
+          "msg": "CV 0.3854 (s42) / 0.3855 (s1) vs base-v4 0.3858: Δ-0.0003, dentro de la variación de semilla (~0.001); folds mejora 2/4, empeora 2/4 (f2 +0.0001, f3 +0.0002); c1 0.7513 vs 0.7552 (mejor); tiempo 138 s vs 97 s. RECHAZADA (no cumple: empeora 2 folds y mejora < variación). RMSLE en filas con venta 0 y holdout no medidos (holdout solo consultor)."
+        },
+        {
+          "t": "2026-10-17T18:15:15+02:00",
+          "by": "tester",
+          "msg": "DONE: V-015 RECHAZADA: CV 0.3854 (semilla 1: 0.3855) frente a 0.3858 de base-v4, mejora menor que el ruido de semilla y empeora 2 de 4 folds."
         }
       ],
       "runs": [
@@ -2633,8 +2648,19 @@
           "tokens": 136118,
           "cost_usd": 0.097497,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T18:15:15+02:00",
+          "min": 6.7,
+          "turns": 21,
+          "tokens": 181323,
+          "cost_usd": 0.1316724,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T18:08:32+02:00"
     },
     {
       "id": "T-043",

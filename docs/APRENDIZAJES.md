@@ -102,6 +102,9 @@ Qué: añadido `control_folds` (c1 = 16-31 ago 2016, la misma estación que el t
 ### V-014 · afinado de hiperparámetros del LightGBM — ❌ RECHAZADA (0.3858 → 0.3853/0.3851, mejora < 0.002)
 Qué: probar 63 hojas, lr 0.03×700 rondas, min_data 100 (frente a los valores copiados de ceshine). · Pasó: mejora 4/4 folds con semillas 7 y 11, pero solo −0.0005/−0.0007 y el tiempo se triplica (97 s → ~300 s). · Por qué: los parámetros ya estaban cerca del óptimo; el modelo es poco sensible a ellos, y lo que queda de error está en las variables y la estructura, no en el afinado. Mejoras bajo 0.002 son indistinguibles del ruido de semilla.
 
+### V-015 · rasgos de intermitencia (fracción de ceros 14/28/56 d, días desde la última venta) — ❌ RECHAZADA (0.3858 → 0.3854, semilla 1: 0.3855)
+Qué: decirle al modelo cuánto «vende a golpes» cada serie. Una serie **intermitente** es la que tiene muchos días con venta 0 entre días con venta (p. ej. libros en una tienda pequeña). · Pasó: −0.0003 de media, 2 folds mejor y 2 peor, c1 mejora −0.0039; tiempo 97 s → 138 s. · Por qué: el modelo ya deducía la intermitencia de las medias y retardos (m56, lags); los rasgos nuevos repiten esa información y la mejora queda bajo el ruido de semilla (~0.001).
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …

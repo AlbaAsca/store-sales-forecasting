@@ -1,20 +1,24 @@
+import importlib.util
+from pathlib import Path
+
 import numpy as np
 
-from test_v005 import _data, _load
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_v015_forma_y_no_negativo():
-    hist, fut = _data(0)
-    m = _load("V-015")
-    p = np.asarray(m.fit_predict(hist, fut, {}))
-    assert len(p) == len(fut) and np.isfinite(p).all() and (p >= 0).all()
+def _load():
+    spec = importlib.util.spec_from_file_location("v015", ROOT / "variants" / "V-015" / "model.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
 
 
-def test_v015_zero_feats():
-    m = _load("V-015")
-    past = np.ones((2, 60))
-    past[0, -3:] = 0.0  # 3 ceros al final
-    past[1, :] = 0.0    # todo ceros
+def test_zero_feats():
+    m = _load()
+    past = np.ones((3, 60))
+    past[0, -3:] = 0          # 3 ceros recientes
+    past[1, :] = 0            # siempre cero
     f = m._zero_feats(past)
-    assert f["since_nz"][0] == 3 and f["since_nz"][1] == 56
-    assert np.isclose(f["zfrac14"][0], 3 / 14) and f["zfrac56"][1] == 1.0
+    assert f["since_nz"].tolist() == [3.0, 56.0, 0.0]
+    assert np.allclose(f["zfrac14"], [3 / 14, 1, 0])
+    assert np.allclose(f["zfrac56"], [3 / 56, 1, 0])
