@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T10:27:31+02:00",
+  "updated": "2026-10-17T10:31:51+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,11 +35,11 @@
     "enabled": true,
     "state": "working",
     "current": "T-027",
-    "heartbeat": "2026-10-17T10:22:41+02:00",
+    "heartbeat": "2026-10-17T10:31:51+02:00",
     "message": "experto con T-027",
-    "pid": 16016,
+    "pid": 6188,
     "agent": "experto",
-    "started": "2026-10-17T10:22:41+02:00",
+    "started": "2026-10-17T10:31:51+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador"
   },
@@ -1340,14 +1340,14 @@
       "status": "doing",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": 2.6,
+      "actual_min": 11.8,
       "auto": true,
       "manual": null,
       "desc": "Datos: CV v2 0.4154 → v3 0.3904; holdout 0.5244 → 0.4378; LB 0.41457 → 0.41341. Comprobar por orden: (1) bug en la ruta de envío: reproducir make_submission cortando train en 2017-07-30 y comparar fila a fila con eval/results/base-v3-holdout/preds; categorías de family/store en test vs train; orden de ids; (2) dónde difieren v2 y v3 en el test (dist/submission-base-v2.csv vs v3) por familia y día: ¿vuelta al cole (SCHOOL AND OFFICE SUPPLIES, final de agosto), paga del 31?; (3) ruido: el LB público es una sola ventana de 16 días, cuánto varía RMSLE entre ventanas de 16 días en nuestro backtest. Entregable: docs/ANALISIS-ERRORES.md (sección nueva, explicada para aprender) + veredicto bug/estacional/ruido + máx. 2 tarjetas (p. ej. un fold que cubra 16-31 ago de 2016). Nunca mirar el holdout para elegir variantes.",
       "deps": [],
       "created": "2026-10-17T10:17:23+02:00",
-      "updated": "2026-10-17T10:22:41+02:00",
-      "started_at": "2026-10-17T10:22:41+02:00",
+      "updated": "2026-10-17T10:31:51+02:00",
+      "started_at": "2026-10-17T10:31:51+02:00",
       "finished_at": null,
       "log": [
         {
@@ -1367,6 +1367,16 @@
         },
         {
           "t": "2026-10-17T10:22:41+02:00",
+          "by": "runner",
+          "msg": "empieza experto"
+        },
+        {
+          "t": "2026-10-17T10:31:50+02:00",
+          "by": "tú",
+          "msg": "parada desde el panel; se reintentará"
+        },
+        {
+          "t": "2026-10-17T10:31:51+02:00",
           "by": "runner",
           "msg": "empieza experto"
         }
