@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:40:26+02:00",
+  "updated": "2026-10-17T20:47:06+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -3687,6 +3687,11 @@
           "t": "2026-10-17T20:40:00+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T20:47:06+02:00",
+          "by": "consultor",
+          "msg": "La base vuelve a ser base-v5 (v6 empeoró en Kaggle). V-024 se mide contra base-v5: es igual que V-023, así que basta con reutilizar sus resultados (CV 0.3849/0.3850, holdout 0.4177)."
         }
       ]
     },
@@ -3694,7 +3699,7 @@
       "id": "T-059",
       "title": "Subir v0.6 (base-v6) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 3,
       "actual_min": null,
@@ -3703,12 +3708,41 @@
       "desc": "La nueva base aprende de la vuelta al cole del año anterior. Mejora en las prácticas, en el examen final y en el control, así que toca comprobarlo en Kaggle.\n\n## Técnico\ndist/submission-base-v6.csv · tag v0.6 · backtest 0.3839 · holdout 0.4148 (v0.5: 0.3852 / 0.4179 / LB 0.39940).",
       "deps": [],
       "created": "2026-10-17T20:40:00+02:00",
-      "updated": "2026-10-17T20:40:00+02:00",
+      "updated": "2026-10-17T20:47:06+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T20:47:06+02:00",
+          "by": "consultor",
+          "msg": "LB 0.40871 (v0.5 0.39940): peor. Tiendas 18 y 25 cerradas en ago-2016 → V-018 las predice ~16 % más bajas en el test. Base revertida a base-v5."
+        }
+      ]
+    },
+    {
+      "id": "T-060",
+      "title": "V-025: aprender del año anterior sin copiar sus cierres",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Enseñarle al modelo cómo fue el mismo periodo del año anterior (V-018) mejoraba mucho en casa, pero en Kaggle empeoró. El motivo: en agosto de 2016 dos tiendas estuvieron cerradas, y el modelo aprendió que en esas fechas se hunden, cuando en 2017 venden con normalidad.\n\nLa idea es usar el año anterior, pero quitando de esos ejemplos las tiendas o series que estaban cerradas o anómalas entonces.\n\nCómo sabremos si funciona: mejora las prácticas frente a base-v5 con dos semillas, y en el test de Kaggle sus predicciones para las tiendas 18 y 25 ya no salen hundidas frente a base-v5.\n\n## Técnico\n- V-025 = V-018 (variants/V-018) + filtro: en los cortes de hace un año, excluir las filas de tiendas con >= 50 % de días a venta total 0 en la ventana objetivo de ese corte, y las series con 0 en toda esa ventana si vendían en las 8 semanas previas (cierres y huecos de datos).\n- Datos: tienda 18 = 0 del 16 al 31-ago-2016 y ~10 200/día en jul-ago 2017; tienda 25 = 2 634/día vs 9 088. v6 − v5 en el test: −0.178 en log para 18/25, +0.002 resto.\n- Criterio: RMSLE medio < base-v5 (0.3852) con semillas 42 y 7, ≤ 1 fold peor; c1 sin cerradas no empeora; además, diferencia media en log de predicciones del test frente a base-v5 en tiendas 18 y 25 > −0.03 (python, sin enviar nada).",
+      "deps": [],
+      "created": "2026-10-17T20:47:06+02:00",
+      "updated": "2026-10-17T20:47:06+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T20:47:06+02:00",
           "by": "consultor",
           "msg": "creada"
         }

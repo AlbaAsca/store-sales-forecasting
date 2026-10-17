@@ -5,6 +5,14 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.6 · la vuelta al cole del año anterior empeora en Kaggle — 🏁 LB 0.40871 (se vuelve a base-v5)
+Qué: subir base-v6 (V-018), que entrena también con el mismo periodo del año anterior. · Pasó: mejoraba en todo lo local (prácticas
+0.3852 → 0.3839, examen final 0.4179 → 0.4148, control sin cerradas 0.3927 → 0.3865), pero Kaggle empeoró de 0.39940 a 0.40871.
+· Por qué: del 16 al 31 de agosto de 2016 las tiendas 18 y 25 estuvieron cerradas (o casi); en 2017 venden con normalidad. El modelo
+aprendió de ese año que «en estas fechas esas tiendas se hunden» y las predijo un 16 % más bajas justo en el test. Ninguna medida local
+lo podía ver: el examen final es anterior a esas fechas y el control excluye las tiendas cerradas a propósito. Lección: si entrenas con
+el año anterior, sus anomalías (cierres, terremotos, datos que faltan) viajan al futuro; hay que limpiarlas antes.
+
 ### v0.5 · envío experimental de una variante rechazada: Kaggle la premia — 🏁 LB 0.39940 (V-014 pasa a base-v5)
 Qué: subir V-014 (LightGBM afinado), rechazada porque mejoraba solo 0.0005 en las prácticas, menos que el ruido de semilla. · Pasó: holdout
 0.4187 → 0.4179 y Kaggle 0.40327 → 0.39940 (−0.0039, ocho veces más que en local). · Por qué: mejoraba en las 4 prácticas con dos semillas

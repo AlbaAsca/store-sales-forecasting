@@ -10,9 +10,9 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 🏁 **Nota en Kaggle** | **0.39940** (v0.5) · empezó en 0.45751 (v0.1) |
+| 🏁 **Nota en Kaggle** | **0.39940** (v0.5, la mejor) · empezó en 0.45751 (v0.1) · v0.6 empeoró a 0.40871 |
 | 📈 **Error en las prácticas** | **0.3852** (base-v5) · empezó en 0.4745 (base-v0) |
-| 🧪 **Ideas probadas** | 17: 7 forman el modelo actual, 10 no entraron (2 se están repitiendo) → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 🧪 **Ideas probadas** | 20: 7 forman el modelo actual, 13 no entraron → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
 | 🌳 **Árbol de experimentos** | [`docs/experimentos.html`](docs/experimentos.html): cada idea explicada sin tecnicismos (descárgalo y ábrelo en el navegador) |
 
 ![Progreso de los envíos a Kaggle](docs/img/progreso.png)
@@ -194,11 +194,14 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 | V-023 · cero solo en series de verdad muertas (excepción de temporada) | prácticas 0.3849 / 0.3850 (base 0.3852), mejora 4/4 folds; examen final pendiente del consultor | no toca series que vendieron en las mismas fechas del año anterior |
 | V-020 · reparto distinto de las dos opiniones según el tipo de producto | empeora 3 de 4 prácticas (0.3856 / 0.3857 vs 0.3852) | el reparto 50/50 ya era casi óptimo |
 | V-018 · ejemplos de la vuelta al cole del año anterior | prácticas 0.3839 / 0.3840 (base 0.3852), mejora 4/4 folds; material escolar −0.014 | el modelo ve cómo es un arranque de temporada |
-| V-010 y V-015 · varias semillas / series intermitentes | mejoras pequeñas | se están repitiendo sobre base-v5 con la regla nueva (V-021, V-022) |
+| V-018 · entrenar también con el mismo periodo del año anterior | mejora todo lo local (0.3839, examen final 0.4148) pero **empeora en Kaggle** (0.40871) | en agosto de 2016 las tiendas 18 y 25 cerraron; el modelo copió ese hundimiento al test de 2017. Se rehace sin los cierres (V-025) |
+| V-020 · repartir distinto las dos formas de predecir según el producto | igual o peor (0.3856) | el reparto a medias ya era el bueno |
+| V-021 · media de varias copias del modelo (repesca de V-010) | empata (0.3851) y tarda 4 veces más | más copias del mismo modelo no aportan información |
+| V-022 · decirle qué series se venden a ratos (repesca de V-015) | mejora un poco las prácticas (0.3850) pero empeora el examen final (0.4204) | no compensa |
+| V-023 · cero en series muertas, respetando las de temporada | mejora un poco (0.3849) y no empeora el examen final (0.4177) | pendiente de combinar con la base (V-024) |
 
 Los números exactos de cada experimento (por fold, por familia y por semilla) están en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md)
-y en `eval/results/`. En curso: festivos por tienda (V-017), la vuelta al cole del año anterior (V-018), el reparto entre las dos
-formas de predecir según el producto (V-020) y la regla del cero sin productos de temporada (V-023).
+y en `eval/results/`. En curso: festivos por tienda (V-017), la regla del cero sobre la base (V-024) y el año anterior sin sus cierres (V-025).
 
 ---
 
@@ -236,6 +239,9 @@ docs/               APRENDIZAJES.md (bitácora), análisis de errores, diseño d
 4. **Una mejora pequeña y repetida no es ruido.** V-014 se rechazó por mejorar «solo» 0.0005 y en Kaggle mejoró 0.0039.
 5. **Las reglas duras son peligrosas con productos de temporada.** Poner a cero lo que lleva dos meses sin venderse (V-019) mataba
    el material escolar justo antes de la vuelta al cole; solo lo vio el examen final.
-6. **Rechazar también es avanzar.** Diez ideas no entraron en el modelo, y cada una dejó escrito por qué.
+6. **Lo que copias del pasado incluye sus accidentes.** Entrenar con el mismo periodo del año anterior (V-018) mejoraba en todas
+   las medidas locales y empeoró en Kaggle: en esas fechas de 2016 dos tiendas estuvieron cerradas, y el modelo lo trasladó a 2017.
+   Ninguna medida local cubría esa quincena con esas tiendas abiertas.
+7. **Rechazar también es avanzar.** Trece ideas no entraron en el modelo, y cada una dejó escrito por qué.
 
 La bitácora completa, con un glosario de cada concepto nuevo, está en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md).
