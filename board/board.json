@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:52:54+02:00",
+  "updated": "2026-10-17T19:03:36+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-054",
-    "heartbeat": "2026-10-17T18:44:02+02:00",
-    "message": "desarrollador con T-054",
+    "heartbeat": "2026-10-17T18:52:57+02:00",
+    "message": "tester con T-054",
     "pid": 19976,
-    "agent": "desarrollador",
-    "started": "2026-10-17T18:44:02+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T18:52:57+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-054-desarrollador-20261017-184402.jsonl"
+    "live": "live-T-054-tester-20261017-185257.jsonl"
   },
   "agents": [
     {
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-054"
     },
     {
       "id": "investigador",
@@ -3113,6 +3113,11 @@
           "t": "2026-10-17T18:42:53+02:00",
           "by": "tester",
           "msg": "⚠ 1 comandos denegados: ZERO_N=28 python scripts/backtest.py --src variants/V-019 --name V-019-n28-s42 -"
+        },
+        {
+          "t": "2026-10-17T19:03:36+02:00",
+          "by": "consultor",
+          "msg": "Consultor: aceptada en CV, pero NO promovida: empeora el holdout (0.4179 → 0.4227) por poner a 0 material escolar dormido que arranca en agosto. Corrección en V-023."
         }
       ],
       "runs": [
@@ -3311,6 +3316,11 @@
           "t": "2026-10-17T18:52:54+02:00",
           "by": "desarrollador",
           "msg": "⚠ 1 comandos denegados: git add variants/V-021 variants/V-022"
+        },
+        {
+          "t": "2026-10-17T18:52:56+02:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -3323,6 +3333,65 @@
           "tokens": 287211,
           "cost_usd": 0.20121899999999998,
           "verdict": "review"
+        }
+      ],
+      "verify_started": "2026-10-17T18:52:56+02:00"
+    },
+    {
+      "id": "T-055",
+      "title": "Promover V-019 a base-v6 y preparar el envío v0.6",
+      "owner": "consultor",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 20.0,
+      "actual_min": 7.8,
+      "auto": true,
+      "manual": null,
+      "desc": "La regla de predecir cero en las series que llevan dos meses sin vender mejora un poco, pero de forma repetida. Pasa a ser la base y se prepara el envío a Kaggle.\n\n## Técnico\nmodels/base = variants/V-019 (ZERO_N=56 por defecto). CV 0.3849/0.3850 (semillas 42/7) frente a 0.3852. Medir base-v6 (CV + c1 sin cerradas), holdout, CSV y tags base-v6 y v0.6.",
+      "deps": [],
+      "created": "2026-10-17T18:55:50+02:00",
+      "updated": "2026-10-17T19:03:35+02:00",
+      "started_at": "2026-10-17T18:55:50+02:00",
+      "finished_at": "2026-10-17T19:03:35+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T18:55:50+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:55:50+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-17T19:03:35+02:00",
+          "by": "consultor",
+          "msg": "NO se promueve. Holdout 0.4179 → 0.4227: la regla pone a 0 SCHOOL AND OFFICE SUPPLIES en tiendas 10, 13, 15 y 19, que estaban dormidas y arrancan con la vuelta al cole; el test de Kaggle (16-31 ago) es vuelta al cole. Base sigue en base-v5. Corrección en tarjeta nueva."
+        }
+      ]
+    },
+    {
+      "id": "T-056",
+      "title": "V-023: la regla de «cero» sin tocar productos de temporada",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "La regla de predecir cero en las series que llevan dos meses sin vender (V-019) mejoraba un poquito en las prácticas, pero en el examen final salió bastante peor. El motivo: el material escolar de algunas tiendas no se vende en todo el año y de golpe arranca con la vuelta al cole. La regla lo daba por muerto justo cuando empieza a venderse, y el test de Kaggle cae precisamente en la vuelta al cole.\n\nLa idea es aplicar la regla solo a las series que de verdad están muertas: si una serie vendió algo en esas mismas fechas el año anterior, no se toca.\n\nCómo sabremos si funciona: mejora las prácticas con dos semillas como antes, y en el examen final ya no empeora frente a la base actual (lo mide el consultor).\n\n## Técnico\n- V-019 sobre base-v5: CV 0.3849/0.3850 (sem 42/7) vs 0.3852; c1 sin cerradas 0.3921 vs 0.3927; holdout 0.4227 vs 0.4179.\n- Holdout: 1430 filas / 98 series a 0; 29 filas con venta real > 0. Casi todo el daño en SCHOOL AND OFFICE SUPPLIES de tiendas 19, 13, 15 y 10 (Δ error cuadrático ≈ 35/35/32/19).\n- Cambio (variants/V-023 = V-019 + excepción): no poner a 0 si la serie tuvo ventas > 0 en [corte−364−7, corte−364+16+7] (mismo tramo del año anterior ± 1 semana). Sin fugas: solo datos anteriores al corte.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas, empeora como mucho 1 de 4 folds; c1 sin cerradas no empeora. El holdout lo mira solo el consultor antes de enviar.",
+      "deps": [],
+      "created": "2026-10-17T19:03:36+02:00",
+      "updated": "2026-10-17T19:03:36+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T19:03:36+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }
