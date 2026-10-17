@@ -10,9 +10,12 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 📈 **Mejor RMSLE en el backtest** | 0.3852 (base-v5 = V-014, LightGBM afinado) · base-v4: 0.3858 · base-v0: 0.4745 |
-| 🧪 **Experimentos cerrados** | 6 aceptados · 5 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
-| 🏁 **Leaderboard de Kaggle** | 0.39940 (v0.5, base-v5) · v0.4: 0.40327 · v0.3: 0.41341 · v0.2: 0.41457 · v0.1: 0.45751 |
+| 🏁 **Nota en Kaggle** | **0.39940** (v0.5) · empezó en 0.45751 (v0.1) |
+| 📈 **Error en las prácticas** | **0.3852** (base-v5) · empezó en 0.4745 (base-v0) |
+| 🧪 **Ideas probadas** | 17: 7 forman el modelo actual, 10 no entraron (2 se están repitiendo) → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 🌳 **Árbol de experimentos** | [`docs/experimentos.html`](docs/experimentos.html): cada idea explicada sin tecnicismos (descárgalo y ábrelo en el navegador) |
+
+![Progreso de los envíos a Kaggle](docs/img/progreso.png)
 
 ---
 
@@ -80,7 +83,11 @@ quincena:
 
 ![Backtest: 4 folds, holdout y test](docs/img/backtest.png)
 
-- **4 folds** (azul): sirven para comparar ideas. Una idea se acepta si mejora la media **y** no empeora más de un fold.
+- **4 folds** (azul): sirven para comparar ideas. Una idea se acepta si mejora la media **con dos semillas distintas**
+  y no empeora más de un fold. Al principio exigía además que la mejora superase el «ruido» del azar (~0.001), pero esa regla
+  rechazó V-014, que en Kaggle mejoró 0.0039: una mejora pequeña que se repite siempre en la misma dirección no es casualidad.
+- **Fold de control** (16–31 de agosto de 2016): la misma quincena que el test de Kaggle, un año antes. No decide nada, avisa.
+  Se mira **sin las tiendas que cerraron** esos días (18 y 25) ni la que aún no había abierto (52): un cierre no se puede prever.
 - **Holdout** (rojo): los últimos 16 días. **No se toca** hasta el final; es el examen de verdad antes de enviar a Kaggle.
   Si mirase el holdout para decidir, acabaría ajustándome a él sin darme cuenta (otra forma de fuga, más sutil).
 - El código que corta los datos ([`scripts/backtest.py`](scripts/backtest.py)) **solo le entrega al modelo el pasado**:
@@ -139,38 +146,55 @@ flowchart TB
     Dev -- "a revisión" --> Test
 ```
 
-Quien implementa una variante nunca la evalúa. Un *runner* ([`board/runner.py`](board/runner.py)) recoge tarjetas del panel cada
-3 horas y lanza al agente que toca, con permisos acotados: puede ejecutar Python y leer git, pero no instalar, borrar,
-hacer push ni enviar nada a Kaggle. Los envíos los hago yo a mano.
+Quien implementa una variante nunca la evalúa. Un *runner* ([`board/runner.py`](board/runner.py)) recoge tarjetas del panel
+(cada 3 horas o con el botón **▶ Iniciar** del panel) y lanza al agente que toca, con permisos acotados: puede ejecutar Python y
+leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo que aprendí montándolo:
+
+- **Ver qué hace el agente sin gastar tokens:** la CLI escribe cada paso en un log (`stream-json`) y el panel lo muestra en directo,
+  con un indicador de si el proceso sigue vivo y cuándo hizo su última acción.
+- **Dos carriles en paralelo:** «pensar» (investigador, modelador, analista, arquitecto) y «medir» (desarrollador, evaluador),
+  para que nunca coincidan dos backtests que se pelean por la CPU. Cada carril hace commit solo de sus propios ficheros.
+- **Comandos denegados a la vista:** si a un agente le bloquean un comando, queda anotado en su tarjeta; si lo bloqueado era crear
+  tarjetas, la suya no puede cerrarse como hecha.
+- **Tarjetas para humanos:** la descripción empieza en lenguaje llano y lo técnico va plegado debajo.
+- **Los envíos los preparo yo (consultor) y los sube Alba**, revisando antes el examen final. El MCP de Kaggle solo lo usa el
+  consultor, con permiso en cada envío; el runner lo tiene bloqueado.
 
 ---
 
 ## 6. Resultados
 
-Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se actualiza con cada experimento cerrado.
+### El tronco: lo que forma el modelo actual
 
-| Variante | Idea | RMSLE backtest | Folds que mejora | Veredicto |
+| Paso | Idea, en llano | Prácticas | Examen final | Kaggle |
 |---|---|---|---|---|
-| base-v0 | media de los últimos 14 días por tienda×familia | 0.4745 ± 0.0090 (f1 0.4738 · f2 0.4611 · f3 0.4769 · f4 0.4864) | — | línea base |
-| V-001 | base-v0 × factor del día de la semana (8 sem.) por tienda×familia | 0.4304 ± 0.0106 (f1 0.4368 · f2 0.4143 · f3 0.4283 · f4 0.4423) | −0.044 | ✅ ACEPTADA |
-| V-002 | media y perfil semanal en escala log (log1p 14 d + perfil log 8 sem.) | 0.4154 ± 0.0064 (f1 0.4201 · f2 0.4057 · f3 0.4138 · f4 0.4222) | −0.015 vs base-v1 | ✅ ACEPTADA |
-| V-003 | ajuste en log por promociones (beta por familia) sobre V-002 | 0.4571 ± 0.0244 (f1 0.4311 · f2 0.4405 · f3 0.4625 · f4 0.4945) | +0.042 vs base-v2 (0/4) | ❌ RECHAZADA |
-| V-004 | LightGBM global (8 cortes; medias log + perfil semanal) | 0.4057 ± 0.0122 (f1 0.4041 · f2 0.3926 · f3 0.4007 · f4 0.4255) | −0.010 vs base-v2 (3/4) | ✅ ACEPTADA |
-| V-005 | V-004 + 3 rasgos de promoción (día, suma 14 d, ratio) | 0.3946 ± 0.0072 (f1 0.3949 · f2 0.3860 · f3 0.3918 · f4 0.4057) | −0.011 vs V-004 (4/4) | ✅ ACEPTADA |
-| V-006 | V-005 + 3 rasgos anuales (retardo 364: día, ventana ±3 d, diferencia) | 0.3904 ± 0.0087 (f1 0.3932 · f2 0.3796 · f3 0.3861 · f4 0.4029) | −0.004 vs V-005 (4/4) | ✅ ACEPTADA |
-| V-007 | base-v3 con objetivo tweedie (p=1.3) sobre ventas crudas | 0.4094 ± 0.0149 (f1 0.4075 · f2 0.3885 · f3 0.4113 · f4 0.4304) | +0.019 vs base-v3 (0/4) | ❌ RECHAZADA |
-| V-008 | base-v3 con 16 modelos directos (uno por horizonte h) | 0.4833 ± 0.0155 (f1 0.4793 · f2 0.4636 · f3 0.4835 · f4 0.5068) | +0.093 vs base-v3 (0/4) | ❌ RECHAZADA |
-| V-009 | base-v3 + modelo recursivo (1 paso); media en log con el directo | media 0.3860 ± 0.0077 (f1 0.3912 · f2 0.3754 · f3 0.3822 · f4 0.3952); s1 0.3856. Solo recursivo: 0.3894 | −0.0045 vs base-v3 (4/4) media; recursivo solo −0.0010 (3/4) | ✅ ACEPTADA (media) · ❌ recursivo solo |
-| V-011 | base-v3 con promo_day/promo_ratio recortados al p99 por familia | 0.3908 ± 0.0088 (f1 0.3953 · f2 0.3792 · f3 0.3863 · f4 0.4023) | +0.0003 vs base-v3 (2/4); 16-ago aún ×2.8–3.1 el 17-ago | ❌ RECHAZADA |
-| V-010 | base-v4 promediando 3 semillas × 2 ventanas (todo / desde 2015) en log | 0.3856 ± 0.0076 (f1 0.3908 · f2 0.3750 · f3 0.3819 · f4 0.3945); s7 0.3854; c1 0.7536 | −0.0002 vs base-v4 (4/4) < variación ~0.001; tiempo ×3 (97→312 s) | ❌ RECHAZADA |
-| V-014 | afinado de hiperparámetros LightGBM (63 hojas, lr 0.03×700, min_data 100) | media 0.3853 ± 0.0073 (sem 7); sem 11: 0.3851 | −0.0005/−0.0007 vs base-v4 (4/4, pero <0.002 = ruido); tiempo ×3 | ❌ RECHAZADA |
-| V-015 | rasgos de intermitencia (fracción de ceros 14/28/56 d, días desde última venta) | media 0.3854 ± 0.0071; sem 1: 0.3855 | −0.0003 vs base-v4 (2/4 folds, <ruido); c1 0.7513 vs 0.7552; tiempo ×1.4 | ❌ RECHAZADA |
-| V-016 | calendario de paga (día del mes, is_payday, días desde paga, días a fin de mes) | media 0.3878 ± 0.0092; sem 1: 0.3874 | +0.0020 vs base-v4 (empeora 3/4 folds); c1 0.7574 vs 0.7552; tiempo ×1.9 | ❌ RECHAZADA |
-| V-019 | predecir 0 si la serie lleva ≥56 días sin vender | media 0.3849 (sem 42); 0.3850 (sem 7) | −0.0003/−0.0002 vs base-v5 (mejor 4/4 y 3/4 folds); c1 0.7523/0.7511 vs 0.7526 | ✅ ACEPTADA |
-| V-013 | mezcla en log 0.8·base-v3 + 0.2·base-v2 | 0.3893 ± 0.0078 (f1 0.3929 · f2 0.3788 · f3 0.3858 · f4 0.3996); s1 0.3891 | −0.0012 vs base-v3 (4/4) pero +0.0035 vs base-v4 (peor 4/4); control ago-2016 0.7704 | ❌ RECHAZADA |
-| V-012 | base-v3 con 24 cortes (en vez de 8) y peso exponencial a lo reciente (vida media 120 d) | 0.3919 ± 0.0116 (f1 0.3922 · f2 0.3751 · f3 0.3924 · f4 0.4079); s1 0.3928 | +0.0015 vs base-v3 (2/4); control ago-2016 mejora (0.7596 vs 0.7696); 4× más lento | ❌ RECHAZADA |
+| base-v0 | repetir la media de las dos últimas semanas | 0.4745 | 0.5191 | 0.45751 |
+| V-001 | tener en cuenta el día de la semana | 0.4304 | 0.5109 | — |
+| V-002 | calcular en proporciones (escala logarítmica), como mide la nota | 0.4154 | 0.5244 | 0.41457 |
+| V-004 | un modelo que aprende de las 1.782 series a la vez (LightGBM) | 0.4057 | — | — |
+| V-005 | darle las promociones como pista | 0.3946 | — | — |
+| V-006 | recordar lo vendido hace un año | 0.3904 | 0.4378 | 0.41341 |
+| V-009 | media de dos maneras de predecir: los 16 días de golpe y día a día | 0.3858 | 0.4187 | 0.40327 |
+| **V-014** | **afinar los ajustes del LightGBM** (aceptada tras el envío experimental) | **0.3852** | **0.4179** | **0.39940** |
 
-![Progreso de los experimentos](docs/img/progreso.png)
+### Las ramas: lo que se probó y se descartó
+
+| Idea | Qué pasó | Por qué |
+|---|---|---|
+| V-003 · ajustar a mano por promociones | empeora mucho (0.4571) | la promoción coincide con otras cosas y la fórmula le atribuía efectos ajenos |
+| V-007 · entrenar con pérdida tweedie | empeora (0.4094) | puntúa unidades, pero la nota mide proporciones |
+| V-008 · un modelo por cada día del horizonte | empeora mucho (0.4833) | cada modelo aprende con 16 veces menos ejemplos |
+| V-009 recursivo solo · predecir día a día | mejora dentro del ruido (0.3894) | solo funciona combinado con el directo (V-009) |
+| V-011 · poner tope a las promociones | igual (0.3908) | en las prácticas casi no hay picos que recortar |
+| V-012 · triplicar los ejemplos de entrenamiento | peor de media (0.3919), ×4 de tiempo | los ejemplos nuevos repiten información |
+| V-013 · mezclar con el modelo sencillo | mejora a base-v3 pero no a base-v4 | una opinión débil resta en una media de opiniones fuertes |
+| V-016 · día del mes y día de paga | empeora 3 de 4 prácticas (0.3878) | el modelo ya lo deducía de las ventas recientes |
+| V-019 · predecir cero en series dormidas | mejora las prácticas (0.3849) pero empeora el examen final (0.4227) | da por muerto el material escolar que arranca en agosto; se corrige en V-023 |
+| V-010 y V-015 · varias semillas / series intermitentes | mejoras pequeñas | se están repitiendo sobre base-v5 con la regla nueva (V-021, V-022) |
+
+Los números exactos de cada experimento (por fold, por familia y por semilla) están en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md)
+y en `eval/results/`. En curso: festivos por tienda (V-017), la vuelta al cole del año anterior (V-018), el reparto entre las dos
+formas de predecir según el producto (V-020) y la regla del cero sin productos de temporada (V-023).
 
 ---
 
@@ -201,5 +225,13 @@ docs/               APRENDIZAJES.md (bitácora), análisis de errores, diseño d
 
 ## 8. Qué he aprendido
 
-La bitácora completa está en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md), con un glosario de cada concepto nuevo.
-Los tres aprendizajes más importantes se resumirán aquí al terminar el proyecto.
+1. **Lo sencillo primero.** Fijarse en el día de la semana bajó el error más que todo lo demás junto.
+2. **Mide como te van a medir.** Calcular en proporciones (V-002) mejoró; entrenar con otra vara (V-007) empeoró.
+3. **Un examen solo engaña; tres que coinciden, no.** v0.3 mejoraba en las prácticas y apenas en Kaggle. Desde v0.4, cuando
+   prácticas, examen final y control bajan a la vez, Kaggle también baja.
+4. **Una mejora pequeña y repetida no es ruido.** V-014 se rechazó por mejorar «solo» 0.0005 y en Kaggle mejoró 0.0039.
+5. **Las reglas duras son peligrosas con productos de temporada.** Poner a cero lo que lleva dos meses sin venderse (V-019) mataba
+   el material escolar justo antes de la vuelta al cole; solo lo vio el examen final.
+6. **Rechazar también es avanzar.** Diez ideas no entraron en el modelo, y cada una dejó escrito por qué.
+
+La bitácora completa, con un glosario de cada concepto nuevo, está en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md).

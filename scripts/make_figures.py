@@ -119,19 +119,25 @@ def familias(train):
 
 
 def progreso():
-    """Evolución del RMSLE de backtest por experimento (eval/results/*.json, sin -quick ni holdout)."""
-    res = [json.loads(f.read_text(encoding="utf-8")) for f in sorted((ROOT / "eval" / "results").glob("*.json"))]
-    res = [r for r in res if not r["name"].endswith(("-quick", "-holdout"))]
-    if not res:
-        print("  (sin resultados aún: salto progreso)")
+    """Evolución por envío a Kaggle (eval/kaggle.json): prácticas (4 folds), examen final (holdout) y nota de Kaggle."""
+    f = ROOT / "eval" / "kaggle.json"
+    if not f.exists():
+        print("  (sin eval/kaggle.json: salto progreso)")
         return
-    fig, ax = plt.subplots(figsize=(10, 3.6))
-    best = min(r["mean"] for r in res)
-    ax.bar([r["name"] for r in res], [r["mean"] for r in res], yerr=[r["std"] for r in res],
-           color=[OK if r["mean"] == best else MUTED for r in res], capsize=3)
-    ax.set_ylabel("RMSLE backtest (↓ mejor)")
-    ax.set_title("Experimentos: media de 4 folds y su dispersión", loc="left")
-    ax.tick_params(axis="x", rotation=30)
+    subs = json.loads(f.read_text(encoding="utf-8"))["submissions"]
+    x = [f"{s['tag']}\n{s['base']}" for s in subs]
+    fig, ax = plt.subplots(figsize=(10, 4))
+    for key, label, col, mk in (("holdout", "examen final (holdout)", WARN, "s"),
+                                ("lb", "Kaggle (nota oficial)", INK, "o"),
+                                ("cv", "prácticas (media de 4 folds)", ACCENT, "D")):
+        ys = [s[key] for s in subs]
+        ax.plot(x, ys, marker=mk, color=col, lw=2, label=label)
+        ax.annotate(f"{ys[-1]:.4f}", (len(x) - 1, ys[-1]), xytext=(8, 0), textcoords="offset points",
+                    va="center", fontsize=9, color=col)
+    ax.set_ylabel("RMSLE (↓ mejor)")
+    ax.set_title("Cada envío a Kaggle: las tres medidas bajan juntas desde v0.4", loc="left")
+    ax.grid(axis="y", color=MUTED, alpha=0.25)
+    ax.legend(frameon=False, loc="upper right")
     save(fig, "progreso")
 
 
