@@ -70,6 +70,8 @@ def get_board():
     runners = b.setdefault("runners", {})
     for r in [b.setdefault("runner", {})] + [runners.setdefault(k, {}) for k in LANES]:
         r["alive"] = pid_alive(r.get("pid"))
+        if not r["alive"] and r.get("state") in ("working", "idle"):
+            r.update(state="stopped", current=None)  # pid muerto: no mostrar carriles fantasma
         live = HERE / "runs" / r["live"] if r.get("live") else None
         r["last_activity"] = (datetime.fromtimestamp(live.stat().st_mtime).astimezone().isoformat(timespec="seconds")
                               if live and live.is_file() else None)  # última línea que escribió el agente

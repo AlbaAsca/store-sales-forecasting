@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:24:19+02:00",
+  "updated": "2026-10-17T17:25:12+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-035",
-    "heartbeat": "2026-10-17T17:19:35+02:00",
-    "message": "tester con T-035",
+    "current": "T-039",
+    "heartbeat": "2026-10-17T17:24:22+02:00",
+    "message": "desarrollador con T-039",
     "pid": 15036,
-    "agent": "tester",
-    "started": "2026-10-17T17:19:35+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T17:24:22+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-035-tester-20261017-171935.jsonl"
+    "live": "live-T-039-desarrollador-20261017-172422.jsonl"
   },
   "agents": [
     {
@@ -2288,23 +2288,45 @@
       "id": "T-039",
       "title": "Bug: runners.{think,measure} con estado fantasma (pid muerto, pid 8) mientras el runner sin carril trabaja",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 0.8,
       "auto": true,
       "manual": null,
       "desc": "Tras T-033 el panel ve runners.think=T-032 y runners.measure=T-024 'working' con pid muerto (uno pid=8, parece dato de test escrito en el board.json real) mientras el runner real (lane all, clave runner) trabaja en T-034. Arreglar: (1) que ningún test escriba en board/board.json real; (2) un runner --lane all actualiza el estado que el panel muestra; (3) al arrancar cualquier runner, limpiar carriles con pid muerto (state stopped). Criterio: test que lo cubra; suite en verde; el panel no muestra carriles fantasma.",
       "deps": [],
       "created": "2026-10-17T17:18:43+02:00",
-      "updated": "2026-10-17T17:18:43+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T17:25:12+02:00",
+      "started_at": "2026-10-17T17:24:22+02:00",
+      "finished_at": "2026-10-17T17:25:12+02:00",
       "log": [
         {
           "t": "2026-10-17T17:18:43+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:24:22+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T17:25:12+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: Aislado `board.json` en tests, limpieza de carriles con pid muerto al arrancar el runner y panel sin fantasmas; 33 tests en verde."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T17:25:12+02:00",
+          "min": 0.8,
+          "turns": 24,
+          "tokens": 220628,
+          "cost_usd": 0.158785,
+          "verdict": "review"
         }
       ]
     }

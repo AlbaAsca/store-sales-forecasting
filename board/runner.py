@@ -119,6 +119,15 @@ def set_runner(**kw):
     bd.update(f)
 
 
+def clean_dead_lanes(b):
+    """Carriles (y el runner sin carril) con pid muerto o sin pid no pueden estar 'working': pasan a stopped."""
+    for st in [b.setdefault("runner", {})] + [b.setdefault("runners", {}).setdefault(k, {}) for k in bd.LANES]:
+        if st.get("state") in (None, "stopped") and not st.get("pid"):
+            continue
+        if not bd.pid_alive(st.get("pid")) and st.get("pid") != os.getpid():
+            st.update(state="stopped", current=None, pid=None, message="Runner parado (pid muerto)")
+
+
 def enabled():
     if STOP.exists():
         return False
@@ -371,6 +380,7 @@ def main():
         return
     fails = 0
     print(f"Runner [{LANE}] en marcha · claude = {o.claude}\nPausa: botón en el panel o crea board/STOP · Ctrl+C para salir")
+    bd.update(clean_dead_lanes)
     set_runner(state="idle", current=None, message="Runner en marcha", pid=os.getpid())
 
     def recover(b):  # tareas que se quedaron "En curso" si el runner se cortó

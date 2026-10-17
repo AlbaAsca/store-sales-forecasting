@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -67,6 +68,20 @@ def test_commit_solo_con_ficheros_propios(tmp_path, monkeypatch):
     assert files == ["board/board.json", "mio.py", "otro.txt"]
     assert g("show", "--name-only", "--format=", "HEAD").split() == files
     assert "previo.txt" in g("status", "--porcelain")  # sigue sin commitear
+
+
+def test_limpia_carriles_con_pid_muerto():
+    b = {"runner": {"pid": os.getpid(), "state": "working"},
+         "runners": {"think": {"pid": 99999999, "state": "working", "current": "T-32"},
+                     "measure": {"pid": 8, "state": "working", "current": "T-24"}}}
+    runner.clean_dead_lanes(b)
+    assert b["runner"]["state"] == "working"  # el vivo (este proceso) no se toca
+    for k in ("think", "measure"):
+        assert b["runners"][k]["state"] == "stopped" and b["runners"][k]["current"] is None
+
+
+def test_los_tests_no_tocan_el_board_real():
+    assert runner.bd.F.parent != Path(runner.__file__).parent
 
 
 def test_limite_de_uso_no_es_fallo(monkeypatch):
