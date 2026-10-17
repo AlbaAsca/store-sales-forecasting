@@ -192,6 +192,7 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 | V-016 · día del mes y día de paga | empeora 3 de 4 prácticas (0.3878) | el modelo ya lo deducía de las ventas recientes |
 | V-019 · predecir cero en series dormidas | mejora las prácticas (0.3849) pero empeora el examen final (0.4227) | da por muerto el material escolar que arranca en agosto; se corrige en V-023 |
 | V-023 · cero solo en series de verdad muertas (excepción de temporada) | prácticas 0.3849 / 0.3850 (base 0.3852), mejora 4/4 folds; examen final pendiente del consultor | no toca series que vendieron en las mismas fechas del año anterior |
+| V-020 · reparto distinto de las dos opiniones según el tipo de producto | empeora 3 de 4 prácticas (0.3856 / 0.3857 vs 0.3852) | el reparto 50/50 ya era casi óptimo |
 | V-018 · ejemplos de la vuelta al cole del año anterior | prácticas 0.3839 / 0.3840 (base 0.3852), mejora 4/4 folds; material escolar −0.014 | el modelo ve cómo es un arranque de temporada |
 | V-010 y V-015 · varias semillas / series intermitentes | mejoras pequeñas | se están repitiendo sobre base-v5 con la regla nueva (V-021, V-022) |
 

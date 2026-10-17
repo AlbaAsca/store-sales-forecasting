@@ -127,6 +127,9 @@ Qué: igual que V-019, pero no se pone a 0 una serie que vendió algo en las mis
 ### V-018 · ejemplos de la vuelta al cole del año anterior en el entrenamiento — ✅ ACEPTADA (0.3852 → 0.3839 / 0.3840 con semillas 42 y 7)
 Qué: añadir al entrenamiento del modelo directo 4 cortes de hace un año (mismo periodo, ±1 semana) para que vea cómo es un arranque de temporada. · Pasó: mejora 4/4 folds (f4 −0.0031), SCHOOL AND OFFICE −0.014, c1 0.7522 (sin cerradas 0.3865/0.3868), tiempo 90 s. · Por qué: ahora el modelo ve ejemplos reales de la subida estacional en vez de solo un rasgo «hace 364 días» que nunca había visto en acción; la ganancia en c1 es pequeña (−0.0005), así que conviene confirmarla en el holdout.
 
+### V-020 · reparto distinto directo/recursivo por tipo de producto — ❌ RECHAZADA (0.3856 / 0.3857 vs 0.3852)
+Qué: en vez de mezclar 50/50 «16 días de golpe» y «día a día», usar 65/35, 50/50 o 35/65 según lo a ratos que se vende el producto. · Pasó: empeora 3 de 4 prácticas (+0.0004 a +0.0007) con dos semillas; c1 0.7552 (base 0.7526). · Por qué: los dos métodos fallan de forma parecida en todos los grupos, así que el 50/50 ya estaba cerca del óptimo y los pesos a priori solo añaden ruido.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …
