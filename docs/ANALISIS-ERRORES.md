@@ -6,7 +6,7 @@ problema). **Sesgo** = media de `log(1+pred) − log(1+real)`: positivo = el mod
 Solo folds de `eval/folds.json`; el holdout no se ha mirado.
 
 Scripts (reproducibles): `python scripts/analysis/errors_base.py base-v0` (desglose y casos),
-`python scripts/analysis/errors_cf.py` (contrafactuales), `python scripts/analysis/errors_promo.py` (promociones). T-027: `diag_lb_gap.py`, `diag_window.py`.
+`python scripts/analysis/errors_cf.py` (contrafactuales), `python scripts/analysis/errors_promo.py` (promociones). T-027: `diag_lb_gap.py`, `diag_lb_gap_extra.py`, `diag_window.py`.
 
 ## 2026-10-17 · T-027 · ¿Por qué base-v3 gana −0.025 en CV y solo −0.001 en Kaggle?
 
@@ -78,6 +78,11 @@ de Kaggle tiene el suyo (el pico de promo), así que encaja con «evento + ruido
   Afecta solo a ventanas que empiezan el 26-dic (no al test de Kaggle). Arreglo: `start = future.date.min()`.
 - **28-feb-2017 (Carnaval)**: v3 predice de menos los domingos (sesgo −0.69 y −0.80) y el martes de Carnaval (−0.46);
   pierde sobre todo en perecederos (PREPARED FOODS, MEATS, POULTRY). v3 es menos robusto que v2 alrededor de festivos.
+- **Ceros**: v3 casi nunca predice 0 (2.5 % de filas en el test, 3.7 % en los folds), cuando en la realidad hay ~14 % de
+  ventas cero (folds) y 14.6 % el 15-ago-2017. En los 4 folds, las filas con venta 0 son el 14 % de las filas pero el
+  **21 % del error**, y el 16 % sale de filas donde v3 predijo >1 unidad. v2 predecía 0 en el 7.6 % del test. No explica
+  el salto CV→LB (afecta igual a CV y test), pero es un hueco grande para una variante futura
+  (`python scripts/analysis/diag_lb_gap_extra.py`).
 
 ### Qué hacer
 1. Que v3 no extrapole promociones fuera del rango visto (tarjeta V-011).

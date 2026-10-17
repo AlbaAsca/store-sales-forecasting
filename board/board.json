@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T10:58:25+02:00",
+  "updated": "2026-10-17T11:00:19+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -42,7 +42,7 @@
     "started": "2026-10-17T10:58:25+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-027-experto-20261017-103151.jsonl"
+    "live": "live-T-027-experto-20261017-105825.jsonl"
   },
   "agents": [
     {
@@ -90,8 +90,8 @@
       "name": "Analista de errores",
       "role": "Lee los errores del modelo por fold, tienda y familia como un data scientist senior",
       "color": "#ca8a04",
-      "status": "working",
-      "current": "T-027"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "modelador",
@@ -1338,18 +1338,18 @@
       "id": "T-027",
       "title": "Diagnóstico: por qué base-v3 mejora −0.025 en CV y solo −0.001 en Kaggle",
       "owner": "experto",
-      "status": "doing",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": 38.4,
+      "actual_min": 40.3,
       "auto": true,
       "manual": null,
       "desc": "Datos: CV v2 0.4154 → v3 0.3904; holdout 0.5244 → 0.4378; LB 0.41457 → 0.41341. Comprobar por orden: (1) bug en la ruta de envío: reproducir make_submission cortando train en 2017-07-30 y comparar fila a fila con eval/results/base-v3-holdout/preds; categorías de family/store en test vs train; orden de ids; (2) dónde difieren v2 y v3 en el test (dist/submission-base-v2.csv vs v3) por familia y día: ¿vuelta al cole (SCHOOL AND OFFICE SUPPLIES, final de agosto), paga del 31?; (3) ruido: el LB público es una sola ventana de 16 días, cuánto varía RMSLE entre ventanas de 16 días en nuestro backtest. Entregable: docs/ANALISIS-ERRORES.md (sección nueva, explicada para aprender) + veredicto bug/estacional/ruido + máx. 2 tarjetas (p. ej. un fold que cubra 16-31 ago de 2016). Nunca mirar el holdout para elegir variantes.",
       "deps": [],
       "created": "2026-10-17T10:17:23+02:00",
-      "updated": "2026-10-17T10:58:25+02:00",
+      "updated": "2026-10-17T11:00:19+02:00",
       "started_at": "2026-10-17T10:58:25+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T11:00:19+02:00",
       "log": [
         {
           "t": "2026-10-17T10:17:23+02:00",
@@ -1390,6 +1390,28 @@
           "t": "2026-10-17T10:58:25+02:00",
           "by": "runner",
           "msg": "empieza experto"
+        },
+        {
+          "t": "2026-10-17T11:00:05+02:00",
+          "by": "experto",
+          "msg": "Veredicto: no es bug (ruta de envío idéntica al backtest, |Δlog| 4e-16). Causa probable: pico de promo fuera de rango el 16-ago (SCHOOL/LAWN/LINGERIE, v3 x3) + vuelta al cole no cubierta por los folds + ruido (Δ v3−v2 > −0.005 en 3/23 ventanas). Extra: v3 casi no predice ceros (filas y=0 = 21% del error CV). Tarjetas: T-031 (V-011), T-032. Doc: docs/ANALISIS-ERRORES.md."
+        },
+        {
+          "t": "2026-10-17T11:00:19+02:00",
+          "by": "experto",
+          "msg": "DONE: No es un bug: pico de promos fuera de rango el 16 de agosto + vuelta al cole sin fold + ruido de ventana; análisis en docs/ANALISIS-ERRORES.md y tarjetas T-031/T-032."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "experto",
+          "mode": "work",
+          "at": "2026-10-17T11:00:19+02:00",
+          "min": 1.9,
+          "turns": 24,
+          "tokens": 512400,
+          "cost_usd": 0.5217904,
+          "verdict": "done"
         }
       ]
     },
