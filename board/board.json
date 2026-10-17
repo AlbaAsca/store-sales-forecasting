@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:01:18+02:00",
+  "updated": "2026-10-17T11:04:36+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -42,7 +42,7 @@
     "started": "2026-10-17T11:01:18+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-020-desarrollador-20261017-110024.jsonl"
+    "live": "live-T-020-tester-20261017-110118.jsonl"
   },
   "agents": [
     {
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-020"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -1137,7 +1137,7 @@
       "id": "T-020",
       "title": "V-007: objetivo tweedie sobre ventas crudas en el LightGBM",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": 0.8,
@@ -1148,7 +1148,7 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T11:01:15+02:00",
+      "updated": "2026-10-17T11:04:35+02:00",
       "started_at": "2026-10-17T11:00:24+02:00",
       "finished_at": "2026-10-17T11:01:15+02:00",
       "log": [
@@ -1181,6 +1181,21 @@
           "t": "2026-10-17T11:01:18+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T11:04:18+02:00",
+          "by": "tester",
+          "msg": "CV 0.4094 semilla 42 y 0.4094 semilla 7 (base-v3 0.3904): empeora 4/4 folds (+0.009..+0.028); peor en LAWN AND GARDEN +0.072, LADIESWEAR +0.046, SEAFOOD +0.043; tiempo 21s→71s → RECHAZADA"
+        },
+        {
+          "t": "2026-10-17T11:04:27+02:00",
+          "by": "tester",
+          "msg": "RECHAZADA: CV 0.4094 (2 semillas) vs base-v3 0.3904, empeora 4/4 folds"
+        },
+        {
+          "t": "2026-10-17T11:04:35+02:00",
+          "by": "tester",
+          "msg": "DONE: V-007 RECHAZADA: CV 0.4094 en dos semillas frente a 0.3904 de base-v3, empeora 4/4 folds."
         }
       ],
       "runs": [
@@ -1193,6 +1208,16 @@
           "tokens": 173942,
           "cost_usd": 0.13216969999999997,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T11:04:35+02:00",
+          "min": 3.3,
+          "turns": 19,
+          "tokens": 150787,
+          "cost_usd": 0.10997589999999999,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-17T11:01:18+02:00"
@@ -1584,6 +1609,30 @@
         {
           "t": "2026-10-17T10:40:19+02:00",
           "by": "experto",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-033",
+      "title": "Runner con dos carriles en paralelo: pensar y medir",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Petición de Alba. (1) board/runner.py --lane think|measure|all (por defecto all = comportamiento actual). think = investigador, modelador, experto, arquitecto (+ rondas de aportación); measure = desarrollador y tester (las verificaciones de review van siempre a measure). pick() filtra por carril. (2) Estado por carril en board.json: runners.{think,measure} con los mismos campos que runner (state, current, agent, pid, live, heartbeat…); mantener runner como alias de compatibilidad o migrar panel y server a la vez. Guarda de instancia única POR carril (bd.pid_alive). (3) Commits por carril: anotar git status --porcelain al empezar la tarjeta y al terminar añadir solo los ficheros que han cambiado durante la tarjeta + board/board.json (nunca git add -A), para no llevarse el trabajo a medias del otro carril. (4) run-agents-scheduled.bat lanza los dos carriles a la vez (--once, think con --contribute) con logs separados. (5) server.py: /api/runner/start y /stop aceptan ?lane= (sin lane = los dos); /api/board expone alive y last_activity por carril; /api/runner/live?lane=. (6) panel.html: una línea por carril con su estado/vivo/última acción y Ver en directo con selector de carril; Iniciar/Parar actúan sobre ambos. Criterio: tests nuevos en tests/test_runner.py y tests/test_board.py (pick por carril, guarda por carril, commit solo con ficheros propios usando un repo git temporal) y suite en verde; los tests NUNCA deben tocar el board.json real ni procesos reales (usar copias con pid=None). No cambiar ALLOWED/DENIED.",
+      "deps": [],
+      "created": "2026-10-17T11:03:38+02:00",
+      "updated": "2026-10-17T11:03:38+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T11:03:38+02:00",
+          "by": "consultor",
           "msg": "creada"
         }
       ]

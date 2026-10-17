@@ -40,6 +40,11 @@ Qué: V-004 + 3 rasgos (onpromotion del día objetivo, suma 14 d previos al cort
 otra semilla 0.3940 (variación ~0.001). Mejoran SCHOOL AND OFFICE −0.081, BEAUTY −0.056; ninguna familia empeora más de +0.005. Vs V-003: −0.063. ·
 Por qué: el árbol aprende la respuesta a la promo por familia/tienda y no la mezcla con tendencia, que era el fallo de la beta fija de V-003.
 
+### V-007 · objetivo tweedie sobre ventas crudas — ❌ RECHAZADA (RMSLE 0.3904 → 0.4094, empeora 4/4 folds)
+Qué: cambiar la función de pérdida del LightGBM de L2 sobre log1p(ventas) a tweedie (p=1.3) sobre ventas crudas. · Pasó: 0.4075 / 0.3885 / 0.4113 / 0.4304;
+semilla 7 igual (0.4094): la variación es ~0.000, el empeoramiento (+0.019) es real. Peor en LAWN AND GARDEN +0.072, LADIESWEAR +0.046, SEAFOOD +0.043; 3× más lento. ·
+Por qué: la función de pérdida es lo que el modelo intenta minimizar al entrenar; si no coincide con la métrica, optimiza otra cosa. RMSLE es L2 en log1p, así que L2 sobre log1p ya es exactamente la métrica. Tweedie pondera por escala (las series grandes mandan) y las familias de pocas ventas pierden.
+
 ### V-006 · estacionalidad anual (retardo 364) como rasgo — ✅ ACEPTADA (RMSLE 0.3946 → 0.3904, mejora 4/4 folds)
 Qué: a V-005 se le añaden 3 rasgos: log1p de las ventas del mismo día un año antes (−364 d), su ventana ±3 d y la diferencia frente a la media 14 d previa a ese día. ·
 Pasó: 0.3932 / 0.3796 / 0.3861 / 0.4029; otra semilla: 0.3903 (variación ~0.001). Mejoran GROCERY I −0.028, HOME CARE −0.022, DAIRY −0.021;

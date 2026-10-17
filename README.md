@@ -158,6 +158,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | V-004 | LightGBM global (8 cortes; medias log + perfil semanal) | 0.4057 ± 0.0122 (f1 0.4041 · f2 0.3926 · f3 0.4007 · f4 0.4255) | −0.010 vs base-v2 (3/4) | ✅ ACEPTADA |
 | V-005 | V-004 + 3 rasgos de promoción (día, suma 14 d, ratio) | 0.3946 ± 0.0072 (f1 0.3949 · f2 0.3860 · f3 0.3918 · f4 0.4057) | −0.011 vs V-004 (4/4) | ✅ ACEPTADA |
 | V-006 | V-005 + 3 rasgos anuales (retardo 364: día, ventana ±3 d, diferencia) | 0.3904 ± 0.0087 (f1 0.3932 · f2 0.3796 · f3 0.3861 · f4 0.4029) | −0.004 vs V-005 (4/4) | ✅ ACEPTADA |
+| V-007 | base-v3 con objetivo tweedie (p=1.3) sobre ventas crudas | 0.4094 ± 0.0149 (f1 0.4075 · f2 0.3885 · f3 0.4113 · f4 0.4304) | +0.019 vs base-v3 (0/4) | ❌ RECHAZADA |
 
 ![Progreso de los experimentos](docs/img/progreso.png)
 
