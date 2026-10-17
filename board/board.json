@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:25:38+02:00",
+  "updated": "2026-10-17T17:27:34+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-039",
-    "heartbeat": "2026-10-17T17:25:14+02:00",
-    "message": "tester con T-039",
+    "current": "T-023",
+    "heartbeat": "2026-10-17T17:25:41+02:00",
+    "message": "desarrollador con T-023",
     "pid": 23052,
-    "agent": "tester",
-    "started": "2026-10-17T17:25:14+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T17:25:41+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-039-tester-20261017-172514.jsonl"
+    "live": "live-T-023-desarrollador-20261017-172541.jsonl"
   },
   "agents": [
     {
@@ -1394,10 +1394,10 @@
       "id": "T-023",
       "title": "V-010: ensemble de semillas y de ventanas de entrenamiento",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "baja",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 1.8,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (chongzhenjie; DISENO-MODELOS #13): promediar 3 semillas y 2 ventanas (todo / desde 2015) reduce varianza. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Hacerla después de V-007/V-008 sobre la base vigente.",
@@ -1405,9 +1405,9 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T17:27:34+02:00",
+      "started_at": "2026-10-17T17:25:41+02:00",
+      "finished_at": "2026-10-17T17:27:28+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
@@ -1423,6 +1423,43 @@
           "t": "2026-10-17T17:18:52+02:00",
           "by": "consultor",
           "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
+        },
+        {
+          "t": "2026-10-17T17:25:41+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T17:25:45+02:00",
+          "by": "desarrollador",
+          "msg": "empiezo V-010 sobre base-v4"
+        },
+        {
+          "t": "2026-10-17T17:27:28+02:00",
+          "by": "desarrollador",
+          "msg": "lista para medir con backtest completo (comparar con base-v4)"
+        },
+        {
+          "t": "2026-10-17T17:27:30+02:00",
+          "by": "desarrollador",
+          "msg": "V-010 sobre base-v4 (3 semillas x 2 ventanas, media en log). Quick f1 0.3908 en 76 s (~6x tiempo). Falta medicion completa por el tester."
+        },
+        {
+          "t": "2026-10-17T17:27:34+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-010 (3 semillas × 2 ventanas) implementada sobre base-v4; quick f1 0.3908 en 76 s, tests en verde, falta backtest completo del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T17:27:34+02:00",
+          "min": 1.9,
+          "turns": 12,
+          "tokens": 133883,
+          "cost_usd": 0.0938907,
+          "verdict": "review"
         }
       ]
     },
