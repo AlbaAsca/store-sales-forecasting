@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:19:48+02:00",
+  "updated": "2026-10-17T18:20:25+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-045"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -2789,18 +2789,18 @@
       "id": "T-045",
       "title": "V-016: día del mes y día de paga (dom, is_payday, días desde paga, días a fin de mes) en directo y recursivo",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 1.5,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (T-040 + DISENO-MODELOS T-041): base-v4 tiene sesgo por día del mes (días 1-5 y fin de mes -0.05 en log, resto +0.018); la paga es el 15 y el último día. Cambio: añadir dom, is_payday, dias_desde_paga (0-15), dias_a_fin_mes del día objetivo en _features y _step_feats; nada más. Criterio: CV medio < 0.3858, empeora como mucho 1 de 4 folds, mejora > 0.001 (repetir con otra semilla), c1 sin tiendas 18/25 no empeora (hoy 0.3902); anotar sesgo por grupo de día del mes y holdout.",
       "deps": [],
       "created": "2026-10-17T18:06:29+02:00",
-      "updated": "2026-10-17T18:18:59+02:00",
+      "updated": "2026-10-17T18:20:25+02:00",
       "started_at": "2026-10-17T18:18:52+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T18:20:21+02:00",
       "log": [
         {
           "t": "2026-10-17T18:06:29+02:00",
@@ -2816,6 +2816,28 @@
           "t": "2026-10-17T18:18:59+02:00",
           "by": "desarrollador",
           "msg": "empiezo"
+        },
+        {
+          "t": "2026-10-17T18:20:21+02:00",
+          "by": "desarrollador",
+          "msg": "V-016 implementada (dom, is_payday, dias_desde_paga, dias_a_fin_mes en directo y recursivo). Quick f1 0.3942; tests 38 OK. Medición completa pendiente del tester."
+        },
+        {
+          "t": "2026-10-17T18:20:25+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-016 implementada (4 rasgos de calendario en directo y recursivo), quick f1 0.3942 y tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T18:20:25+02:00",
+          "min": 1.6,
+          "turns": 19,
+          "tokens": 148163,
+          "cost_usd": 0.12260460000000002,
+          "verdict": "review"
         }
       ]
     },
