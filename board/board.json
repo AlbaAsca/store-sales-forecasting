@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:58:36+02:00",
+  "updated": "2026-10-17T17:59:16+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,16 +33,16 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "working",
-    "current": "T-036",
-    "heartbeat": "2026-10-17T17:44:49+02:00",
-    "message": "tester con T-036",
+    "state": "idle",
+    "current": null,
+    "heartbeat": "2026-10-17T17:59:16+02:00",
+    "message": "aportación investigador (T-040): notas con la comparación y dos propuestas (V-015 rasgos de ceros, V-016 rasgos de calendario) en docs/NOTAS-investigador.md; las tarjetas no se crearon porque `board.py add` fue denegado y quedan pendientes de crear.",
     "pid": 23052,
-    "agent": "tester",
-    "started": "2026-10-17T17:44:49+02:00",
-    "contrib_at": "2026-10-15T19:30:08+02:00",
-    "contrib_agent": "modelador",
-    "live": "live-T-036-tester-20261017-174449.jsonl"
+    "agent": "investigador",
+    "started": "2026-10-17T17:58:39+02:00",
+    "contrib_at": "2026-10-17T17:59:16+02:00",
+    "contrib_agent": "investigador",
+    "live": "live-T-040-investigador-20261017-175839.jsonl"
   },
   "agents": [
     {
@@ -2476,6 +2476,53 @@
         }
       ],
       "verify_started": "2026-10-17T17:25:14+02:00"
+    },
+    {
+      "id": "T-040",
+      "title": "Ronda de aportación: investigador",
+      "owner": "investigador",
+      "status": "done",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 0.6,
+      "auto": true,
+      "manual": null,
+      "desc": "Busca en la discusión y notebooks públicos de la competición, en papers o blogs de forecasting una idea concreta con ganancia esperada que no esté ya en el panel.",
+      "deps": [],
+      "created": "2026-10-17T17:58:39+02:00",
+      "updated": "2026-10-17T17:59:16+02:00",
+      "started_at": "2026-10-17T17:58:39+02:00",
+      "finished_at": "2026-10-17T17:59:16+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T17:58:39+02:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:58:39+02:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-17T17:59:16+02:00",
+          "by": "investigador",
+          "msg": "DONE: notas con la comparación y dos propuestas (V-015 rasgos de ceros, V-016 rasgos de calendario) en docs/NOTAS-investigador.md; las tarjetas no se crearon porque `board.py add` fue denegado y quedan pendientes de crear."
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "contrib",
+          "at": "2026-10-17T17:59:16+02:00",
+          "min": 0.6,
+          "turns": 7,
+          "tokens": 145013,
+          "cost_usd": 0.15131170000000002,
+          "verdict": "done"
+        }
+      ]
     }
   ],
   "runners": {
