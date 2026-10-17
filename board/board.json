@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:00:19+02:00",
+  "updated": "2026-10-17T11:00:24+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-027",
-    "heartbeat": "2026-10-17T10:58:25+02:00",
-    "message": "experto con T-027",
+    "current": "T-020",
+    "heartbeat": "2026-10-17T11:00:24+02:00",
+    "message": "desarrollador con T-020",
     "pid": 20528,
-    "agent": "experto",
-    "started": "2026-10-17T10:58:25+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:00:24+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
     "live": "live-T-027-experto-20261017-105825.jsonl"
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-020"
     },
     {
       "id": "tester",
@@ -1137,7 +1137,7 @@
       "id": "T-020",
       "title": "V-007: objetivo tweedie sobre ventas crudas en el LightGBM",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": null,
@@ -1148,8 +1148,8 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T11:00:24+02:00",
+      "started_at": "2026-10-17T11:00:24+02:00",
       "finished_at": null,
       "log": [
         {
@@ -1161,6 +1161,11 @@
           "t": "2026-10-17T10:17:23+02:00",
           "by": "consultor",
           "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
+        },
+        {
+          "t": "2026-10-17T11:00:24+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
