@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:09:48+02:00",
+  "updated": "2026-10-17T17:11:45+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-024",
-    "heartbeat": "2026-10-17T17:09:29+02:00",
-    "message": "tester con T-024",
+    "current": "T-032",
+    "heartbeat": "2026-10-17T17:09:51+02:00",
+    "message": "arquitecto con T-032",
     "pid": 15036,
-    "agent": "tester",
-    "started": "2026-10-17T17:09:29+02:00",
+    "agent": "arquitecto",
+    "started": "2026-10-17T17:09:50+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-024-tester-20261017-170929.jsonl"
+    "live": "live-T-032-arquitecto-20261017-170951.jsonl"
   },
   "agents": [
     {
@@ -1874,18 +1874,18 @@
       "id": "T-032",
       "title": "Fold de control de vuelta al cole (2016-08-16..31) y 'start' robusto al 25-dic en el backtest",
       "owner": "arquitecto",
-      "status": "next",
+      "status": "done",
       "priority": "media",
       "estimate_min": 25.0,
-      "actual_min": 219.4,
+      "actual_min": 221.2,
       "auto": true,
       "manual": null,
       "desc": "Motivo (T-027): los 4 folds son de mayo-julio y el test de Kaggle es 16-31 ago (vuelta al cole Sierra, SCHOOL 37% de la diferencia v2-v3); el CV no ve esa estación. · Cambio: añadir en eval/folds.json un fold de control 'c1' 2016-08-16..2016-08-31 que backtest.py y results.py compare reporten APARTE (no entra en la media ni en el criterio por defecto, para no romper la comparabilidad con bases anteriores). Además documentar/avisar: si history.max()+1 != future.date.min() (caso 25-dic, train no tiene esa fecha) los modelos que calculan start así dejan el último día sin predicción (ventana 26-dic: 10-ene predicho 0); añadir test que lo detecte. · Criterio: tests verdes, base-v3 medido con c1 y anotado; la media de los 4 folds no cambia.",
       "deps": [],
       "created": "2026-10-17T10:40:19+02:00",
-      "updated": "2026-10-17T17:09:29+02:00",
-      "started_at": "2026-10-17T16:30:02+02:00",
-      "finished_at": "2026-10-17T17:09:29+02:00",
+      "updated": "2026-10-17T17:11:45+02:00",
+      "started_at": "2026-10-17T17:09:50+02:00",
+      "finished_at": "2026-10-17T17:11:40+02:00",
       "log": [
         {
           "t": "2026-10-17T10:40:19+02:00",
@@ -1911,6 +1911,38 @@
           "t": "2026-10-17T17:09:29+02:00",
           "by": "runner",
           "msg": "interrumpida (runner reiniciado); se reintentará"
+        },
+        {
+          "t": "2026-10-17T17:09:50+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-17T17:11:25+02:00",
+          "by": "arquitecto",
+          "msg": "Hecho. folds.json: 'control_folds' (c1 2016-08-16..31) separado de 'folds' (los demás scripts no cambian). backtest.py lo mide y guarda en summary['control']; results.py compare lo imprime aparte. start_gap() + AVISO en backtest y test (hueco 25-dic). base-v3: media 4 folds 0.3904 ± 0.0087 sin cambio; c1 = 0.7696 (casi el doble: el CV de mayo-julio no ve la vuelta al cole). 30 tests verdes. --no-control para omitirlo."
+        },
+        {
+          "t": "2026-10-17T17:11:40+02:00",
+          "by": "arquitecto",
+          "msg": "c1 aparte, aviso de hueco 25-dic, tests verdes"
+        },
+        {
+          "t": "2026-10-17T17:11:45+02:00",
+          "by": "arquitecto",
+          "msg": "DONE: fold de control c1 reportado aparte (base-v3: c1 0.7696, media de 4 folds 0.3904 sin cambio), aviso y test del hueco del 25-dic, 30 tests verdes."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-17T17:11:45+02:00",
+          "min": 1.9,
+          "turns": 16,
+          "tokens": 307565,
+          "cost_usd": 0.1861715,
+          "verdict": "done"
         }
       ]
     },

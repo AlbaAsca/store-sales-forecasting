@@ -36,7 +36,9 @@ def compare(a, b, max_worse_folds=1):
             fam.setdefault(name, []).append(v - fa[k]["by_family"].get(name, v))
     fam = sorted(((n, sum(d) / len(d)) for n, d in fam.items()), key=lambda x: x[1])
     ok = mean_b < mean_a and len(worse) <= max_worse_folds
-    return dict(folds=folds, worse=worse, mean_a=mean_a, mean_b=mean_b, families=fam, accepted=ok)
+    ca, cb = {f["id"]: f["rmsle"] for f in a.get("control", [])}, {f["id"]: f["rmsle"] for f in b.get("control", [])}
+    control = [(k, ca[k], cb[k]) for k in ca if k in cb]  # informativo: no entra en media ni en veredicto
+    return dict(folds=folds, worse=worse, mean_a=mean_a, mean_b=mean_b, families=fam, accepted=ok, control=control)
 
 
 def main(argv=None):
@@ -63,6 +65,8 @@ def main(argv=None):
     for k, x, y in r["folds"]:
         print(f"{k:8} {x:12.4f} {y:12.4f} {y - x:+8.4f} {'peor' if y > x else 'mejor'}")
     print(f"{'media':8} {r['mean_a']:12.4f} {r['mean_b']:12.4f} {r['mean_b'] - r['mean_a']:+8.4f}")
+    for k, x, y in r["control"]:
+        print(f"{k:8} {x:12.4f} {y:12.4f} {y - x:+8.4f} {'peor' if y > x else 'mejor'}  (control: aparte, no entra en la media)")
     print(f"tiempo: {a['secs']:.0f} s → {b['secs']:.0f} s")
     print("familias que más mejoran: " + ", ".join(f"{n} {d:+.3f}" for n, d in r["families"][:3]))
     print("familias que más empeoran: " + ", ".join(f"{n} {d:+.3f}" for n, d in r["families"][::-1][:3]))

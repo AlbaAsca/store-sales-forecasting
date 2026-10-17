@@ -63,3 +63,27 @@ def test_compare_veredicto():
     assert results.compare(base, summ([0.40, 0.45, 0.52, 0.48]))["accepted"]       # mejora media, empeora 1 fold
     assert not results.compare(base, summ([0.30, 0.55, 0.52, 0.48]))["accepted"]   # empeora 2 folds
     assert not results.compare(base, summ([0.50, 0.50, 0.50, 0.50]))["accepted"]   # empate: no aporta
+
+
+def test_start_gap_detecta_hueco_25_dic():
+    train, ctx = synthetic(days=60)
+    train = train[train["date"] != pd.Timestamp("2017-02-09")]  # como el 25-dic: no hay fila ese día
+    h, fut, _, _ = backtest.split(train, ctx, "2017-02-09", "2017-02-24")
+    assert backtest.start_gap(h, fut) == 1  # future empieza el 10, history acaba el 8
+    assert h["date"].max() + pd.Timedelta(days=1) != fut["date"].min()  # el start ingenuo falla
+    h2, fut2, _, _ = backtest.split(train, ctx, "2017-02-12", "2017-02-27")
+    assert backtest.start_gap(h2, fut2) == 0
+
+
+def test_control_fold_aparte_de_la_media(tmp_path, monkeypatch):
+    (tmp_path / "toy").mkdir()
+    (tmp_path / "toy" / "model.py").write_text(TOY_MODEL)
+    monkeypatch.setattr(backtest, "RESULTS", tmp_path)
+    train, ctx = synthetic()
+    f1 = [{"id": "f1", "start": "2017-02-10", "end": "2017-02-25"}]
+    c1 = [{"id": "c1", "start": "2017-01-20", "end": "2017-02-04"}]
+    s = backtest.run(tmp_path / "toy", "t", f1, train, ctx, control=c1)
+    s0 = backtest.run(tmp_path / "toy", "t0", f1, train, ctx)
+    assert s["mean"] == s0["mean"] and [r["id"] for r in s["control"]] == ["c1"] and "control" not in s0
+    r = results.compare(s, s)
+    assert [k for k, _, _ in r["control"]] == ["c1"] and [k for k, _, _ in r["folds"]] == ["f1"]

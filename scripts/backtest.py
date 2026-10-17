@@ -1,6 +1,6 @@
 """Backtest fijo: mide un modelo con validación temporal (folds de eval/folds.json). CPU, determinista por semilla.
 
-  python scripts/backtest.py --src models/base --name base-v0          # 4 folds → eval/results/base-v0.json
+  python scripts/backtest.py --src models/base --name base-v0          # 4 folds (+ fold de control c1 aparte) → eval/results/base-v0.json
   python scripts/backtest.py --src variants/V-001 --name V-001 --quick # solo f1, para comprobar que corre
   python scripts/backtest.py --src models/base --name base-v0-holdout --holdout   # SOLO el consultor
 
@@ -59,30 +59,48 @@ def split(train, ctx, start, end):
     return history, future, y, c
 
 
-def run(src, name, folds, train, ctx, seed=42, save_preds=True):
+def start_gap(history, future):
+    """Días de hueco entre el fin del history y el primer día del future (0 = contiguos).
+    >0 pasa tras el 25-dic (train no tiene esa fecha): un modelo con `start = history.date.max()+1` empieza un día antes
+    del primer día a predecir y deja el último día del future sin predicción (sale 0). Calcula start con future.date.min()."""
+    return int((future["date"].min() - history["date"].max()).days) - 1
+
+
+def _one(model, f, train, ctx, seed, out_dir, save_preds):
+    history, future, y, c = split(train, ctx, f["start"], f["end"])
+    c["seed"] = seed
+    if start_gap(history, future):
+        print(f"  AVISO {f['id']}: history termina {history['date'].max().date()} y future empieza {future['date'].min().date()} "
+              "(hueco, p. ej. 25-dic): no uses history.max()+1 como start")
+    t0 = time.time()
+    p = np.asarray(model.fit_predict(history, future, c), float)
+    secs = time.time() - t0
+    assert len(p) == len(future), f"{f['id']}: {len(p)} predicciones para {len(future)} filas"
+    assert np.isfinite(p).all(), f"{f['id']}: predicciones con NaN/inf"
+    df = future[["date", "store_nbr", "family"]].assign(sales=y, pred=np.clip(p, 0, None))
+    if save_preds:
+        df.to_csv(out_dir / f"preds-{f['id']}.csv.gz", index=False)
+    le = (np.log1p(df["pred"]) - np.log1p(df["sales"])) ** 2
+    r = dict(id=f["id"], start=f["start"], end=f["end"], rmsle=rmsle(y, p), secs=round(secs, 1),
+             by_family={k: float(np.sqrt(v)) for k, v in le.groupby(df["family"], observed=True).mean().items()},
+             bias=float((np.log1p(df["pred"]) - np.log1p(df["sales"])).mean()))
+    print(f"  {f['id']} {f['start']}..{f['end']}  RMSLE {r['rmsle']:.4f}  ({secs:.1f} s)")
+    return r
+
+
+def run(src, name, folds, train, ctx, seed=42, save_preds=True, control=()):
+    """`control`: folds aparte (p. ej. vuelta al cole). Se miden y guardan en summary['control'], pero NO entran
+    en mean/std/secs ni en el criterio de aceptación: así la media sigue siendo comparable con bases anteriores."""
     model = load_model(src)
     out_dir = RESULTS / name
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = []
-    for f in folds:
-        history, future, y, c = split(train, ctx, f["start"], f["end"])
-        c["seed"] = seed
-        t0 = time.time()
-        p = np.asarray(model.fit_predict(history, future, c), float)
-        secs = time.time() - t0
-        assert len(p) == len(future), f"{f['id']}: {len(p)} predicciones para {len(future)} filas"
-        assert np.isfinite(p).all(), f"{f['id']}: predicciones con NaN/inf"
-        df = future[["date", "store_nbr", "family"]].assign(sales=y, pred=np.clip(p, 0, None))
-        if save_preds:
-            df.to_csv(out_dir / f"preds-{f['id']}.csv.gz", index=False)
-        le = (np.log1p(df["pred"]) - np.log1p(df["sales"])) ** 2
-        res.append(dict(id=f["id"], start=f["start"], end=f["end"], rmsle=rmsle(y, p), secs=round(secs, 1),
-                        by_family={k: float(np.sqrt(v)) for k, v in le.groupby(df["family"], observed=True).mean().items()},
-                        bias=float((np.log1p(df["pred"]) - np.log1p(df["sales"])).mean())))
-        print(f"  {f['id']} {f['start']}..{f['end']}  RMSLE {res[-1]['rmsle']:.4f}  ({secs:.1f} s)")
+    res = [_one(model, f, train, ctx, seed, out_dir, save_preds) for f in folds]
     scores = [r["rmsle"] for r in res]
     summary = dict(name=name, src=str(Path(src).as_posix()), seed=seed, folds=res,
                    mean=float(np.mean(scores)), std=float(np.std(scores)), secs=round(sum(r["secs"] for r in res), 1))
+    if control:
+        print("  -- folds de control (aparte, no entran en la media) --")
+        summary["control"] = [_one(model, f, train, ctx, seed, out_dir, save_preds) for f in control]
     (RESULTS / f"{name}.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
     return summary
 
@@ -95,6 +113,7 @@ def main(argv=None):
     ap.add_argument("--name", help="nombre del resultado (por defecto, el de la carpeta)")
     ap.add_argument("--quick", action="store_true", help="solo el fold más reciente (comprobar que corre)")
     ap.add_argument("--holdout", action="store_true", help="evalúa en el holdout (SOLO el consultor, antes de enviar)")
+    ap.add_argument("--no-control", action="store_true", help="no mide los folds de control (control_folds)")
     ap.add_argument("--seed", type=int, default=42)
     o = ap.parse_args(argv)
     spec = json.loads((ROOT / "eval" / ("holdout.json" if o.holdout else "folds.json")).read_text(encoding="utf-8"))
@@ -103,7 +122,8 @@ def main(argv=None):
     name += "-quick" if o.quick else ""
     train, ctx = load_data()
     print(f"{name}: {o.src} · {len(folds)} fold(s) · semilla {o.seed}")
-    s = run(o.src, name, folds, train, ctx, o.seed)
+    control = [] if (o.quick or o.holdout or o.no_control) else spec.get("control_folds", [])
+    s = run(o.src, name, folds, train, ctx, o.seed, control=control)
     print(f"CV RMSLE {s['mean']:.4f} ± {s['std']:.4f} · {s['secs']:.0f} s → eval/results/{name}.json")
 
 

@@ -81,6 +81,9 @@ Qué: medir la predicción más simple (media de 14 días por tienda×familia) e
 (el modelo no tiene aleatoriedad, así que una sola ejecución basta). · Por qué: no conoce el día de la semana ni festivos ni promociones; ese es el margen
 que las variantes deben recortar. Cualquier variante debe bajar de 0.4745.
 
+### T-032 · fold de control de vuelta al cole (c1) — herramienta, sin veredicto
+Qué: añadido `control_folds` (c1 = 16-31 ago 2016, la misma estación que el test de Kaggle) que se mide y se muestra APARTE; no entra en la media ni en el veredicto. · Pasó: base-v3 saca 0.7696 en c1 frente a 0.3904 de media en los 4 folds de mayo-julio. · Por qué: el CV de mayo-julio no ve la vuelta al cole (material escolar en la Sierra), así que una mejora en CV puede no trasladarse al test. Además `backtest.py` avisa si hay hueco entre history y future (25-dic: no hay fila): un modelo con `start = history.max()+1` dejaría el último día sin predecir.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …
