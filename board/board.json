@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:04:36+02:00",
+  "updated": "2026-10-17T11:04:38+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-020",
-    "heartbeat": "2026-10-17T11:01:18+02:00",
-    "message": "tester con T-020",
+    "current": "T-030",
+    "heartbeat": "2026-10-17T11:04:38+02:00",
+    "message": "investigador con T-030",
     "pid": 20528,
-    "agent": "tester",
-    "started": "2026-10-17T11:01:18+02:00",
+    "agent": "investigador",
+    "started": "2026-10-17T11:04:38+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
     "live": "live-T-020-tester-20261017-110118.jsonl"
@@ -82,8 +82,8 @@
       "name": "Investigador",
       "role": "Busca técnicas en la discusión de Kaggle, papers y blogs",
       "color": "#0891b2",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-030"
     },
     {
       "id": "experto",
@@ -1545,7 +1545,7 @@
       "id": "T-030",
       "title": "Revisión de rumbo: ¿vamos por buen camino o hay formas mejores de abordar el problema?",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 40.0,
       "actual_min": null,
@@ -1554,14 +1554,19 @@
       "desc": "Petición de Alba. Leer README, docs/APRENDIZAJES.md, docs/DISENO-MODELOS.md, docs/ANALISIS-ERRORES.md (incl. diagnóstico T-027 si ya está) y eval/results. Contrastar con: soluciones top y discusión de Store Sales (qué RMSLE consiguen y con qué), ganadores de Favorita 2018 y M5, y enfoques alternativos (modelos por familia/tienda, reconciliación jerárquica, estadísticos clásicos ETS/ARIMA vía statsforecast, redes globales N-BEATS/TFT, ensembles). Responder en docs/REVISION-RUMBO.md, en lenguaje para alguien que aprende: (1) dónde estamos frente a lo habitual en el LB (0.413 hoy; ¿qué es bueno?); (2) qué hacemos bien y qué mal en método (backtest de 4 folds, holdout, criterio, variantes encadenadas); (3) 3-5 cambios de enfoque ordenados por ganancia esperada × aprendizaje / coste (CPU vs GPU, horas de GPU si aplica); (4) qué tarjetas existentes (T-020..T-023) sobran o cambiarían. Máx. 3 tarjetas nuevas con criterio. No tocar models/base ni el holdout.",
       "deps": [],
       "created": "2026-10-17T10:35:39+02:00",
-      "updated": "2026-10-17T10:35:39+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T11:04:38+02:00",
+      "started_at": "2026-10-17T11:04:38+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T10:35:39+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T11:04:38+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
         }
       ]
     },
