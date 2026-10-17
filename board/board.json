@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:11:09+02:00",
+  "updated": "2026-10-17T11:14:24+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-033",
-    "heartbeat": "2026-10-17T11:11:09+02:00",
+    "heartbeat": "2026-10-17T11:11:10+02:00",
     "message": "desarrollador con T-033",
     "pid": 20528,
     "agent": "desarrollador",
     "started": "2026-10-17T11:11:09+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-031-tester-20261017-110708.jsonl"
+    "live": "live-T-033-desarrollador-20261017-111110.jsonl"
   },
   "agents": [
     {
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-033"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -1344,7 +1344,7 @@
       "title": "Ordenar APRENDIZAJES (más reciente arriba) y resumen del README",
       "owner": "arquitecto",
       "status": "backlog",
-      "priority": "baja",
+      "priority": "alta",
       "estimate_min": 15.0,
       "actual_min": null,
       "auto": true,
@@ -1360,6 +1360,11 @@
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T11:11:27+02:00",
+          "by": "tú",
+          "msg": "editada: priority"
         }
       ]
     },
@@ -1692,18 +1697,18 @@
       "id": "T-033",
       "title": "Runner con dos carriles en paralelo: pensar y medir",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 3.1,
       "auto": true,
       "manual": null,
       "desc": "Petición de Alba. (1) board/runner.py --lane think|measure|all (por defecto all = comportamiento actual). think = investigador, modelador, experto, arquitecto (+ rondas de aportación); measure = desarrollador y tester (las verificaciones de review van siempre a measure). pick() filtra por carril. (2) Estado por carril en board.json: runners.{think,measure} con los mismos campos que runner (state, current, agent, pid, live, heartbeat…); mantener runner como alias de compatibilidad o migrar panel y server a la vez. Guarda de instancia única POR carril (bd.pid_alive). (3) Commits por carril: anotar git status --porcelain al empezar la tarjeta y al terminar añadir solo los ficheros que han cambiado durante la tarjeta + board/board.json (nunca git add -A), para no llevarse el trabajo a medias del otro carril. (4) run-agents-scheduled.bat lanza los dos carriles a la vez (--once, think con --contribute) con logs separados. (5) server.py: /api/runner/start y /stop aceptan ?lane= (sin lane = los dos); /api/board expone alive y last_activity por carril; /api/runner/live?lane=. (6) panel.html: una línea por carril con su estado/vivo/última acción y Ver en directo con selector de carril; Iniciar/Parar actúan sobre ambos. Criterio: tests nuevos en tests/test_runner.py y tests/test_board.py (pick por carril, guarda por carril, commit solo con ficheros propios usando un repo git temporal) y suite en verde; los tests NUNCA deben tocar el board.json real ni procesos reales (usar copias con pid=None). No cambiar ALLOWED/DENIED.",
       "deps": [],
       "created": "2026-10-17T11:03:38+02:00",
-      "updated": "2026-10-17T11:11:09+02:00",
+      "updated": "2026-10-17T11:14:24+02:00",
       "started_at": "2026-10-17T11:11:09+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T11:14:13+02:00",
       "log": [
         {
           "t": "2026-10-17T11:03:38+02:00",
@@ -1714,6 +1719,28 @@
           "t": "2026-10-17T11:11:09+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:14:13+02:00",
+          "by": "desarrollador",
+          "msg": "Carriles think/measure en runner, server, panel y .bat; tests nuevos en verde (24). El runner en marcha debe reiniciarse para usar los carriles."
+        },
+        {
+          "t": "2026-10-17T11:14:24+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: Runner con carriles think/measure implementado en runner, board, server, panel y .bat; tests nuevos y suite en verde (24 passed)"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:14:24+02:00",
+          "min": 3.2,
+          "turns": 51,
+          "tokens": 1186546,
+          "cost_usd": 0.6434572999999999,
+          "verdict": "review"
         }
       ]
     },

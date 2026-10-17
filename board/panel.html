@@ -21,8 +21,11 @@ header h1{font-size:16px;margin:0}
 #runner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:12px 16px 0;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
 #runner .state{display:flex;align-items:center;gap:8px;font-weight:600}
 #runner .pulse{width:10px;height:10px;border-radius:50%;background:var(--muted)}
-#runner.working .pulse{background:var(--ok);animation:p 1.4s infinite}
-#runner.paused .pulse{background:var(--warn)}#runner.stale .pulse,#runner.stopped .pulse{background:var(--bad)}
+#runner .lane{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;flex:1 1 100%}
+#runner .lane .state{min-width:210px}
+#runner .lane.working .pulse{background:var(--ok);animation:p 1.4s infinite}
+#runner .lane.paused .pulse{background:var(--warn)}#runner .lane.stale .pulse,#runner .lane.stopped .pulse{background:var(--bad)}
+#liveLane{margin-left:8px}
 @keyframes p{50%{opacity:.35}}
 #live{margin:8px 16px 0;padding:8px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:13px}
 #live summary{cursor:pointer;font-weight:600}#liveFile{color:var(--muted);font-weight:400}
@@ -88,12 +91,11 @@ dialog h3{margin:0;grid-column:1/-1;font-size:15px}
   <span id="upd"></span>
   <button class="primary" id="new">Nueva tarea</button>
 </header>
-<section id="runner"><span class="state"><span class="pulse"></span><span id="rState">–</span></span>
-  <span class="info" id="rInfo"></span><span class="sp"></span>
+<section id="runner"><div id="lanes" style="flex:1 1 100%"></div><span class="sp"></span>
   <button id="rStart" title="Trabaja las tarjetas pendientes una tras otra y se para cuando no quedan">▶ Iniciar</button>
   <button id="rStop" title="Para el runner y al agente que esté trabajando; su tarjeta vuelve a Próximo">■ Parar</button>
   <button id="rToggle" title="En pausa, ni el botón Iniciar ni la ejecución programada cogen tarjetas">Pausar</button></section>
-<details id="live"><summary>📜 Ver en directo qué hace el agente <span id="liveFile"></span></summary><div id="liveLog"></div></details>
+<details id="live"><summary>📜 Ver en directo qué hace el agente <select id="liveLane" onclick="event.stopPropagation()"><option value="think">Pensar</option><option value="measure">Medir</option><option value="all">Único</option></select> <span id="liveFile"></span></summary><div id="liveLog"></div></details>
 <section id="agents"></section>
 <main id="board"></main>
 
@@ -145,42 +147,49 @@ async function load(force) {
   if (!force && (editing || dragId)) return;
   try {
     const nb = await (await fetch("/api/board", { cache: "no-store" })).json();
-    if (force || !B || nb.updated !== B.updated) { B = nb; render(); } else { B.runner = nb.runner; renderRunner(); }
+    if (force || !B || nb.updated !== B.updated) { B = nb; render(); } else { B.runner = nb.runner; B.runners = nb.runners; renderRunner(); }
     $("#upd").textContent = "Actualizado " + new Date(B.updated).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   } catch (e) { $("#upd").textContent = "Sin conexión con el servidor"; }
 }
 
-function renderRunner() {
-  const r = B.runner || {}, el = $("#runner");
-  const dead = r.state === "working" && r.alive === false;  // el panel dice «trabajando» pero el proceso ya no existe
-  const stale = dead || (r.state === "working" && minsSince(r.heartbeat) > 70);
-  const st = stale ? "stale" : r.state || "stopped";
-  el.className = st;
-  $("#rState").textContent = dead ? "⚠ El agente se ha parado" : { working: "Agentes trabajando", idle: "En espera", paused: "En pausa", stopped: "Runner parado", stale: "Sin señal del runner" }[st];
-  let info = "";
+const LANE_NAMES = { think: "🧠 Pensar", measure: "📏 Medir", all: "⚙ Único" };
+function laneInfo(r, st, dead) {
   if (st === "working" && r.current) {
     const t = B.tasks.find((x) => x.id === r.current);
-    info = `<b>${esc(agentOf(r.agent).name)}</b> con ${r.current}${t ? " · " + esc(t.title) : ""} · lleva <b>${fmtMin(minsSince(r.started))}</b>${t?.estimate_min ? " de " + fmtMin(t.estimate_min) + " estimados" : ""}`;
+    let info = `<b>${esc(agentOf(r.agent).name)}</b> con ${r.current}${t ? " · " + esc(t.title) : ""} · lleva <b>${fmtMin(minsSince(r.started))}</b>${t?.estimate_min ? " de " + fmtMin(t.estimate_min) + " estimados" : ""}`;
     const act = r.last_activity ? minsSince(r.last_activity) : null;
     if (act != null) info += act < 1 ? ` · <b>activo</b> (última acción hace ${Math.round(act * 60)} s)`
       : ` · última acción hace <b>${fmtMin(act)}</b>${act > 10 ? " (pensando o atascado)" : ""}`;
-  } else if (dead) {
-    info = `Su proceso ya no existe; ${r.current || "la tarea"} quedó a medias. Pulsa <b>▶ Iniciar</b> para retomarla.`;
-  } else if (st === "stopped") info = "Pulsa <b>▶ Iniciar</b> o espera a la próxima ejecución automática";
-  else info = esc(r.message || "");
-  $("#rInfo").innerHTML = info;
-  $("#rToggle").textContent = r.enabled === false ? "Reanudar" : "Pausar";
-  $("#rToggle").onclick = () => api("POST", "/api/board/runner", { enabled: r.enabled === false });
-  $("#rStart").disabled = !!r.alive;
-  $("#rStop").disabled = !r.alive;
+    return info;
+  }
+  if (dead) return `Su proceso ya no existe; ${r.current || "la tarea"} quedó a medias. Pulsa <b>▶ Iniciar</b> para retomarla.`;
+  if (st === "stopped") return "Pulsa <b>▶ Iniciar</b> o espera a la próxima ejecución automática";
+  return esc(r.message || "");
+}
+function renderRunner() {
+  const g = B.runner || {}, rs = B.runners || {};
+  const lanes = [["think", rs.think || {}], ["measure", rs.measure || {}]];
+  if (g.alive || g.state === "working") lanes.push(["all", g]);  // runner único (modo antiguo) en marcha
+  $("#lanes").innerHTML = lanes.map(([k, r]) => {
+    const dead = r.state === "working" && r.alive === false;  // el panel dice «trabajando» pero el proceso ya no existe
+    const stale = dead || (r.state === "working" && minsSince(r.heartbeat) > 70);
+    const st = stale ? "stale" : r.state || "stopped";
+    const txt = dead ? "⚠ El agente se ha parado" : { working: "trabajando", idle: "en espera", paused: "en pausa", stopped: "parado", stale: "sin señal" }[st];
+    return `<div class="lane ${st}"><span class="state"><span class="pulse"></span>${LANE_NAMES[k]}: ${txt}</span><span class="info">${laneInfo(r, st, dead)}</span></div>`;
+  }).join("");
+  const alive = lanes.some(([, r]) => r.alive);
+  $("#rToggle").textContent = g.enabled === false ? "Reanudar" : "Pausar";
+  $("#rToggle").onclick = () => api("POST", "/api/board/runner", { enabled: g.enabled === false });
+  $("#rStart").disabled = lanes.every(([, r]) => r.alive);
+  $("#rStop").disabled = !alive;
   $("#rStart").onclick = () => api("POST", "/api/runner/start");
-  $("#rStop").onclick = () => confirm("¿Parar el runner y al agente que esté trabajando ahora?") && api("POST", "/api/runner/stop");
+  $("#rStop").onclick = () => confirm("¿Parar los dos carriles y a los agentes que estén trabajando ahora?") && api("POST", "/api/runner/stop");
 }
 
 async function loadLive() {
   if (!$("#live").open) return;
   try {
-    const r = await (await fetch("/api/runner/live", { cache: "no-store" })).json();
+    const r = await (await fetch("/api/runner/live?lane=" + $("#liveLane").value, { cache: "no-store" })).json();
     const box = $("#liveLog"), atEnd = box.scrollTop + box.clientHeight >= box.scrollHeight - 20;
     const icon = { inicio: "▶ inicio", texto: "💬 dice", piensa: "🤔 piensa", herramienta: "🔧 usa", resultado: "↩ recibe", error: "⚠ error", fin: "✅ fin" };
     $("#liveFile").textContent = r.file ? "· " + r.file : "· aún no hay ejecuciones";
@@ -188,7 +197,7 @@ async function loadLive() {
     if (atEnd) box.scrollTop = box.scrollHeight;
   } catch (e) {}
 }
-$("#live").addEventListener("toggle", loadLive); setInterval(loadLive, 3000);
+$("#liveLane").addEventListener("change", loadLive); $("#live").addEventListener("toggle", loadLive); setInterval(loadLive, 3000);
 
 function render() {
   $("#title").textContent = "Panel de trabajo · " + (B.project || "");
@@ -245,7 +254,7 @@ function render() {
 }
 function card(t) {
   const a = agentOf(t.owner), real = realMin(t), est = t.estimate_min;
-  const live = B.runner?.current === t.id && B.runner?.state === "working" && B.runner?.alive !== false;
+  const live = [B.runner, ...Object.values(B.runners || {})].some((r) => r?.current === t.id && r?.state === "working" && r?.alive !== false);
   let tm = "";
   if (real == null) tm = est ? `est ${fmtMin(est)}` : "";
   else if (!est) tm = `real ${fmtMin(real)}`;

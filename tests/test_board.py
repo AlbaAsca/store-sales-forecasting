@@ -79,3 +79,25 @@ def test_live_events_resume_el_stream():
         {"type": "result", "result": "RESULT: done — ok"}]] + ["no es json"]
     kinds = [e["kind"] for e in server.live_events(lines)]
     assert kinds == ["inicio", "piensa", "herramienta", "resultado", "fin"]
+
+
+def test_carriles_en_la_api(board):
+    from fastapi.testclient import TestClient
+    sys.path.insert(0, str(board))
+    import importlib
+    import server
+    importlib.reload(server)
+    c = TestClient(server.app)
+    tids = {}
+    for o in ("investigador", "desarrollador"):
+        tids[o] = c.post("/api/board/task", json={"title": o, "owner": o}).json()["id"]
+        c.patch(f"/api/board/task/{tids[o]}", json={"status": "doing"})
+    b = c.get("/api/board").json()
+    assert all(b["runners"][k]["alive"] is False for k in ("think", "measure"))  # pid=None: no hay procesos reales
+    assert c.post("/api/runner/stop?lane=think").json()["ok"]
+    st = {t["id"]: t["status"] for t in c.get("/api/board").json()["tasks"]}
+    assert st[tids["investigador"]] == "next" and st[tids["desarrollador"]] == "doing"  # solo se toca el carril parado
+    assert c.get("/api/runner/live?lane=measure").json()["events"] == []
+    assert c.get("/api/runner/live?lane=xx").status_code == 400
+    c.post("/api/runner/stop")
+    assert next(t for t in c.get("/api/board").json()["tasks"] if t["id"] == tids["desarrollador"])["status"] == "next"

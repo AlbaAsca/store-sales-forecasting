@@ -90,6 +90,22 @@ def validate(b):
     return True
 
 
+LANE_OWNERS = {"think": {"investigador", "modelador", "experto", "arquitecto"},
+               "measure": {"desarrollador", "tester"}}
+LANES = ("think", "measure")
+
+
+def lane_state(b, lane):
+    """Estado del runner de un carril: 'all' = clave histórica `runner`; think/measure = `runners.<carril>`."""
+    if lane == "all":
+        return b.setdefault("runner", {})
+    return b.setdefault("runners", {}).setdefault(lane, {})
+
+
+def lane_owns(lane, owner):
+    return lane == "all" or owner in LANE_OWNERS[lane]
+
+
 def pid_alive(pid):
     """¿Sigue vivo el proceso? (sin os.kill: en Windows os.kill mata el proceso)."""
     if not pid:

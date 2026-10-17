@@ -8,7 +8,12 @@ Se pausa desde el panel (botón Pausar) o creando el archivo board/STOP.
 Con --contribute, si no hay tareas ejecutables, un agente (por turnos: modelador, investigador, experto, arquitecto) revisa
 el estado del proyecto y aporta algo pequeño o registra tarjetas; como mucho una vez cada --contrib-every horas.
 
-Uso: python board/runner.py [--once | --until-idle] [--contribute] [--contrib-every H] [--dry-run] [--claude RUTA]
+Dos carriles en paralelo (--lane): think = investigador, modelador, experto, arquitecto (+ rondas de aportación);
+measure = desarrollador y tester (las verificaciones de review siempre van a measure); all (por defecto) = todo en uno.
+Cada carril tiene su estado en board.json (`runners.<carril>`; all usa `runner`) y su guarda de instancia única.
+Los commits de cada tarjeta solo incluyen los ficheros que cambiaron durante ella (+ board/board.json), nunca `git add -A`.
+
+Uso: python board/runner.py [--lane think|measure|all] [--once | --until-idle] [--contribute] [--contrib-every H] [--dry-run] [--claude RUTA]
 """
 import argparse
 import json
@@ -105,28 +110,42 @@ def now():
     return datetime.now().astimezone().isoformat(timespec="seconds")
 
 
+LANE = "all"  # carril de esta instancia (se fija en main)
+
+
 def set_runner(**kw):
     def f(b):
-        b.setdefault("runner", {}).update(kw, heartbeat=now())
+        bd.lane_state(b, LANE).update(kw, heartbeat=now())
     bd.update(f)
 
 
 def enabled():
     if STOP.exists():
         return False
-    return bd.load().get("runner", {}).get("enabled", True)
+    b = bd.load()
+    return b.get("runner", {}).get("enabled", True) and bd.lane_state(b, LANE).get("enabled", True)
 
 
-def pick(b):
-    """Siguiente tarea ejecutable: (tarea, modo) con modo 'verify' o 'work'."""
+def other_instance(b, lane):
+    """pid vivo de otra instancia que choca con este carril (el mismo carril, o all vs. cualquiera), o None."""
+    keys = ("all", *bd.LANES) if lane == "all" else (lane, "all")
+    for k in keys:
+        pid = (b.get("runner", {}) if k == "all" else b.get("runners", {}).get(k, {})).get("pid")
+        if pid and pid != os.getpid() and bd.pid_alive(pid):
+            return pid
+    return None
+
+
+def pick(b, lane="all"):
+    """Siguiente tarea ejecutable: (tarea, modo) con modo 'verify' o 'work'. Las verificaciones van al carril measure."""
     # tareas que necesitan algo del responsable (manual) solo corren cuando el responsable las mueve a Próximo
     ok = lambda t: t["owner"] != "consultor" and t.get("kind") != "contrib" and bd.deps_done(b, t) and (t.get("auto", True) or t["status"] == "next")
     key = lambda t: (bd.PRIO.get(t.get("priority"), 1), t["id"])
-    rev = sorted([t for t in b["tasks"] if t["status"] == "review" and ok(t)], key=key)
+    rev = sorted([t for t in b["tasks"] if t["status"] == "review" and ok(t)], key=key) if lane in ("all", "measure") else []
     if rev:
         return rev[0], "verify"
     for st in ("next", "backlog"):
-        c = sorted([t for t in b["tasks"] if t["status"] == st and ok(t)], key=key)
+        c = sorted([t for t in b["tasks"] if t["status"] == st and ok(t) and bd.lane_owns(lane, t["owner"])], key=key)
         if c:
             return c[0], "work"
     return None, None
@@ -148,9 +167,37 @@ def build_prompt(t, mode, agent):
 
 def git(*args):
     if not (ROOT / ".git").exists() or not shutil.which("git"):
-        return
-    subprocess.run(["git", *args],  # identidad: la configurada en el repo
-                   cwd=ROOT, capture_output=True)
+        return None
+    return subprocess.run(["git", *args],  # identidad: la configurada en el repo
+                          cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+
+def snapshot():
+    """Estado del árbol de trabajo: {ruta: (estado git, mtime, tamaño)}. Sirve para saber qué cambió durante una tarjeta."""
+    r = git("status", "--porcelain", "-z", "-uall")
+    out, parts = {}, (r.stdout.split("\0") if r else [])
+    i = 0
+    while i < len(parts):
+        e = parts[i]
+        i += 1
+        if len(e) < 4:
+            continue
+        if e[0] in "RC":
+            i += 1  # el siguiente campo es la ruta de origen del renombrado
+        p = e[3:]
+        f = ROOT / p
+        st = f.stat() if f.is_file() else None
+        out[p] = (e[:2], st.st_mtime_ns if st else None, st.st_size if st else None)
+    return out
+
+
+def commit_own(before, msg):
+    """Commit solo con lo que cambió desde `before` (+ board/board.json); lo que ya estaba a medias, o es del otro carril, no entra."""
+    after = snapshot()
+    files = sorted({p for p, v in after.items() if before.get(p) != v} | {"board/board.json"})
+    git("add", "--", *files)
+    git("commit", "-q", "-m", msg, "--", *files)
+    return files
 
 
 def run_claude(claude, prompt, agent, timeout_s, tag="run"):
@@ -232,7 +279,7 @@ def finish(tid, mode, agent, r):
 
 def contribute(o):
     """Ronda de aportación cuando no hay tareas: un rol por vez, con enfriamiento."""
-    st = bd.load().get("runner", {})
+    st = bd.lane_state(bd.load(), LANE)
     last = st.get("contrib_at")
     if last and (datetime.now().astimezone() - datetime.fromisoformat(last)).total_seconds() < o.contrib_every * 3600:
         return False
@@ -248,6 +295,7 @@ def contribute(o):
         bd.set_status(b, t, "doing", "runner", "empieza la ronda")
         return t["id"]
     tid = bd.update(card)
+    before = snapshot()
     set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent}: ronda de aportación ({tid})")
     r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60, tag=tid)
     (LOGDIR / f"contrib-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
@@ -269,7 +317,7 @@ def contribute(o):
     bd.update(close)
     set_runner(contrib_at=now(), contrib_agent=agent, state="idle", current=None,
                message=f"aportación {agent} ({tid}): {summary}")
-    git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): contribution round by {agent}")
+    commit_own(before, f"chore(runner): contribution round by {agent}")
     git("push", "-q")
     print(f"  → {summary}")
     return True
@@ -278,6 +326,8 @@ def contribute(o):
 def main():
     sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # cp1252 en Programador de tareas
     ap = argparse.ArgumentParser()
+    ap.add_argument("--lane", choices=["think", "measure", "all"], default="all",
+                    help="think = investigador/modelador/experto/arquitecto; measure = desarrollador/tester; all = todo")
     ap.add_argument("--once", action="store_true", help="ejecuta una tarea y sale")
     ap.add_argument("--dry-run", action="store_true", help="muestra qué haría sin ejecutar")
     ap.add_argument("--claude", default=os.environ.get("CLAUDE_BIN") or shutil.which("claude") or "claude")
@@ -286,23 +336,29 @@ def main():
     ap.add_argument("--until-idle", action="store_true", help="trabaja tarea tras tarea y sale cuando no quedan")
     ap.add_argument("--contrib-every", type=float, default=6, help="horas mínimas entre rondas de aportación")
     o = ap.parse_args()
+    global LANE
+    LANE = o.lane
+    if LANE == "measure":
+        o.contribute = False  # las rondas de aportación son del carril de pensar
     LOGDIR.mkdir(exist_ok=True)
-    other = bd.load().get("runner", {}).get("pid")
-    if other and other != os.getpid() and bd.pid_alive(other):  # p. ej. botón Iniciar + ejecución programada
-        print(f"Ya hay un runner en marcha (pid {other}): no arranco otro.")
+    other = other_instance(bd.load(), LANE)
+    if other:  # p. ej. botón Iniciar + ejecución programada
+        print(f"Ya hay un runner del carril {LANE} en marcha (pid {other}): no arranco otro.")
         return
     fails = 0
-    print(f"Runner en marcha · claude = {o.claude}\nPausa: botón en el panel o crea board/STOP · Ctrl+C para salir")
+    print(f"Runner [{LANE}] en marcha · claude = {o.claude}\nPausa: botón en el panel o crea board/STOP · Ctrl+C para salir")
     set_runner(state="idle", current=None, message="Runner en marcha", pid=os.getpid())
 
     def recover(b):  # tareas que se quedaron "En curso" si el runner se cortó
         for x in b["tasks"]:
-            if x["status"] == "doing" and x.get("kind") == "contrib":
+            if x["status"] != "doing" or not bd.lane_owns(LANE, x["owner"]):
+                continue
+            if x.get("kind") == "contrib":
                 bd.set_status(b, x, "done", "runner", "ronda interrumpida (runner reiniciado)")
-            elif x["status"] == "doing" and x["owner"] != "consultor":
+            elif x["owner"] != "consultor":
                 bd.set_status(b, x, "next", "runner", "interrumpida (runner reiniciado); se reintentará")
         for a in b["agents"]:
-            if a["id"] != "consultor":
+            if a["id"] != "consultor" and bd.lane_owns(LANE, a["id"]):
                 a.update(status="idle", current=None)
     bd.update(recover)
     try:
@@ -320,7 +376,7 @@ def main():
                 time.sleep(5)
                 continue
             b = bd.load()
-            t, mode = pick(b)
+            t, mode = pick(b, LANE)
             if not t:
                 set_runner(state="idle", current=None, message="Sin tareas ejecutables")
                 if o.contribute and contribute(o) and o.dry_run:
@@ -346,8 +402,8 @@ def main():
                 else:
                     bd.set_status(b, x, "doing", "runner", f"empieza {agent}")
             bd.update(start)
+            before = snapshot()
             set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent} con {tid}")
-            git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): checkpoint before {tid}")
 
             est = t.get("estimate_min") or 15
             r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(60, max(15, est * 4)) * 60), tag=tid)
@@ -360,14 +416,14 @@ def main():
                         if a["id"] == "tester" and a.get("current") == tid:
                             a.update(status="idle", current=None)
                 bd.update(free)
-            git("add", "-A"); git("commit", "-q", "-m", f"chore(runner): {tid} {verdict} by {agent}")
+            commit_own(before, f"chore(runner): {tid} {verdict} by {agent}")
             git("push", "-q")  # sincroniza con GitHub (lo hace el runner, nunca el agente)
             print(f"  → {new} en {r['secs'] / 60:.1f} min · {summary}")
 
             fails = fails + 1 if (r["is_error"] or verdict == "blocked") else 0
             if fails >= MAX_FAILS:
                 set_runner(state="paused", current=None, message=f"Pausado tras {MAX_FAILS} fallos seguidos; revisa board/runs/")
-                bd.update(lambda b: b["runner"].update(enabled=False))
+                bd.update(lambda b: bd.lane_state(b, LANE).update(enabled=False))
                 fails = 0
             if o.once:
                 break

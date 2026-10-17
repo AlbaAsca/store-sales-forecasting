@@ -35,6 +35,21 @@ def panel():
     return FileResponse(HERE / "panel.html", headers={"Cache-Control": "no-store"})
 
 
+LANES = ("think", "measure")  # carriles del runner (board.py: LANES); el estado histórico `runner` = carril «all»
+
+
+def _lanes(lane):
+    if lane is None:
+        return list(LANES)
+    if lane not in LANES and lane != "all":
+        raise HTTPException(400, "lane debe ser think, measure o all")
+    return [lane]
+
+
+def _state(b, lane):
+    return b.setdefault("runner", {}) if lane == "all" else b.setdefault("runners", {}).setdefault(lane, {})
+
+
 AGENTS_DIR = HERE.parent / ".claude" / "agents"
 
 
@@ -52,11 +67,12 @@ def get_board():
     b = json.loads(BOARD.read_text(encoding="utf-8"))
     for a in b.get("agents", []):
         a.update(agent_config(a["id"]))
-    r = b.setdefault("runner", {})
-    r["alive"] = pid_alive(r.get("pid"))
-    live = HERE / "runs" / r["live"] if r.get("live") else None
-    r["last_activity"] = (datetime.fromtimestamp(live.stat().st_mtime).astimezone().isoformat(timespec="seconds")
-                          if live and live.is_file() else None)  # última línea que escribió el agente
+    runners = b.setdefault("runners", {})
+    for r in [b.setdefault("runner", {})] + [runners.setdefault(k, {}) for k in LANES]:
+        r["alive"] = pid_alive(r.get("pid"))
+        live = HERE / "runs" / r["live"] if r.get("live") else None
+        r["last_activity"] = (datetime.fromtimestamp(live.stat().st_mtime).astimezone().isoformat(timespec="seconds")
+                              if live and live.is_file() else None)  # última línea que escribió el agente
     return Response(json.dumps(b, ensure_ascii=False), media_type="application/json", headers={"Cache-Control": "no-store"})
 
 
@@ -201,12 +217,13 @@ def live_events(lines):
 
 
 @app.get("/api/runner/live")
-def runner_live(n: int = 60):
+def runner_live(n: int = 60, lane: str = "all"):
     """Lo que está haciendo el agente ahora (o hizo en la última ejecución), sin gastar tokens: lee el log en vivo."""
     runs = HERE / "runs"
-    name = json.loads(BOARD.read_text(encoding="utf-8")).get("runner", {}).get("live")
+    _lanes(lane)
+    name = _state(json.loads(BOARD.read_text(encoding="utf-8")), lane).get("live")
     f = runs / name if name and (runs / name).is_file() else None
-    if not f:
+    if not f and lane == "all":
         files = sorted(runs.glob("live-*.jsonl"), key=lambda x: x.stat().st_mtime) if runs.is_dir() else []
         f = files[-1] if files else None
     if not f:
@@ -216,13 +233,21 @@ def runner_live(n: int = 60):
 
 
 @app.post("/api/runner/start")
-def runner_start():
-    """Arranca el runner en segundo plano: trabaja tarea tras tarea y se para cuando no quedan (--until-idle)."""
-    b = json.loads(BOARD.read_text(encoding="utf-8"))
-    if pid_alive(b.get("runner", {}).get("pid")):
+def runner_start(lane: str = None):
+    """Arranca el runner en segundo plano: trabaja tarea tras tarea y se para cuando no quedan (--until-idle).
+    Sin ?lane= arranca los dos carriles (think con --contribute, measure); los que ya estén vivos se respetan."""
+    lanes, b = _lanes(lane), json.loads(BOARD.read_text(encoding="utf-8"))
+    legacy = pid_alive(b.get("runner", {}).get("pid"))  # un runner «all» ya cubre todos los carriles
+    todo = [] if legacy else [k for k in lanes if not pid_alive(_state(b, k).get("pid"))]
+    if not todo:
         raise HTTPException(409, "El runner ya está en marcha")
     bd = _bd()
-    bd.update(lambda x: x.setdefault("runner", {}).update(enabled=True))
+
+    def en(x):
+        x.setdefault("runner", {}).update(enabled=True)
+        for k in todo:
+            _state(x, k).update(enabled=True)
+    bd.update(en)
     env = dict(os.environ, PYTHONUTF8="1", CLAUDE_BIN=claude_bin())
     venv = ROOT / ".venv" / ("Scripts" if os.name == "nt" else "bin")
     env["PATH"] = f"{venv}{os.pathsep}{env.get('PATH', '')}"
@@ -230,37 +255,47 @@ def runner_start():
     log = open(HERE / "runs" / "panel.log", "a", encoding="utf-8")
     flags = 0x00000008 | 0x00000200 | 0x08000000 if os.name == "nt" else 0  # DETACHED | NEW_GROUP | NO_WINDOW
     args = dict(cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
-    cmd = [sys.executable, str(HERE / "runner.py"), "--until-idle", "--contribute"]
-    try:  # fuera del "job" del proceso padre: si no, Windows lo mata cuando el padre termina
-        p = subprocess.Popen(cmd, creationflags=flags | (0x01000000 if os.name == "nt" else 0), **args)
-    except OSError:
-        p = subprocess.Popen(cmd, creationflags=flags, **args)
-    return {"ok": True, "pid": p.pid}
+    pids = {}
+    for k in todo:
+        cmd = [sys.executable, str(HERE / "runner.py"), "--lane", k, "--until-idle"] + (["--contribute"] if k != "measure" else [])
+        try:  # fuera del "job" del proceso padre: si no, Windows lo mata cuando el padre termina
+            p = subprocess.Popen(cmd, creationflags=flags | (0x01000000 if os.name == "nt" else 0), **args)
+        except OSError:
+            p = subprocess.Popen(cmd, creationflags=flags, **args)
+        pids[k] = p.pid
+    return {"ok": True, "pids": pids, "pid": next(iter(pids.values()))}
 
 
 @app.post("/api/runner/stop")
-def runner_stop():
-    """Para el runner y al agente que esté trabajando (mata el árbol de procesos). La tarea vuelve a Próximo."""
+def runner_stop(lane: str = None):
+    """Para el runner (o un carril) y al agente que esté trabajando (mata el árbol de procesos). La tarea vuelve a Próximo."""
     bd = _bd()
-    pid = bd.load().get("runner", {}).get("pid")
-    if pid_alive(pid):
-        if os.name == "nt":
-            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, creationflags=0x08000000)
-        else:
-            os.kill(pid, 15)
+    lanes = _lanes(lane) if lane else [*LANES, "all"]  # sin lane = los dos carriles y el runner único histórico
+    killed = False
+    for k in lanes:
+        pid = _state(bd.load(), k).get("pid")
+        if pid_alive(pid):
+            killed = True
+            if os.name == "nt":
+                subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, creationflags=0x08000000)
+            else:
+                os.kill(pid, 15)
 
     def f(b):
-        for t in b["tasks"]:
-            if t["status"] == "doing" and t.get("kind") == "contrib":
-                bd.set_status(b, t, "done", "tú", "ronda parada desde el panel")
-            elif t["status"] == "doing" and t["owner"] != "consultor":
-                bd.set_status(b, t, "next", "tú", "parada desde el panel; se reintentará")
-        for a in b["agents"]:
-            if a["id"] != "consultor":
-                a.update(status="idle", current=None)
-        b.setdefault("runner", {}).update(state="stopped", current=None, message="Parado desde el panel", heartbeat=bd.now())
+        for k in lanes:
+            for t in b["tasks"]:
+                if t["status"] != "doing" or not bd.lane_owns(k, t["owner"]):
+                    continue
+                if t.get("kind") == "contrib":
+                    bd.set_status(b, t, "done", "tú", "ronda parada desde el panel")
+                elif t["owner"] != "consultor":
+                    bd.set_status(b, t, "next", "tú", "parada desde el panel; se reintentará")
+            for a in b["agents"]:
+                if a["id"] != "consultor" and bd.lane_owns(k, a["id"]):
+                    a.update(status="idle", current=None)
+            _state(b, k).update(state="stopped", current=None, message="Parado desde el panel", heartbeat=bd.now())
     bd.update(f)
-    return {"ok": True, "killed": bool(pid)}
+    return {"ok": True, "killed": killed}
 
 
 if __name__ == "__main__":
