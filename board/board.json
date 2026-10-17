@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:47:06+02:00",
+  "updated": "2026-10-17T20:48:57+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,16 +33,16 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "stopped",
-    "current": null,
-    "heartbeat": "2026-10-17T20:15:57+02:00",
-    "message": "Runner parado",
-    "pid": 9572,
-    "agent": "tester",
-    "started": "2026-10-17T20:11:44+02:00",
+    "state": "working",
+    "current": "T-058",
+    "heartbeat": "2026-10-17T20:48:41+02:00",
+    "message": "desarrollador con T-058",
+    "pid": 4780,
+    "agent": "desarrollador",
+    "started": "2026-10-17T20:48:41+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-050-tester-20261017-201144.jsonl"
+    "live": "live-T-058-desarrollador-20261017-204841.jsonl"
   },
   "agents": [
     {
@@ -3670,18 +3670,18 @@
       "id": "T-058",
       "title": "V-024: la regla de «cero» sin productos de temporada, sobre la base nueva",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 20,
-      "actual_min": null,
+      "actual_min": 0.3,
       "auto": true,
       "manual": null,
       "desc": "La regla de predecir cero en las series muertas, respetando los productos de temporada (V-023), mejoraba un poco las prácticas y no empeoraba el examen final. Pero se midió sobre la base anterior, y la nueva base ya ha aprendido mejor la vuelta al cole, así que hay que comprobar si sigue sumando.\n\nCómo sabremos si funciona: baja el error medio de base-v6 con dos semillas y no empeora más de una práctica.\n\n## Técnico\n- V-024 = base-v6 + el post-proceso de V-023 (copiar el bloque «V-023» de variants/V-023/model.py).\n- Antes, sobre base-v5: CV 0.3849/0.3850 vs 0.3852; holdout 0.4177 vs 0.4179.\n- Criterio: RMSLE medio < base-v6 (0.3839) con semillas 42 y 7, ≤ 1 fold peor; c1 sin cerradas no empeora.",
       "deps": [],
       "created": "2026-10-17T20:40:00+02:00",
-      "updated": "2026-10-17T20:40:00+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T20:48:57+02:00",
+      "started_at": "2026-10-17T20:48:41+02:00",
+      "finished_at": "2026-10-17T20:48:57+02:00",
       "log": [
         {
           "t": "2026-10-17T20:40:00+02:00",
@@ -3692,6 +3692,33 @@
           "t": "2026-10-17T20:47:06+02:00",
           "by": "consultor",
           "msg": "La base vuelve a ser base-v5 (v6 empeoró en Kaggle). V-024 se mide contra base-v5: es igual que V-023, así que basta con reutilizar sus resultados (CV 0.3849/0.3850, holdout 0.4177)."
+        },
+        {
+          "t": "2026-10-17T20:48:41+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T20:48:52+02:00",
+          "by": "desarrollador",
+          "msg": "Base vigente = base-v5 y V-023 se construyó sobre base-v5, así que V-024 es idéntica: se reutilizan sus resultados (CV 0.3849/0.3850 vs 0.3852, 4/4 folds mejor, c1 0.7523 vs 0.7526; holdout 0.4177 vs 0.4179). No se crea carpeta duplicada. Si hay que promover, usar variants/V-023."
+        },
+        {
+          "t": "2026-10-17T20:48:57+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-024 equivale a V-023 sobre base-v5; resultados reutilizados (CV 0.3849 vs 0.3852, 4/4 folds mejor, c1 sin empeorar), lista para promover desde variants/V-023."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T20:48:57+02:00",
+          "min": 0.3,
+          "turns": 7,
+          "tokens": 82691,
+          "cost_usd": 0.071085,
+          "verdict": "review"
         }
       ]
     },
