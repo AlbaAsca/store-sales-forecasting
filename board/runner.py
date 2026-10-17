@@ -67,6 +67,7 @@ RULES = """Reglas (modo autónomo, permisos: solo código y tests):
   «Cómo sabremos si funciona: …» en palabras. Los datos técnicos (fuentes, nombres de variables, fórmulas, números,
   criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.
 - NO edites board/board.json a mano: usa siempre board/board.py.
+- No hagas git add ni git commit (está bloqueado): el runner guarda tus cambios al terminar la tarjeta.
 - Comandos permitidos: python (scripts, pytest, board.py), git status/diff/log, ls/cat/head/tail/diff, mkdir y
   `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
   (sin `cd ... &&`, `;` ni `|`), o se denegará. Nunca toques models/base/ (la base vigente) ni eval/holdout.json.

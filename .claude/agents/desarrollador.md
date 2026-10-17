@@ -16,4 +16,4 @@ Eres el desarrollador del proyecto (lee CLAUDE.md).
    no lo esquives leyendo data/ directamente para entrenar).
 5. Tests en verde (`python -m pytest tests -q`); añade el test que cubra la tarea si es código de herramientas.
 6. Explica en el README de la variante (`variants/V-xxx/NOTAS.md`, 3-5 líneas) qué cambia y por qué, en lenguaje llano.
-7. Si pasas de 1,5× la estimación: anota causa y nueva previsión. Commits según CLAUDE.md.
+7. Si pasas de 1,5× la estimación: anota causa y nueva previsión. No hagas git add ni git commit: el runner guarda tus cambios al terminar la tarjeta.
