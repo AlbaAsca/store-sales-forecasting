@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:11:07+02:00",
+  "updated": "2026-10-17T11:11:09+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,12 +34,12 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-031",
-    "heartbeat": "2026-10-17T11:07:08+02:00",
-    "message": "tester con T-031",
+    "current": "T-033",
+    "heartbeat": "2026-10-17T11:11:09+02:00",
+    "message": "desarrollador con T-033",
     "pid": 20528,
-    "agent": "tester",
-    "started": "2026-10-17T11:07:07+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:11:09+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
     "live": "live-T-031-tester-20261017-110708.jsonl"
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-033"
     },
     {
       "id": "tester",
@@ -1692,7 +1692,7 @@
       "id": "T-033",
       "title": "Runner con dos carriles en paralelo: pensar y medir",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 45.0,
       "actual_min": null,
@@ -1701,14 +1701,19 @@
       "desc": "Petición de Alba. (1) board/runner.py --lane think|measure|all (por defecto all = comportamiento actual). think = investigador, modelador, experto, arquitecto (+ rondas de aportación); measure = desarrollador y tester (las verificaciones de review van siempre a measure). pick() filtra por carril. (2) Estado por carril en board.json: runners.{think,measure} con los mismos campos que runner (state, current, agent, pid, live, heartbeat…); mantener runner como alias de compatibilidad o migrar panel y server a la vez. Guarda de instancia única POR carril (bd.pid_alive). (3) Commits por carril: anotar git status --porcelain al empezar la tarjeta y al terminar añadir solo los ficheros que han cambiado durante la tarjeta + board/board.json (nunca git add -A), para no llevarse el trabajo a medias del otro carril. (4) run-agents-scheduled.bat lanza los dos carriles a la vez (--once, think con --contribute) con logs separados. (5) server.py: /api/runner/start y /stop aceptan ?lane= (sin lane = los dos); /api/board expone alive y last_activity por carril; /api/runner/live?lane=. (6) panel.html: una línea por carril con su estado/vivo/última acción y Ver en directo con selector de carril; Iniciar/Parar actúan sobre ambos. Criterio: tests nuevos en tests/test_runner.py y tests/test_board.py (pick por carril, guarda por carril, commit solo con ficheros propios usando un repo git temporal) y suite en verde; los tests NUNCA deben tocar el board.json real ni procesos reales (usar copias con pid=None). No cambiar ALLOWED/DENIED.",
       "deps": [],
       "created": "2026-10-17T11:03:38+02:00",
-      "updated": "2026-10-17T11:03:38+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T11:11:09+02:00",
+      "started_at": "2026-10-17T11:11:09+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T11:03:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T11:11:09+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
