@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:20:25+02:00",
+  "updated": "2026-10-17T18:27:51+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-045",
-    "heartbeat": "2026-10-17T18:18:52+02:00",
-    "message": "desarrollador con T-045",
+    "heartbeat": "2026-10-17T18:20:28+02:00",
+    "message": "tester con T-045",
     "pid": 16672,
-    "agent": "desarrollador",
-    "started": "2026-10-17T18:18:52+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T18:20:28+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-045-desarrollador-20261017-181852.jsonl"
+    "live": "live-T-045-tester-20261017-182028.jsonl"
   },
   "agents": [
     {
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-045"
     },
     {
       "id": "investigador",
@@ -2826,6 +2826,11 @@
           "t": "2026-10-17T18:20:25+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-016 implementada (4 rasgos de calendario en directo y recursivo), quick f1 0.3942 y tests en verde; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-17T18:20:28+02:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -2839,7 +2844,8 @@
           "cost_usd": 0.12260460000000002,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T18:20:28+02:00"
     },
     {
       "id": "T-046",
@@ -2999,7 +3005,7 @@
       "id": "T-052",
       "title": "Subir v0.4.1-exp (V-014) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "media",
       "estimate_min": 3.0,
       "actual_min": null,
@@ -3008,7 +3014,7 @@
       "desc": "Base-v4 dio 0.40327. ¿Se nota una mejora local de 0.0005?",
       "deps": [],
       "created": "2026-10-17T18:19:48+02:00",
-      "updated": "2026-10-17T18:19:48+02:00",
+      "updated": "2026-10-17T18:21:12+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
@@ -3016,6 +3022,45 @@
           "t": "2026-10-17T18:19:48+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:21:12+02:00",
+          "by": "consultor",
+          "msg": "LB 0.39940 (base-v4 0.40327): −0.0039 con una mejora local de solo −0.0005"
+        }
+      ]
+    },
+    {
+      "id": "T-053",
+      "title": "Promover V-014 (afinado) a base-v5",
+      "owner": "consultor",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 10.0,
+      "actual_min": 6.6,
+      "auto": true,
+      "manual": null,
+      "desc": "Kaggle confirmó el envío experimental: 0.39940 frente a 0.40327. Pasa a ser la base.\n\n## Técnico\nmodels/base = variants/V-014; medir base-v5 (CV + c1); holdout ya medido (0.4179); tag base-v5 y v0.5 (mismo CSV que v0.4.1-exp).",
+      "deps": [],
+      "created": "2026-10-17T18:21:12+02:00",
+      "updated": "2026-10-17T18:27:51+02:00",
+      "started_at": "2026-10-17T18:21:13+02:00",
+      "finished_at": "2026-10-17T18:27:51+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T18:21:12+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T18:21:13+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-17T18:27:51+02:00",
+          "by": "consultor",
+          "msg": "base-v5 = V-014: CV 0.3852, c1 0.7526, holdout 0.4179, LB 0.39940; tags base-v5 y v0.5"
         }
       ]
     }

@@ -26,10 +26,15 @@ HORIZON = 16
 N_CUTS = 8
 WINDOWS = (3, 7, 14, 28, 56)
 PROFILE_DAYS = 56
-PARAMS = dict(objective="regression", learning_rate=0.05, num_leaves=31, min_data_in_leaf=50,
+import os
+# V-014: rejilla num_leaves {15,31,63} x (lr,rondas) {0.05x400, 0.03x700} x min_data {20,50,100}.
+# Se elige por variables de entorno (HP_LEAVES, HP_LR, HP_ROUNDS, HP_MIN_DATA); por defecto, 1ª candidata.
+PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("HP_LR", 0.03)),
+              num_leaves=int(os.environ.get("HP_LEAVES", 63)),
+              min_data_in_leaf=int(os.environ.get("HP_MIN_DATA", 100)),
               feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=0.1,
               verbose=-1, num_threads=4)
-ROUNDS = 400
+ROUNDS = int(os.environ.get("HP_ROUNDS", 700))
 
 
 LAG = 364

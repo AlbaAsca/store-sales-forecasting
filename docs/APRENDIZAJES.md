@@ -5,6 +5,12 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.5 · envío experimental de una variante rechazada: Kaggle la premia — 🏁 LB 0.39940 (V-014 pasa a base-v5)
+Qué: subir V-014 (LightGBM afinado), rechazada porque mejoraba solo 0.0005 en las prácticas, menos que el ruido de semilla. · Pasó: holdout
+0.4187 → 0.4179 y Kaggle 0.40327 → 0.39940 (−0.0039, ocho veces más que en local). · Por qué: mejoraba en las 4 prácticas con dos semillas
+distintas; que una mejora sea pequeña no quiere decir que sea azar si se repite siempre en la misma dirección. Lección: la regla «rechazar si
+mejora menos que el ruido» era demasiado estricta; lo que hay que exigir es que la mejora se repita (varias semillas, casi todos los folds).
+
 ### v0.4 · cuarto envío: cuando las tres medidas locales coinciden, Kaggle también — 🏁 LB 0.40327
 Qué: subir base-v4 (media del LightGBM directo y del recursivo). · Pasó: backtest 0.3904 → 0.3858, holdout 0.4378 → 0.4187, control
 16-31 ago 2016 0.7696 → 0.7552, y Kaggle 0.41341 → 0.40327 (−0.010, el mayor salto desde v0.2). · Por qué: promediar dos modelos que se

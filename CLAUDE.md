@@ -23,7 +23,9 @@ variantes. Delega en `.claude/agents/`:
 - `modelador` (opus/high) lee **código** de soluciones de referencia y propone variantes en `docs/DISENO-MODELOS.md`.
 
 Tarjeta: `V-xxx: <variante en una frase>` · `--desc`: hipótesis · cambio · **criterio fijado antes de medir**
-(por defecto: RMSLE medio del backtest < base vigente y empeora como mucho 1 de los 4 folds; si empata, menos tiempo).
+(por defecto: RMSLE medio del backtest < base vigente **con al menos 2 semillas** y empeora como mucho 1 de los 4 folds; si empata, menos tiempo).
+No rechazar solo porque la mejora sea menor que la variación de semilla: si se repite en la misma dirección con 2 semillas, se acepta
+(lección de V-014: −0.0005 en local fue −0.0039 en Kaggle).
 Resultado con `note`: RMSLE por fold, media, tiempo. Rechazada = `done` con «RECHAZADA». Aceptada = nueva base (tag `base-vX`).
 
 ## Variantes: una carpeta cada una (no negociable)
