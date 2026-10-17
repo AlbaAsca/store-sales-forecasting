@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:27:47+02:00",
+  "updated": "2026-10-17T11:39:06+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-022",
-    "heartbeat": "2026-10-17T11:21:17+02:00",
-    "message": "desarrollador con T-022",
+    "heartbeat": "2026-10-17T11:28:32+02:00",
+    "message": "tester con T-022",
     "pid": 22556,
-    "agent": "desarrollador",
-    "started": "2026-10-17T11:21:17+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T11:28:32+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-022-desarrollador-20261017-112117.jsonl"
+    "live": "live-T-022-tester-20261017-112832.jsonl"
   },
   "agents": [
     {
@@ -1310,7 +1310,7 @@
       "id": "T-022",
       "title": "V-009: estrategia recursiva y promedio directo+recursivo",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 60.0,
       "actual_min": 6.0,
@@ -1321,7 +1321,7 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T11:27:47+02:00",
+      "updated": "2026-10-17T11:39:06+02:00",
       "started_at": "2026-10-17T11:21:17+02:00",
       "finished_at": "2026-10-17T11:27:19+02:00",
       "log": [
@@ -1349,6 +1349,21 @@
           "t": "2026-10-17T11:27:47+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-009 implementada (recursivo y media con directo), tests en verde; en el fold 1 sale rec 0.3965 y avg 0.3909, pendiente de medición completa por el tester."
+        },
+        {
+          "t": "2026-10-17T11:28:32+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T11:38:37+02:00",
+          "by": "tester",
+          "msg": "CV (base-v3 0.3904). REC solo: 0.3894/0.3893 (s0/s1), mejora 3/4 folds, peor f1 +0.0033; ganancia ~0.001 = variación → RECHAZADA. AVG (media log rec+directo): 0.3860/0.3856 (s0/s1), mejora 4/4 folds (-0.0045), peor BOOKS +0.008; tiempo 21s→51s → ACEPTADA. OJO: MODE por defecto en model.py es rec; al promover fijar MODE='avg'."
+        },
+        {
+          "t": "2026-10-17T11:39:06+02:00",
+          "by": "tester",
+          "msg": "DONE: V-009 ACEPTADA en modo media directo+recursivo (CV 0.3904→0.3860, semilla 1 0.3856, mejora 4/4 folds); recursivo solo RECHAZADO (0.3894, dentro de la variación)."
         }
       ],
       "runs": [
@@ -1361,8 +1376,19 @@
           "tokens": 190637,
           "cost_usd": 0.1448177,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T11:39:06+02:00",
+          "min": 10.6,
+          "turns": 30,
+          "tokens": 324645,
+          "cost_usd": 0.15906389999999998,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T11:28:32+02:00"
     },
     {
       "id": "T-023",

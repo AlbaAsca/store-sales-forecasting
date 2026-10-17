@@ -10,6 +10,15 @@ Qué: subir base-v3 (LightGBM global + promos + lag 364). · Pasó: backtest 0.4
 pero Kaggle solo 0.41457 → 0.41341 (−0.001). · Por qué: aún no lo sabemos (tarjeta de diagnóstico). Lección provisional: la validación local
 puede dejar de predecir el leaderboard cuando el modelo cambia de tipo; hay que entender la brecha antes de fiarse de la siguiente mejora.
 
+### V-009 · estrategia recursiva y media directo+recursivo — ✅ ACEPTADA la media (0.3904 → 0.3860, semilla 1: 0.3856, mejora 4/4); ❌ RECHAZADO el recursivo solo (0.3894, ≈ variación)
+Directo: un modelo predice los 16 días de golpe desde el corte. Recursivo: un modelo de 1 paso (lags cortos) predice mañana y se alimenta de su propia predicción 16 veces.
+```
+directo:    [historia]──────────────► d1 d2 … d16   (sin acumular error)
+recursivo:  [historia]► d1 ► d2 ► … ► d16           (cada paso usa el anterior; el error se arrastra)
+media:      exp(½·log directo + ½·log recursivo)
+```
+El recursivo solo apenas mejora (−0.001, lo que varía la semilla; peor en f1) porque acumula error; pero se equivoca de otra forma que el directo, y promediarlos en log baja la varianza: −0.0045 y 4/4 folds (coste: tiempo ×2.4). Ojo al promover: `MODE` por defecto en model.py es `rec`; hay que fijar `avg`.
+
 ### V-011 · acotar rasgos de promoción al p99 de entrenamiento — ❌ RECHAZADA (CV 0.3904 → 0.3908, semilla 1: 0.3910)
 Qué: recortar promo_day y promo_ratio por familia al percentil 99 visto, para que el pico de promos del 16-ago (fuera de rango) no se extrapole. · Pasó: el CV queda igual (folds +0.0020/−0.0004/+0.0002/−0.0005), pero el 16-ago sigue
 disparado frente al 17-ago: SCHOOL ×3.06 (antes ×3.29), LAWN ×2.77 (×3.91), LINGERIE ×1.84 (×2.32); el criterio pedía ≤ ×1.5. · Por qué: recortar ayuda algo, pero el salto lo siguen empujando otros rasgos (calendario, retardos); los árboles no extrapolan, así que el problema no era solo el valor extremo de la promo. Idea: atacar el pico por otro lado (p. ej. rasgo de día concreto o tope de predicción).

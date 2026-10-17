@@ -160,6 +160,7 @@ Backtest de 4 folds (RMSLE medio ± desviación; menor es mejor). La tabla se ac
 | V-006 | V-005 + 3 rasgos anuales (retardo 364: día, ventana ±3 d, diferencia) | 0.3904 ± 0.0087 (f1 0.3932 · f2 0.3796 · f3 0.3861 · f4 0.4029) | −0.004 vs V-005 (4/4) | ✅ ACEPTADA |
 | V-007 | base-v3 con objetivo tweedie (p=1.3) sobre ventas crudas | 0.4094 ± 0.0149 (f1 0.4075 · f2 0.3885 · f3 0.4113 · f4 0.4304) | +0.019 vs base-v3 (0/4) | ❌ RECHAZADA |
 | V-008 | base-v3 con 16 modelos directos (uno por horizonte h) | 0.4833 ± 0.0155 (f1 0.4793 · f2 0.4636 · f3 0.4835 · f4 0.5068) | +0.093 vs base-v3 (0/4) | ❌ RECHAZADA |
+| V-009 | base-v3 + modelo recursivo (1 paso); media en log con el directo | media 0.3860 ± 0.0077 (f1 0.3912 · f2 0.3754 · f3 0.3822 · f4 0.3952); s1 0.3856. Solo recursivo: 0.3894 | −0.0045 vs base-v3 (4/4) media; recursivo solo −0.0010 (3/4) | ✅ ACEPTADA (media) · ❌ recursivo solo |
 | V-011 | base-v3 con promo_day/promo_ratio recortados al p99 por familia | 0.3908 ± 0.0088 (f1 0.3953 · f2 0.3792 · f3 0.3863 · f4 0.4023) | +0.0003 vs base-v3 (2/4); 16-ago aún ×2.8–3.1 el 17-ago | ❌ RECHAZADA |
 
 ![Progreso de los experimentos](docs/img/progreso.png)
