@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:18:43+02:00",
+  "updated": "2026-10-17T17:19:31+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-035"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -1418,6 +1418,11 @@
           "t": "2026-10-17T10:17:23+02:00",
           "by": "consultor",
           "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
+        },
+        {
+          "t": "2026-10-17T17:18:52+02:00",
+          "by": "consultor",
+          "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
         }
       ]
     },
@@ -2074,6 +2079,11 @@
           "t": "2026-10-17T17:18:28+02:00",
           "by": "tester",
           "msg": "DONE: V-012 RECHAZADA: CV 0.3919 (semilla 1: 0.3928) frente a 0.3904 de base-v3; mejora 2/4 folds y tarda 4 veces más."
+        },
+        {
+          "t": "2026-10-17T17:18:52+02:00",
+          "by": "consultor",
+          "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
         }
       ],
       "runs": [
@@ -2104,18 +2114,18 @@
       "id": "T-035",
       "title": "V-013: mezcla ponderada de base-v3 (LightGBM) y base-v2 (estadístico) en log",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "media",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 1.0,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (ensembles de Favorita/M5, T-027): v2 falla distinto que v3 y no extrapola promos; mezclar en log reduce varianza · Cambio: pred = w·v3 + (1-w)·v2 en log1p, w en {0.6,0.7,0.8,0.9} elegido en folds, sin tocar los modelos · Criterio: RMSLE medio < 0.3904 y no empeora más de 1 fold; reportar también ventana 16-ago-2016 y 28-feb (Carnaval); si w óptimo es 1.0, RECHAZADA",
       "deps": [],
       "created": "2026-10-17T11:05:54+02:00",
-      "updated": "2026-10-17T17:18:31+02:00",
+      "updated": "2026-10-17T17:19:31+02:00",
       "started_at": "2026-10-17T17:18:31+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T17:19:31+02:00",
       "log": [
         {
           "t": "2026-10-17T11:05:54+02:00",
@@ -2126,6 +2136,28 @@
           "t": "2026-10-17T17:18:31+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T17:18:52+02:00",
+          "by": "consultor",
+          "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
+        },
+        {
+          "t": "2026-10-17T17:19:31+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-013 implementada (mezcla log v3/v2, w por `V013_W`, quick 0.3929, tests verdes); falta que el tester barra w y dé veredicto."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T17:19:31+02:00",
+          "min": 1.0,
+          "turns": 17,
+          "tokens": 156366,
+          "cost_usd": 0.1105485,
+          "verdict": "review"
         }
       ]
     },
@@ -2150,6 +2182,11 @@
           "t": "2026-10-17T11:05:56+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:18:52+02:00",
+          "by": "consultor",
+          "msg": "Nueva base vigente: base-v4 (V-009 avg, CV 0.3858, c1 0.7552). Si aún no se ha medido, compara contra base-v4; si ya se hizo sobre base-v3, anótalo y valora rehacerla sobre base-v4."
         }
       ]
     },
