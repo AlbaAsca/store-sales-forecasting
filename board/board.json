@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:30:03+02:00",
+  "updated": "2026-10-17T18:31:22+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-048",
-    "heartbeat": "2026-10-17T18:29:15+02:00",
-    "message": "arquitecto con T-048",
-    "pid": 16672,
-    "agent": "arquitecto",
-    "started": "2026-10-17T18:29:15+02:00",
+    "current": "T-049",
+    "heartbeat": "2026-10-17T18:30:06+02:00",
+    "message": "desarrollador con T-049",
+    "pid": 19976,
+    "agent": "desarrollador",
+    "started": "2026-10-17T18:30:06+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-048-arquitecto-20261017-182915.jsonl"
+    "live": "live-T-049-desarrollador-20261017-183006.jsonl"
   },
   "agents": [
     {
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-049"
     },
     {
       "id": "tester",
@@ -2948,17 +2948,17 @@
     {
       "id": "T-048",
       "title": "Medir la quincena de control sin las tiendas que cerraron",
-      "owner": "arquitecto",
-      "status": "human",
+      "owner": "desarrollador",
+      "status": "next",
       "priority": "alta",
       "estimate_min": 15.0,
       "actual_min": 0.8,
-      "auto": false,
-      "manual": "Código de `c1_open` listo y los 39 tests existentes en verde; falta el test nuevo en `tests/test_backtest.py`, porque el sistema denegó el comando que lo añadía.",
+      "auto": true,
+      "manual": null,
       "desc": "Teníamos una prueba extra con la quincena de la vuelta al cole de 2016 que salía muy mal, y creíamos que era por el material escolar. El modelador ha descubierto que no: dos tiendas (la 18 y la 25) cerraron justo esos días y vendieron cero. Eso explica casi tres cuartas partes del error, y un cierre no se puede prever.\n\nQueremos que esa prueba también se muestre sin esas tiendas cerradas, para que mida lo que de verdad nos interesa.\n\nCómo sabremos que funciona: al comparar variantes aparece el resultado de esa prueba con y sin tiendas cerradas, y los tests siguen en verde.\n\n## Técnico\n- Medido en T-041 con preds de base-v4: c1 = 0.755; sin tiendas 18 y 25 = 0.3902. Las dos explican el 74 % del error cuadrático.\n- Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con >= 50 % de días a 0 en la ventana; mostrarlo en compare.",
       "deps": [],
       "created": "2026-10-17T18:06:38+02:00",
-      "updated": "2026-10-17T18:30:03+02:00",
+      "updated": "2026-10-17T18:31:22+02:00",
       "started_at": "2026-10-17T18:29:15+02:00",
       "finished_at": "2026-10-17T18:30:03+02:00",
       "log": [
@@ -2986,6 +2986,16 @@
           "t": "2026-10-17T18:30:03+02:00",
           "by": "arquitecto",
           "msg": "⚠ 1 comandos denegados: cat >> tests/test_backtest.py <<'EOF' def test_open_mask_excluye_tiendas_cerrada"
+        },
+        {
+          "t": "2026-10-17T18:31:22+02:00",
+          "by": "consultor",
+          "msg": "Revisado por el consultor: el código está bien (c1 base-v5 0.7526 → sin cerradas 0.3927; excluye 18, 25 y 52, que en ago-2016 aún no había abierto). No era tarea para Alba: falta solo el test, y el arquitecto no tiene permiso para escribir ficheros. Pasa al desarrollador."
+        },
+        {
+          "t": "2026-10-17T18:31:22+02:00",
+          "by": "consultor",
+          "msg": "Falta: test en tests/test_backtest.py para open_mask (tienda con >= 50 % de días a 0 se excluye; tienda normal no) y para control_open en results.compare. Usa Edit/Write, no cat ni heredoc."
         }
       ],
       "runs": [
@@ -3005,7 +3015,7 @@
       "id": "T-049",
       "title": "V-019: predecir cero en las series que llevan semanas sin vender",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": null,
@@ -3014,8 +3024,8 @@
       "desc": "Algunas combinaciones de tienda y producto llevan semanas sin vender nada. El modelo a veces les predice un poquito de venta, y con esta forma de puntuar eso penaliza bastante.\n\nLa idea es una regla sencilla después del modelo: si una serie lleva muchos días seguidos sin vender, predecir cero. Un notebook público consiguió con esto su mayor mejora.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (LB −0.0153); Favorita 5.º usa conteo de ceros. Distinto de V-015 (eso eran rasgos; esto es una regla dura posterior).\n- Cambio sobre base-v5: post-proceso en fit_predict; N = 28/56/90 días a 0 antes del corte (sin fugas); una sola constante elegida con los folds.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:43+02:00",
-      "updated": "2026-10-17T18:16:43+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T18:30:06+02:00",
+      "started_at": "2026-10-17T18:30:06+02:00",
       "finished_at": null,
       "log": [
         {
@@ -3027,6 +3037,11 @@
           "t": "2026-10-17T18:29:06+02:00",
           "by": "consultor",
           "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
+        },
+        {
+          "t": "2026-10-17T18:30:06+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
