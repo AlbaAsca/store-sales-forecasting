@@ -188,6 +188,7 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 | V-011 · poner tope a las promociones | igual (0.3908) | en las prácticas casi no hay picos que recortar |
 | V-012 · triplicar los ejemplos de entrenamiento | peor de media (0.3919), ×4 de tiempo | los ejemplos nuevos repiten información |
 | V-013 · mezclar con el modelo sencillo | mejora a base-v3 pero no a base-v4 | una opinión débil resta en una media de opiniones fuertes |
+| V-017 · festivos por tienda (nacional/regional/local) | media 0.3849 (−0.0003) pero empeora 2 de 4 prácticas | casi no hay festivos en las prácticas; los retardos ya los reflejan |
 | V-016 · día del mes y día de paga | empeora 3 de 4 prácticas (0.3878) | el modelo ya lo deducía de las ventas recientes |
 | V-019 · predecir cero en series dormidas | mejora las prácticas (0.3849) pero empeora el examen final (0.4227) | da por muerto el material escolar que arranca en agosto; se corrige en V-023 |
 | V-023 · cero solo en series de verdad muertas (excepción de temporada) | prácticas 0.3849 / 0.3850 (base 0.3852), mejora 4/4 folds; examen final pendiente del consultor | no toca series que vendieron en las mismas fechas del año anterior |

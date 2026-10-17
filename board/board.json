@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:00:41+02:00",
+  "updated": "2026-10-17T20:05:11+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-046",
-    "heartbeat": "2026-10-17T19:59:31+02:00",
-    "message": "desarrollador con T-046",
+    "heartbeat": "2026-10-17T20:00:44+02:00",
+    "message": "tester con T-046",
     "pid": 9572,
-    "agent": "desarrollador",
-    "started": "2026-10-17T19:59:31+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T20:00:44+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-046-desarrollador-20261017-195931.jsonl"
+    "live": "live-T-046-tester-20261017-200044.jsonl"
   },
   "agents": [
     {
@@ -2891,7 +2891,7 @@
       "id": "T-046",
       "title": "V-017: decirle al modelo qué días son festivos en cada tienda",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 30.0,
       "actual_min": 1.2,
@@ -2900,7 +2900,7 @@
       "desc": "El modelo no sabe cuándo es festivo. Hay festivos de todo el país, de una región o de una sola ciudad, y algunos se trasladan a otro día. Queremos decirle, para cada tienda y día, si ese día es festivo donde está la tienda.\n\nEn los exámenes de práctica casi no hay festivos, así que puede que ahí no se note; donde sí hay es en el examen final (el 10 de agosto, trasladado al 11).\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas; si empata, miramos el examen final y decide el consultor.\n\n## Técnico\n- Fuente: notebook chongzhenjie (process_holiday); DISENO-MODELOS (T-041). Festivos ≈ 1 % de filas en folds.\n- Cambio sobre base-v5: 0/1 hol_nat, hol_reg, hol_loc, event_nat del día objetivo cruzando holidays_events.csv con stores.csv (city/state). transferred=True → día normal; Transfer/Bridge/Additional → festivo; Work Day → laborable. En _features y _step_feats.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:06:32+02:00",
-      "updated": "2026-10-17T20:00:41+02:00",
+      "updated": "2026-10-17T20:05:11+02:00",
       "started_at": "2026-10-17T19:59:31+02:00",
       "finished_at": "2026-10-17T20:00:41+02:00",
       "log": [
@@ -2923,6 +2923,21 @@
           "t": "2026-10-17T20:00:41+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-017 (festivos nacional/regional/local y evento por tienda) implementada, corre en quick (0.3906 en el fold 1) y los tests pasan; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-17T20:00:44+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T20:04:59+02:00",
+          "by": "tester",
+          "msg": "CV 0.3849 s42 / 0.3850 s7 (base-v5 0.3852 / 0.3853): media -0.0003 en ambas semillas, pero empeora f1 (+0.0004) y f2 (+0.0008) en las dos → 2 folds peores (máx. 1) → RECHAZADA. Mejora f4 -0.0019, f3 -0.0003. c1 0.7507 (base 0.7526); c1 sin cerradas 0.3945 s42 / 0.3940 s7 (base-v5-s7 0.3919: peor +0.0021). Familias: mejora LIQUOR -0.004; empeora GROCERY II +0.003. Holdout no medido (solo consultor). Tests 45 OK."
+        },
+        {
+          "t": "2026-10-17T20:05:11+02:00",
+          "by": "tester",
+          "msg": "DONE: V-017 RECHAZADA: media 0.3849 y 0.3850 frente a 0.3852 y 0.3853 de base-v5, pero empeora 2 de 4 folds (f1 y f2) con ambas semillas."
         }
       ],
       "runs": [
@@ -2935,8 +2950,19 @@
           "tokens": 206213,
           "cost_usd": 0.1376527,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T20:05:11+02:00",
+          "min": 4.4,
+          "turns": 20,
+          "tokens": 207535,
+          "cost_usd": 0.14427700000000002,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T20:00:44+02:00"
     },
     {
       "id": "T-047",
