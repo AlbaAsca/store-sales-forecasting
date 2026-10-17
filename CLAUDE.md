@@ -74,6 +74,9 @@ y el RMSLE de backtest y holdout. Subir es tarea `--manual` para Alba. Los agent
 sin esperar a que se lo pidan: la promueve a base, mide holdout y control sin tiendas cerradas, genera el CSV, pone los tags y crea la
 tarjeta `--manual` de subida con el mensaje exacto. También puede proponer un envío experimental de una variante rechazada por poco
 (como V-014) si la evidencia local es ambigua. Al empezar cada conversación, el consultor revisa el panel por si hay algo que promover.
+**MCP de Kaggle** (`.mcp.json`, servidor remoto https://www.kaggle.com/mcp, sin token: Alba inicia sesión con la herramienta `authorize`).
+Solo lo usa el consultor en sesiones interactivas: para leer puntuaciones y, **con el OK explícito de Alba en cada envío**, subir el CSV.
+El runner lo bloquea (`--strict-mcp-config` y `mcp__kaggle` en DENIED): los agentes autónomos nunca lo ven.
 
 ## Commits
 Autoría Alba Ascaso <albaasca@gmail.com>. En **inglés**, Conventional Commits, tarea al final: `feat(model): add weekday profile (T-012)`.

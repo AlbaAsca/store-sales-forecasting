@@ -51,7 +51,8 @@ ALLOWED = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch",
            "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe competitions leaderboard *)",
            "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe kernels list *)",
            "PowerShell(../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull * -p data/kaggle-code/*)"]
-DENIED = ["Bash(python -m pip *)", "Bash(pip *)", "Bash(npm *)", "Bash(winget *)", "Bash(curl *)", "Bash(wget *)",
+DENIED = ["mcp__kaggle",  # MCP de Kaggle: solo el consultor, con permiso de Alba en cada envío
+          "Bash(python -m pip *)", "Bash(pip *)", "Bash(npm *)", "Bash(winget *)", "Bash(curl *)", "Bash(wget *)",
           "Bash(cp *)", "Bash(mv *)", "Bash(rm *)", "Bash(git push*)", "Bash(git reset*)", "Bash(git checkout*)",
           "Bash(*kaggle* competitions submit*)", "Bash(*kaggle* kernels push*)", "Bash(*kaggle* competitions download*)",
           "PowerShell(python -m pip *)", "PowerShell(pip *)", "PowerShell(Copy-Item*)", "PowerShell(Remove-Item*)",
@@ -219,7 +220,8 @@ def run_claude(claude, prompt, agent, timeout_s, tag="run"):
     """Lanza al agente con salida en streaming: cada evento (texto, herramienta, resultado) se guarda al momento en
     board/runs/live-<tag>-<agente>-<fecha>.jsonl para verlo en directo desde el panel. No cuesta tokens extra:
     es la misma ejecución, solo que la CLI va contando lo que hace en vez de esperar al final."""
-    cmd = [claude, "-p", "--agent", agent, "--output-format", "stream-json", "--verbose",
+    # --strict-mcp-config sin --mcp-config: el agente no carga ningún MCP del proyecto (p. ej. kaggle, que puede enviar)
+    cmd = [claude, "-p", "--agent", agent, "--output-format", "stream-json", "--verbose", "--strict-mcp-config",
            "--permission-mode", "acceptEdits", "--permission-prompts", "none",
            "--max-turns", "80", "--allowedTools", *ALLOWED, "--disallowedTools", *DENIED]
     live = LOGDIR / f"live-{tag}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.jsonl"

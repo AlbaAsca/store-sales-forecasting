@@ -130,3 +130,9 @@ def test_denegados_avisan_y_bloquean(monkeypatch):
 def test_sin_denegados_sin_nota(monkeypatch):
     t, (new, verdict, _) = _finish(monkeypatch, False)
     assert (new, verdict) == ("done", "done") and t["log"] == []
+
+
+def test_runner_no_da_acceso_al_mcp_de_kaggle():
+    import inspect
+    assert "mcp__kaggle" in runner.DENIED
+    assert "--strict-mcp-config" in inspect.getsource(runner.run_claude)
