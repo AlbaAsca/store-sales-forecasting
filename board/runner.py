@@ -62,6 +62,10 @@ RULES = """Reglas (modo autónomo, permisos: solo código y tests):
 - Sigue CLAUDE.md. Trabaja SOLO en esta tarea. Si ves otras mejoras o bugs, regístralos con
   `python board/board.py add "Título" --owner <rol> --est <minutos de agente> --prio <alta|media|baja> --desc "..." --by {owner}`.
   Las estimaciones son en MINUTOS DE AGENTE (lo que tardarías tú), no horas humanas.
+- Cómo escribir la descripción de una tarjeta (la lee Alba, una persona que está aprendiendo, no un robot):
+  arriba, 2-4 frases en lenguaje llano: qué problema hay, qué idea probamos y por qué; después una línea
+  «Cómo sabremos si funciona: …» en palabras. Los datos técnicos (fuentes, nombres de variables, fórmulas, números,
+  criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.
 - NO edites board/board.json a mano: usa siempre board/board.py.
 - Comandos permitidos: python (scripts, pytest, board.py), git status/diff/log, ls/cat/head/tail/diff, mkdir y
   `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
@@ -100,7 +104,7 @@ CONTRIB_RULES = """Eres el agente «{agent}» y hoy no hay tareas asignadas para
 1. Ponte al día: CLAUDE.md, `python board/board.py list`, docs/ y los resúmenes eval/results/*.json si existen.
 2. Dentro de tu rol: {focus}
 3. Solo si aporta de verdad: registra como mucho 2 tarjetas con
-   `python board/board.py add "Título" --owner <rol> --est <min> --prio <alta|media|baja> --desc "hipótesis · cambio · criterio" --by {agent}`
+   `python board/board.py add "Título" --owner <rol> --est <min> --prio <alta|media|baja> --desc "<lenguaje llano; datos técnicos debajo de ## Técnico>" --by {agent}`
    y/o deja el detalle en docs/NOTAS-{agent}.md (fecha + hallazgo + fuente). No dupliques tarjetas ni notas existentes.
 4. No toques models/base/ ni ejecutes evaluaciones: eso va por tarjeta.
 - NO edites board/board.json a mano. NO instales nada ni hagas git push. Responde en español.

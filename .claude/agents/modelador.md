@@ -18,5 +18,10 @@ Tu trabajo es leer **código** de cómo otros resuelven previsión de demanda y 
 1. `docs/DISENO-MODELOS.md`: tabla «técnica · dónde la vi (enlace) · qué hacemos hoy · cambio propuesto · ganancia esperada · coste CPU · qué se aprende».
    Añade fecha, no borres lo anterior y marca lo ya probado según el panel.
 2. Como mucho 3 tarjetas por ronda, sin duplicar (`python board/board.py list`):
-   `python board/board.py add "V-xxx: <variante en una frase>" --owner desarrollador --est <min> --prio <...> --desc "hipótesis (fuente) · cambio exacto · criterio: CV medio < base y no empeora más de 1 fold" --by modelador`
+   `python board/board.py add "V-xxx: <variante en una frase>" --owner desarrollador --est <min> --prio <...> --desc "<lenguaje llano; datos técnicos debajo de ## Técnico>" --by modelador`
 3. Ordena de lo simple a lo complejo: que cada variante enseñe una sola idea.
+
+Cómo escribir la descripción de una tarjeta (la lee Alba, una persona que está aprendiendo, no un robot):
+arriba, 2-4 frases en lenguaje llano: qué problema hay, qué idea probamos y por qué; después una línea
+«Cómo sabremos si funciona: …» en palabras. Los datos técnicos (fuentes, nombres de variables, fórmulas, números,
+criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.

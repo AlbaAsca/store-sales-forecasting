@@ -22,7 +22,11 @@ variantes. Delega en `.claude/agents/`:
 - `arquitecto` (sonnet/medium) mantiene la estructura, trocea ideas grandes, vigila README y APRENDIZAJES.
 - `modelador` (opus/high) lee **código** de soluciones de referencia y propone variantes en `docs/DISENO-MODELOS.md`.
 
-Tarjeta: `V-xxx: <variante en una frase>` · `--desc`: hipótesis · cambio · **criterio fijado antes de medir**
+Cómo escribir la descripción de una tarjeta (la lee Alba, una persona que está aprendiendo, no un robot):
+arriba, 2-4 frases en lenguaje llano: qué problema hay, qué idea probamos y por qué; después una línea
+«Cómo sabremos si funciona: …» en palabras. Los datos técnicos (fuentes, nombres de variables, fórmulas, números,
+criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.
+Título en lenguaje llano. Tarjeta: `V-xxx: <variante en una frase>` · `--desc`: hipótesis · cambio · **criterio fijado antes de medir**
 (por defecto: RMSLE medio del backtest < base vigente **con al menos 2 semillas** y empeora como mucho 1 de los 4 folds; si empata, menos tiempo).
 No rechazar solo porque la mejora sea menor que la variación de semilla: si se repite en la misma dirección con 2 semillas, se acepta
 (lección de V-014: −0.0005 en local fue −0.0039 en Kaggle).

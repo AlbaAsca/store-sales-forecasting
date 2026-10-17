@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T18:29:12+02:00",
+  "updated": "2026-10-17T18:29:23+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-045",
-    "heartbeat": "2026-10-17T18:20:28+02:00",
-    "message": "tester con T-045",
+    "current": "T-048",
+    "heartbeat": "2026-10-17T18:29:15+02:00",
+    "message": "arquitecto con T-048",
     "pid": 16672,
-    "agent": "tester",
-    "started": "2026-10-17T18:20:28+02:00",
+    "agent": "arquitecto",
+    "started": "2026-10-17T18:29:15+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-045-tester-20261017-182028.jsonl"
+    "live": "live-T-048-arquitecto-20261017-182915.jsonl"
   },
   "agents": [
     {
@@ -58,8 +58,8 @@
       "name": "Arquitecto",
       "role": "Mantiene la estructura del proyecto y trocea ideas grandes",
       "color": "#7c3aed",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-048"
     },
     {
       "id": "desarrollador",
@@ -2856,6 +2856,11 @@
           "t": "2026-10-17T18:29:12+02:00",
           "by": "tester",
           "msg": "DONE: V-016 RECHAZADA: CV 0.3878 (semilla 1: 0.3874) frente a 0.3858 de base-v4, empeora 3 de 4 folds y c1 también empeora."
+        },
+        {
+          "t": "2026-10-17T18:29:23+02:00",
+          "by": "consultor",
+          "msg": "Esta variante se construyó sobre base-v4, antes de promover base-v5. Compárala con base-v4 (0.3858) con 2 semillas; si se acepta, el desarrollador la rehace sobre base-v5."
         }
       ],
       "runs": [
@@ -2944,7 +2949,7 @@
       "id": "T-048",
       "title": "Medir la quincena de control sin las tiendas que cerraron",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 15.0,
       "actual_min": null,
@@ -2953,8 +2958,8 @@
       "desc": "Teníamos una prueba extra con la quincena de la vuelta al cole de 2016 que salía muy mal, y creíamos que era por el material escolar. El modelador ha descubierto que no: dos tiendas (la 18 y la 25) cerraron justo esos días y vendieron cero. Eso explica casi tres cuartas partes del error, y un cierre no se puede prever.\n\nQueremos que esa prueba también se muestre sin esas tiendas cerradas, para que mida lo que de verdad nos interesa.\n\nCómo sabremos que funciona: al comparar variantes aparece el resultado de esa prueba con y sin tiendas cerradas, y los tests siguen en verde.\n\n## Técnico\n- Medido en T-041 con preds de base-v4: c1 = 0.755; sin tiendas 18 y 25 = 0.3902. Las dos explican el 74 % del error cuadrático.\n- Cambio: en backtest/results añadir c1_open = RMSLE excluyendo tiendas con >= 50 % de días a 0 en la ventana; mostrarlo en compare.",
       "deps": [],
       "created": "2026-10-17T18:06:38+02:00",
-      "updated": "2026-10-17T18:06:38+02:00",
-      "started_at": null,
+      "updated": "2026-10-17T18:29:15+02:00",
+      "started_at": "2026-10-17T18:29:15+02:00",
       "finished_at": null,
       "log": [
         {
@@ -2966,6 +2971,11 @@
           "t": "2026-10-17T18:29:06+02:00",
           "by": "consultor",
           "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
+        },
+        {
+          "t": "2026-10-17T18:29:15+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
         }
       ]
     },
