@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:15:37+02:00",
+  "updated": "2026-10-17T11:17:02+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-025",
-    "heartbeat": "2026-10-17T11:14:56+02:00",
-    "message": "arquitecto con T-025",
+    "current": "T-021",
+    "heartbeat": "2026-10-17T11:15:48+02:00",
+    "message": "desarrollador con T-021",
     "pid": 22556,
-    "agent": "arquitecto",
-    "started": "2026-10-17T11:14:55+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T11:15:48+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-025-arquitecto-20261017-111456.jsonl"
+    "live": "live-T-021-desarrollador-20261017-111548.jsonl"
   },
   "agents": [
     {
@@ -1226,10 +1226,10 @@
       "id": "T-021",
       "title": "V-008: 16 modelos directos (uno por horizonte h) frente a h como rasgo",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 1.2,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (ceshine, Favorita 5.º; DISENO-MODELOS #9): un modelo por día de horizonte se especializa. Cambio: entrenar 16 LightGBM, uno por h. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar estrategia multi-paso directa.",
@@ -1237,9 +1237,9 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T10:14:38+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T11:17:02+02:00",
+      "started_at": "2026-10-17T11:15:48+02:00",
+      "finished_at": "2026-10-17T11:17:02+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
@@ -1250,6 +1250,28 @@
           "t": "2026-10-17T10:17:23+02:00",
           "by": "consultor",
           "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
+        },
+        {
+          "t": "2026-10-17T11:15:48+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:17:02+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-008 (16 modelos por horizonte) implementada, el backtest rápido corre (fold 1: 0.4793) y los tests pasan; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:17:02+02:00",
+          "min": 1.2,
+          "turns": 10,
+          "tokens": 123797,
+          "cost_usd": 0.0973642,
+          "verdict": "review"
         }
       ]
     },
