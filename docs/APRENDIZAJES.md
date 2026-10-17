@@ -25,6 +25,9 @@ media:      exp(½·log directo + ½·log recursivo)
 ```
 El recursivo solo apenas mejora (−0.001, lo que varía la semilla; peor en f1) porque acumula error; pero se equivoca de otra forma que el directo, y promediarlos en log baja la varianza: −0.0045 y 4/4 folds (coste: tiempo ×2.4). Ojo al promover: `MODE` por defecto en model.py es `rec`; hay que fijar `avg`.
 
+### V-013 · mezcla en log de base-v3 (LightGBM) y base-v2 (estadístico) — ❌ RECHAZADA (CV 0.3893 con w=0.8 vs base-v4 0.3858)
+Qué: pred = w·v3 + (1−w)·v2 en log1p, w ∈ {0.6…0.9}. · Pasó: curva suave con mínimo en w=0.8 (0.6→0.3912, 0.7→0.3899, 0.8→0.3893, 0.9→0.3895, 1.0→0.3904; semilla 1: 0.3891). Gana 0.0012 a v3 en 4/4 folds, pero pierde con base-v4 en 4/4 folds (+0.0035) y en el control de ago-2016 (+0.015, SCHOOL SUPPLIES +0.018). · Por qué: el estadístico aporta algo de varianza reducida, pero el promedio directo+recursivo de v4 ya capta casi todo eso con más calidad; v2 no sabe de promos ni de la vuelta al cole. El Carnaval (28-feb) no está en los folds, no se pudo medir.
+
 ### V-011 · acotar rasgos de promoción al p99 de entrenamiento — ❌ RECHAZADA (CV 0.3904 → 0.3908, semilla 1: 0.3910)
 Qué: recortar promo_day y promo_ratio por familia al percentil 99 visto, para que el pico de promos del 16-ago (fuera de rango) no se extrapole. · Pasó: el CV queda igual (folds +0.0020/−0.0004/+0.0002/−0.0005), pero el 16-ago sigue
 disparado frente al 17-ago: SCHOOL ×3.06 (antes ×3.29), LAWN ×2.77 (×3.91), LINGERIE ×1.84 (×2.32); el criterio pedía ≤ ×1.5. · Por qué: recortar ayuda algo, pero el salto lo siguen empujando otros rasgos (calendario, retardos); los árboles no extrapolan, así que el problema no era solo el valor extremo de la promo. Idea: atacar el pico por otro lado (p. ej. rasgo de día concreto o tope de predicción).
