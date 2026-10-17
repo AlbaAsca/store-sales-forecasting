@@ -70,6 +70,10 @@ Todos los scripts que imprimen fuerzan UTF-8 (`sys.stdout.reconfigure(encoding="
 ## Envíos a Kaggle
 `python scripts/make_submission.py --src models/base --name base-vX` → `dist/`. Tag `vX.Y` antes de subir; el mensaje incluye el tag
 y el RMSLE de backtest y holdout. Subir es tarea `--manual` para Alba. Los agentes nunca envían.
+**Quién lo decide: el consultor, por iniciativa propia** (petición de Alba, 17-oct). En cuanto haya una variante aceptada, el consultor
+sin esperar a que se lo pidan: la promueve a base, mide holdout y control sin tiendas cerradas, genera el CSV, pone los tags y crea la
+tarjeta `--manual` de subida con el mensaje exacto. También puede proponer un envío experimental de una variante rechazada por poco
+(como V-014) si la evidencia local es ambigua. Al empezar cada conversación, el consultor revisa el panel por si hay algo que promover.
 
 ## Commits
 Autoría Alba Ascaso <albaasca@gmail.com>. En **inglés**, Conventional Commits, tarea al final: `feat(model): add weekday profile (T-012)`.
