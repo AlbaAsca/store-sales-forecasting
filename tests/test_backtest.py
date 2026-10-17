@@ -37,10 +37,20 @@ def test_split_sin_fugas():
     assert c["transactions"]["date"].max() < pd.Timestamp("2017-02-10")
 
 
-def test_base_corre_y_escribe_resumen(tmp_path, monkeypatch):
+TOY_MODEL = """
+def fit_predict(history, future, ctx):
+    mean = history.groupby(["store_nbr", "family"], observed=True)["sales"].mean().rename("pred")
+    return future.join(mean, on=["store_nbr", "family"])["pred"].fillna(0).to_numpy()
+"""
+
+
+def test_backtest_corre_y_escribe_resumen(tmp_path, monkeypatch):
+    # modelo de juguete fijo: el harness no debe depender de cuánta historia necesite la base vigente
+    (tmp_path / "toy").mkdir()
+    (tmp_path / "toy" / "model.py").write_text(TOY_MODEL)
     monkeypatch.setattr(backtest, "RESULTS", tmp_path)
     train, ctx = synthetic()
-    s = backtest.run(ROOT / "models" / "base", "t", [{"id": "f1", "start": "2017-02-10", "end": "2017-02-25"}], train, ctx)
+    s = backtest.run(tmp_path / "toy", "t", [{"id": "f1", "start": "2017-02-10", "end": "2017-02-25"}], train, ctx)
     assert (tmp_path / "t.json").exists() and 0 <= s["mean"] < 0.5 and set(s["folds"][0]["by_family"]) == {"A", "B"}
 
 

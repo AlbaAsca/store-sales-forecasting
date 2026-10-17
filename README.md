@@ -10,7 +10,7 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 📈 **Mejor RMSLE en el backtest** | 0.4057 (V-004, pendiente de promover) · base-v2: 0.4154 · base-v0: 0.4745 |
+| 📈 **Mejor RMSLE en el backtest** | 0.3904 (base-v3 = V-006, LightGBM global) · base-v2: 0.4154 · base-v0: 0.4745 |
 | 🧪 **Experimentos cerrados** | 3 aceptados · 0 rechazados → [qué aprendí en cada uno](docs/APRENDIZAJES.md) |
 | 🏁 **Leaderboard de Kaggle** | 0.41457 (v0.2, base-v2) · v0.1: 0.45751 |
 
