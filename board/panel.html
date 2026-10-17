@@ -90,7 +90,6 @@ dialog h3{margin:0;grid-column:1/-1;font-size:15px}
 </header>
 <section id="runner"><span class="state"><span class="pulse"></span><span id="rState">–</span></span>
   <span class="info" id="rInfo"></span><span class="sp"></span>
-  <span class="info" id="rNext" title="Programador de tareas de Windows"></span>
   <button id="rStart" title="Trabaja las tarjetas pendientes una tras otra y se para cuando no quedan">▶ Iniciar</button>
   <button id="rStop" title="Para el runner y al agente que esté trabajando; su tarjeta vuelve a Próximo">■ Parar</button>
   <button id="rToggle" title="En pausa, ni el botón Iniciar ni la ejecución programada cogen tarjetas">Pausar</button></section>
@@ -153,14 +152,20 @@ async function load(force) {
 
 function renderRunner() {
   const r = B.runner || {}, el = $("#runner");
-  const stale = r.state === "working" && minsSince(r.heartbeat) > 70;  // más allá del timeout máximo por tarea
+  const dead = r.state === "working" && r.alive === false;  // el panel dice «trabajando» pero el proceso ya no existe
+  const stale = dead || (r.state === "working" && minsSince(r.heartbeat) > 70);
   const st = stale ? "stale" : r.state || "stopped";
   el.className = st;
-  $("#rState").textContent = { working: "Agentes trabajando", idle: "En espera", paused: "En pausa", stopped: "Runner parado", stale: "Sin señal del runner" }[st];
+  $("#rState").textContent = dead ? "⚠ El agente se ha parado" : { working: "Agentes trabajando", idle: "En espera", paused: "En pausa", stopped: "Runner parado", stale: "Sin señal del runner" }[st];
   let info = "";
   if (st === "working" && r.current) {
     const t = B.tasks.find((x) => x.id === r.current);
     info = `<b>${esc(agentOf(r.agent).name)}</b> con ${r.current}${t ? " · " + esc(t.title) : ""} · lleva <b>${fmtMin(minsSince(r.started))}</b>${t?.estimate_min ? " de " + fmtMin(t.estimate_min) + " estimados" : ""}`;
+    const act = r.last_activity ? minsSince(r.last_activity) : null;
+    if (act != null) info += act < 1 ? ` · <b>activo</b> (última acción hace ${Math.round(act * 60)} s)`
+      : ` · última acción hace <b>${fmtMin(act)}</b>${act > 10 ? " (pensando o atascado)" : ""}`;
+  } else if (dead) {
+    info = `Su proceso ya no existe; ${r.current || "la tarea"} quedó a medias. Pulsa <b>▶ Iniciar</b> para retomarla.`;
   } else if (st === "stopped") info = "Pulsa <b>▶ Iniciar</b> o espera a la próxima ejecución automática";
   else info = esc(r.message || "");
   $("#rInfo").innerHTML = info;
@@ -171,16 +176,7 @@ function renderRunner() {
   $("#rStart").onclick = () => api("POST", "/api/runner/start");
   $("#rStop").onclick = () => confirm("¿Parar el runner y al agente que esté trabajando ahora?") && api("POST", "/api/runner/stop");
 }
-async function loadSchedule() {
-  try {
-    const s = await (await fetch("/api/runner/schedule", { cache: "no-store" })).json();
-    const fmt = (t) => new Date(t).toLocaleString("es-ES", { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-    $("#rNext").innerHTML = !s.exists ? "Sin ejecución automática programada"
-      : s.state === "Disabled" ? "Ejecución automática <b>desactivada</b>"
-      : `Próxima automática: <b>${fmt(s.next)}</b>` + (s.last && !s.last.startsWith("1999") ? ` · última ${fmt(s.last)}` : "");
-  } catch (e) { $("#rNext").textContent = ""; }
-}
-loadSchedule(); setInterval(loadSchedule, 60000);
+
 async function loadLive() {
   if (!$("#live").open) return;
   try {
@@ -249,7 +245,7 @@ function render() {
 }
 function card(t) {
   const a = agentOf(t.owner), real = realMin(t), est = t.estimate_min;
-  const live = B.runner?.current === t.id && B.runner?.state === "working";
+  const live = B.runner?.current === t.id && B.runner?.state === "working" && B.runner?.alive !== false;
   let tm = "";
   if (real == null) tm = est ? `est ${fmtMin(est)}` : "";
   else if (!est) tm = `real ${fmtMin(real)}`;

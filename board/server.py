@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
@@ -51,7 +52,11 @@ def get_board():
     b = json.loads(BOARD.read_text(encoding="utf-8"))
     for a in b.get("agents", []):
         a.update(agent_config(a["id"]))
-    b.setdefault("runner", {})["alive"] = pid_alive(b["runner"].get("pid"))
+    r = b.setdefault("runner", {})
+    r["alive"] = pid_alive(r.get("pid"))
+    live = HERE / "runs" / r["live"] if r.get("live") else None
+    r["last_activity"] = (datetime.fromtimestamp(live.stat().st_mtime).astimezone().isoformat(timespec="seconds")
+                          if live and live.is_file() else None)  # última línea que escribió el agente
     return Response(json.dumps(b, ensure_ascii=False), media_type="application/json", headers={"Cache-Control": "no-store"})
 
 
