@@ -5,6 +5,12 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.4 · cuarto envío: cuando las tres medidas locales coinciden, Kaggle también — 🏁 LB 0.40327
+Qué: subir base-v4 (media del LightGBM directo y del recursivo). · Pasó: backtest 0.3904 → 0.3858, holdout 0.4378 → 0.4187, control
+16-31 ago 2016 0.7696 → 0.7552, y Kaggle 0.41341 → 0.40327 (−0.010, el mayor salto desde v0.2). · Por qué: promediar dos modelos que se
+equivocan de forma distinta reduce el error, y el pico de promos del 16-ago (diagnóstico T-027) le afecta menos. Lección: una mejora que se ve
+en folds, holdout y control a la vez es mucho más fiable que una que solo se ve en la media de los folds (v0.3).
+
 ### v0.3 · tercer envío: el LightGBM mejora mucho en local y casi nada en Kaggle — 🏁 LB 0.41341
 Qué: subir base-v3 (LightGBM global + promos + lag 364). · Pasó: backtest 0.4154 → 0.3904 (−0.025) y holdout 0.5244 → 0.4378 (−0.087),
 pero Kaggle solo 0.41457 → 0.41341 (−0.001). · Por qué: aún no lo sabemos (tarjeta de diagnóstico). Lección provisional: la validación local

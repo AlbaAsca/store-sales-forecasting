@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:19:31+02:00",
+  "updated": "2026-10-17T17:22:33+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-035",
-    "heartbeat": "2026-10-17T17:18:31+02:00",
-    "message": "desarrollador con T-035",
+    "heartbeat": "2026-10-17T17:19:35+02:00",
+    "message": "tester con T-035",
     "pid": 15036,
-    "agent": "desarrollador",
-    "started": "2026-10-17T17:18:31+02:00",
+    "agent": "tester",
+    "started": "2026-10-17T17:19:35+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-035-desarrollador-20261017-171831.jsonl"
+    "live": "live-T-035-tester-20261017-171935.jsonl"
   },
   "agents": [
     {
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-035"
     },
     {
       "id": "investigador",
@@ -2146,6 +2146,11 @@
           "t": "2026-10-17T17:19:31+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-013 implementada (mezcla log v3/v2, w por `V013_W`, quick 0.3929, tests verdes); falta que el tester barra w y dé veredicto."
+        },
+        {
+          "t": "2026-10-17T17:19:35+02:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -2159,7 +2164,8 @@
           "cost_usd": 0.1105485,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T17:19:35+02:00"
     },
     {
       "id": "T-036",
@@ -2228,7 +2234,7 @@
       "id": "T-038",
       "title": "Subir v0.4 (base-v4) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 3.0,
       "actual_min": null,
@@ -2237,7 +2243,7 @@
       "desc": "Primer envío con fold de control c1.",
       "deps": [],
       "created": "2026-10-17T17:18:43+02:00",
-      "updated": "2026-10-17T17:18:43+02:00",
+      "updated": "2026-10-17T17:22:33+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
@@ -2245,6 +2251,11 @@
           "t": "2026-10-17T17:18:43+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T17:22:33+02:00",
+          "by": "consultor",
+          "msg": "LB 0.40327 (v0.3 0.41341): mejora coherente con backtest, holdout y control"
         }
       ]
     },
