@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T19:03:36+02:00",
+  "updated": "2026-10-17T19:52:57+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-054"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -3274,7 +3274,7 @@
       "id": "T-054",
       "title": "Repescar V-010 y V-015 sobre la base nueva",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "blocked",
       "priority": "alta",
       "estimate_min": 40,
       "actual_min": 8.9,
@@ -3283,7 +3283,7 @@
       "desc": "Dos ideas que rechazamos porque mejoraban «demasiado poco» puede que sí valieran: con V-014 nos pasó justo eso, una mejora pequeñísima en casa que en Kaggle fue ocho veces mayor.\n\n- V-010 era hacer la media de varias copias del modelo; mejoraba en las cuatro prácticas, aunque muy poco.\n- V-015 era decirle al modelo qué series se venden a ratos; mejoraba dos prácticas y la de control.\n\nQueremos rehacerlas sobre la base nueva (base-v5) y medirlas con dos semillas, con la regla nueva: se aceptan si mejoran de forma repetida, aunque sea poco.\n\nCómo sabremos si funcionan: cada una baja el error medio de base-v5 con las dos semillas y no empeora más de una práctica.\n\n## Técnico\n- Antes, sobre base-v4 (0.3858; folds 0.3909/0.3754/0.3821/0.3947; c1 0.7552):\n  V-010 0.3856 (0.3908/0.3750/0.3819/0.3945; c1 0.7536), mejora 4/4, ×3 de tiempo.\n  V-015 0.3854 (0.3903/0.3755/0.3823/0.3937; c1 0.7513), mejora 2/4.\n- Rehacer como V-021 (= V-010 sobre base-v5) y V-022 (= V-015 sobre base-v5) con new_variant.py; medir con --seed 42 y --seed 7.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:29:06+02:00",
-      "updated": "2026-10-17T18:52:54+02:00",
+      "updated": "2026-10-17T19:52:57+02:00",
       "started_at": "2026-10-17T18:44:02+02:00",
       "finished_at": "2026-10-17T18:52:54+02:00",
       "log": [
@@ -3321,6 +3321,16 @@
           "t": "2026-10-17T18:52:56+02:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T19:09:18+02:00",
+          "by": "consultor",
+          "msg": "Consultor: V-021 tarda ~7 min por fold (6 modelos), unos 35 min por semilla; puede pasar del tiempo máximo de la ejecución (60 min). Si te cortan y vuelves a empezar, reutiliza los resultados que ya estén en eval/results (V-021, V-022, V-022-s7, base-v5-s7) y mide solo lo que falte. El tiempo máximo sube a 120 min a partir de la próxima ejecución."
+        },
+        {
+          "t": "2026-10-17T19:52:57+02:00",
+          "by": "tester",
+          "msg": "BLOCKED: timeout"
         }
       ],
       "runs": [
@@ -3333,6 +3343,16 @@
           "tokens": 287211,
           "cost_usd": 0.20121899999999998,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T19:52:57+02:00",
+          "min": 60.0,
+          "turns": null,
+          "tokens": null,
+          "cost_usd": null,
+          "verdict": "blocked"
         }
       ],
       "verify_started": "2026-10-17T18:52:56+02:00"
