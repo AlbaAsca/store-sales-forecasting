@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T17:25:12+02:00",
+  "updated": "2026-10-17T17:25:38+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-039",
-    "heartbeat": "2026-10-17T17:24:22+02:00",
-    "message": "desarrollador con T-039",
-    "pid": 15036,
-    "agent": "desarrollador",
-    "started": "2026-10-17T17:24:22+02:00",
+    "heartbeat": "2026-10-17T17:25:14+02:00",
+    "message": "tester con T-039",
+    "pid": 23052,
+    "agent": "tester",
+    "started": "2026-10-17T17:25:14+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-039-desarrollador-20261017-172422.jsonl"
+    "live": "live-T-039-tester-20261017-172514.jsonl"
   },
   "agents": [
     {
@@ -2288,7 +2288,7 @@
       "id": "T-039",
       "title": "Bug: runners.{think,measure} con estado fantasma (pid muerto, pid 8) mientras el runner sin carril trabaja",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 20.0,
       "actual_min": 0.8,
@@ -2297,7 +2297,7 @@
       "desc": "Tras T-033 el panel ve runners.think=T-032 y runners.measure=T-024 'working' con pid muerto (uno pid=8, parece dato de test escrito en el board.json real) mientras el runner real (lane all, clave runner) trabaja en T-034. Arreglar: (1) que ningún test escriba en board/board.json real; (2) un runner --lane all actualiza el estado que el panel muestra; (3) al arrancar cualquier runner, limpiar carriles con pid muerto (state stopped). Criterio: test que lo cubra; suite en verde; el panel no muestra carriles fantasma.",
       "deps": [],
       "created": "2026-10-17T17:18:43+02:00",
-      "updated": "2026-10-17T17:25:12+02:00",
+      "updated": "2026-10-17T17:25:38+02:00",
       "started_at": "2026-10-17T17:24:22+02:00",
       "finished_at": "2026-10-17T17:25:12+02:00",
       "log": [
@@ -2315,6 +2315,21 @@
           "t": "2026-10-17T17:25:12+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: Aislado `board.json` en tests, limpieza de carriles con pid muerto al arrancar el runner y panel sin fantasmas; 33 tests en verde."
+        },
+        {
+          "t": "2026-10-17T17:25:14+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-17T17:25:34+02:00",
+          "by": "tester",
+          "msg": "Verificado: 33 tests en verde; tests nuevos (clean_dead_lanes, aislamiento de board.json vía conftest autouse); server oculta fantasmas. ACEPTADA"
+        },
+        {
+          "t": "2026-10-17T17:25:38+02:00",
+          "by": "tester",
+          "msg": "DONE: ACEPTADA: 33 tests en verde, con tests nuevos de limpieza de carriles con pid muerto y de aislamiento de board.json."
         }
       ],
       "runs": [
@@ -2327,26 +2342,37 @@
           "tokens": 220628,
           "cost_usd": 0.158785,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-17T17:25:38+02:00",
+          "min": 0.4,
+          "turns": 7,
+          "tokens": 62764,
+          "cost_usd": 0.062409,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-17T17:25:14+02:00"
     }
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-032",
-      "message": "arquitecto con T-032",
-      "pid": 21016,
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
       "heartbeat": "2026-10-17T16:30:02+02:00",
       "agent": "arquitecto",
       "started": "2026-10-17T16:30:02+02:00",
       "live": "live-T-032-arquitecto-20261017-163002.jsonl"
     },
     "measure": {
-      "state": "working",
-      "current": "T-024",
-      "message": "tester con T-024",
-      "pid": 8,
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
       "heartbeat": "2026-10-17T16:30:02+02:00",
       "agent": "tester",
       "started": "2026-10-17T16:30:02+02:00",
