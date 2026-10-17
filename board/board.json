@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:15:55+02:00",
+  "updated": "2026-10-17T20:40:26+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,10 +33,10 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "working",
-    "current": "T-050",
-    "heartbeat": "2026-10-17T20:11:44+02:00",
-    "message": "tester con T-050",
+    "state": "stopped",
+    "current": null,
+    "heartbeat": "2026-10-17T20:15:57+02:00",
+    "message": "Runner parado",
     "pid": 9572,
     "agent": "tester",
     "started": "2026-10-17T20:11:44+02:00",
@@ -2968,7 +2968,7 @@
       "id": "T-047",
       "title": "V-018: enseñarle cómo fue la vuelta al cole del año pasado",
       "owner": "desarrollador",
-      "status": "blocked",
+      "status": "done",
       "priority": "media",
       "estimate_min": 30.0,
       "actual_min": 0.8,
@@ -2977,7 +2977,7 @@
       "desc": "El modelo aprende de las últimas semanas antes de cada fecha, y en esas semanas nunca hay un arranque de curso escolar. Por eso, aunque le contamos que «el año pasado por estas fechas se vendió mucho material escolar», no sabe qué hacer con ese dato.\n\nLa idea es añadir a sus ejemplos de entrenamiento algunas semanas del mismo periodo del año anterior, para que vea cómo es un arranque de temporada.\n\nCómo sabremos si funciona: el error medio baja con dos semillas y, sobre todo, baja el error del material escolar en la práctica de julio.\n\n## Técnico\n- Fuente: ceshine / Favorita eligen cortes por calendario; DISENO-MODELOS (T-041). SCHOOL AND OFFICE = 8 % del error de f1 (RMSLE 0.637).\n- Cambio sobre base-v5: añadir 4 cortes en T−16−364+7j, j = −1..2 (rasgos y objetivos de hace un año) al entrenamiento del directo; el recursivo no cambia.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md). Anotar RMSLE de SCHOOL en f1 y el tiempo.",
       "deps": [],
       "created": "2026-10-17T18:06:36+02:00",
-      "updated": "2026-10-17T20:10:49+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
       "started_at": "2026-10-17T20:05:13+02:00",
       "finished_at": "2026-10-17T20:06:01+02:00",
       "log": [
@@ -3020,6 +3020,11 @@
           "t": "2026-10-17T20:10:49+02:00",
           "by": "tester",
           "msg": "⚠ 1 comandos denegados: python board/board.py add \"Promover V-018 a base y preparar envío a Kaggle\" --ow"
+        },
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "ACEPTADA y promovida: V-018 = base-v6 (CV 0.3839, holdout 0.4148, c1 sin cerradas 0.3865). La tarjeta de promoción no se creó porque el comando del tester tenía saltos de línea reales; arreglado en board.py."
         }
       ],
       "runs": [
@@ -3423,7 +3428,7 @@
       "id": "T-054",
       "title": "Repescar V-010 y V-015 sobre la base nueva",
       "owner": "desarrollador",
-      "status": "blocked",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 40,
       "actual_min": 8.9,
@@ -3432,7 +3437,7 @@
       "desc": "Dos ideas que rechazamos porque mejoraban «demasiado poco» puede que sí valieran: con V-014 nos pasó justo eso, una mejora pequeñísima en casa que en Kaggle fue ocho veces mayor.\n\n- V-010 era hacer la media de varias copias del modelo; mejoraba en las cuatro prácticas, aunque muy poco.\n- V-015 era decirle al modelo qué series se venden a ratos; mejoraba dos prácticas y la de control.\n\nQueremos rehacerlas sobre la base nueva (base-v5) y medirlas con dos semillas, con la regla nueva: se aceptan si mejoran de forma repetida, aunque sea poco.\n\nCómo sabremos si funcionan: cada una baja el error medio de base-v5 con las dos semillas y no empeora más de una práctica.\n\n## Técnico\n- Antes, sobre base-v4 (0.3858; folds 0.3909/0.3754/0.3821/0.3947; c1 0.7552):\n  V-010 0.3856 (0.3908/0.3750/0.3819/0.3945; c1 0.7536), mejora 4/4, ×3 de tiempo.\n  V-015 0.3854 (0.3903/0.3755/0.3823/0.3937; c1 0.7513), mejora 2/4.\n- Rehacer como V-021 (= V-010 sobre base-v5) y V-022 (= V-015 sobre base-v5) con new_variant.py; medir con --seed 42 y --seed 7.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:29:06+02:00",
-      "updated": "2026-10-17T19:52:57+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
       "started_at": "2026-10-17T18:44:02+02:00",
       "finished_at": "2026-10-17T18:52:54+02:00",
       "log": [
@@ -3480,6 +3485,11 @@
           "t": "2026-10-17T19:52:57+02:00",
           "by": "tester",
           "msg": "BLOCKED: timeout"
+        },
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "V-021: 0.3851/0.3851, empata y tarda ×4 → RECHAZADA. V-022: aceptada en CV (0.3850/0.3848) pero empeora el examen final (0.4179 → 0.4204) → no se promueve."
         }
       ],
       "runs": [
@@ -3544,7 +3554,7 @@
       "id": "T-056",
       "title": "V-023: la regla de «cero» sin tocar productos de temporada",
       "owner": "desarrollador",
-      "status": "blocked",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 25.0,
       "actual_min": 1.4,
@@ -3553,7 +3563,7 @@
       "desc": "La regla de predecir cero en las series que llevan dos meses sin vender (V-019) mejoraba un poquito en las prácticas, pero en el examen final salió bastante peor. El motivo: el material escolar de algunas tiendas no se vende en todo el año y de golpe arranca con la vuelta al cole. La regla lo daba por muerto justo cuando empieza a venderse, y el test de Kaggle cae precisamente en la vuelta al cole.\n\nLa idea es aplicar la regla solo a las series que de verdad están muertas: si una serie vendió algo en esas mismas fechas el año anterior, no se toca.\n\nCómo sabremos si funciona: mejora las prácticas con dos semillas como antes, y en el examen final ya no empeora frente a la base actual (lo mide el consultor).\n\n## Técnico\n- V-019 sobre base-v5: CV 0.3849/0.3850 (sem 42/7) vs 0.3852; c1 sin cerradas 0.3921 vs 0.3927; holdout 0.4227 vs 0.4179.\n- Holdout: 1430 filas / 98 series a 0; 29 filas con venta real > 0. Casi todo el daño en SCHOOL AND OFFICE SUPPLIES de tiendas 19, 13, 15 y 10 (Δ error cuadrático ≈ 35/35/32/19).\n- Cambio (variants/V-023 = V-019 + excepción): no poner a 0 si la serie tuvo ventas > 0 en [corte−364−7, corte−364+16+7] (mismo tramo del año anterior ± 1 semana). Sin fugas: solo datos anteriores al corte.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas, empeora como mucho 1 de 4 folds; c1 sin cerradas no empeora. El holdout lo mira solo el consultor antes de enviar.",
       "deps": [],
       "created": "2026-10-17T19:03:36+02:00",
-      "updated": "2026-10-17T19:59:29+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
       "started_at": "2026-10-17T19:53:00+02:00",
       "finished_at": "2026-10-17T19:54:25+02:00",
       "log": [
@@ -3591,6 +3601,11 @@
           "t": "2026-10-17T19:59:29+02:00",
           "by": "tester",
           "msg": "⚠ 1 comandos denegados: python board/board.py add \"Promover V-023 a base y preparar envío a Kaggle\" --ow"
+        },
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "V-023: aceptada en CV (0.3849/0.3850) y neutra en el examen final (0.4177 vs 0.4179). Se promovió V-018, que gana más; V-023 se rehace sobre base-v6 (tarjeta nueva)."
         }
       ],
       "runs": [
@@ -3616,6 +3631,88 @@
         }
       ],
       "verify_started": "2026-10-17T19:54:28+02:00"
+    },
+    {
+      "id": "T-057",
+      "title": "Promover V-018 (vuelta al cole del año anterior) a base-v6 y preparar el envío v0.6",
+      "owner": "consultor",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 15.0,
+      "actual_min": 7.5,
+      "auto": true,
+      "manual": null,
+      "desc": "Enseñarle al modelo cómo fue el mismo periodo del año anterior mejora en todo: prácticas, examen final y control. Pasa a ser la base y se prepara el envío.\n\n## Técnico\nV-018: CV 0.3839/0.3840 (sem 42/7) vs 0.3852, 4/4 folds; c1 sin cerradas 0.3865 vs 0.3927; holdout 0.4148 vs 0.4179. Las otras aceptadas frente a base-v5: V-023 holdout 0.4177 (neutro), V-022 holdout 0.4204 (peor, no se promueve), V-021 0.3851 ×4 de tiempo.",
+      "deps": [],
+      "created": "2026-10-17T20:32:27+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
+      "started_at": "2026-10-17T20:32:28+02:00",
+      "finished_at": "2026-10-17T20:40:00+02:00",
+      "log": [
+        {
+          "t": "2026-10-17T20:32:27+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T20:32:28+02:00",
+          "by": "consultor",
+          "msg": "→ En curso"
+        },
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "base-v6 = V-018: CV 0.3839, c1 sin cerradas 0.3865, holdout 0.4148; dist/submission-base-v6.csv; tags base-v6 y v0.6."
+        }
+      ]
+    },
+    {
+      "id": "T-058",
+      "title": "V-024: la regla de «cero» sin productos de temporada, sobre la base nueva",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 20,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "La regla de predecir cero en las series muertas, respetando los productos de temporada (V-023), mejoraba un poco las prácticas y no empeoraba el examen final. Pero se midió sobre la base anterior, y la nueva base ya ha aprendido mejor la vuelta al cole, así que hay que comprobar si sigue sumando.\n\nCómo sabremos si funciona: baja el error medio de base-v6 con dos semillas y no empeora más de una práctica.\n\n## Técnico\n- V-024 = base-v6 + el post-proceso de V-023 (copiar el bloque «V-023» de variants/V-023/model.py).\n- Antes, sobre base-v5: CV 0.3849/0.3850 vs 0.3852; holdout 0.4177 vs 0.4179.\n- Criterio: RMSLE medio < base-v6 (0.3839) con semillas 42 y 7, ≤ 1 fold peor; c1 sin cerradas no empeora.",
+      "deps": [],
+      "created": "2026-10-17T20:40:00+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-059",
+      "title": "Subir v0.6 (base-v6) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "alta",
+      "estimate_min": 3,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-base-v6.csv con el mensaje: v0.6 · base-v6 (vuelta al cole año anterior) · backtest 0.3839 · holdout 0.4148. Pasar la puntuación al consultor.",
+      "desc": "La nueva base aprende de la vuelta al cole del año anterior. Mejora en las prácticas, en el examen final y en el control, así que toca comprobarlo en Kaggle.\n\n## Técnico\ndist/submission-base-v6.csv · tag v0.6 · backtest 0.3839 · holdout 0.4148 (v0.5: 0.3852 / 0.4179 / LB 0.39940).",
+      "deps": [],
+      "created": "2026-10-17T20:40:00+02:00",
+      "updated": "2026-10-17T20:40:00+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T20:40:00+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {

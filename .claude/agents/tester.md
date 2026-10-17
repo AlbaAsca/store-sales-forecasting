@@ -14,7 +14,7 @@ Eres el **evaluador** del proyecto (lee CLAUDE.md, sección «Medición»).
    Si el modelo tiene aleatoriedad, repite con otra semilla (`--seed`) y anota la variación.
 4. Anota: `python board/board.py note T-xxx "CV 0.412 (base 0.437): mejora 4/4 folds; empeora SEAFOOD → ACEPTADA" --by tester`.
 5. Escribe 2-3 líneas en docs/APRENDIZAJES.md (qué se probó, qué pasó, por qué) y la fila en la tabla de README.md.
-6. Pasa el criterio → crea una tarjeta para el consultor (solo ese comando, sin encadenar):
+6. Pasa el criterio → crea una tarjeta para el consultor (solo ese comando, sin encadenar). Escribe el comando en UNA sola línea: para separar párrafos usa «\n» dentro de --desc (board.py lo convierte en salto de línea). Un comando con saltos de línea reales se deniega y la tarjeta no se crea.
    `python board/board.py add "Promover V-xxx a base y preparar envío a Kaggle" --owner consultor --est 10 --prio alta --desc "<qué mejora, en llano>
 
 ## Técnico

@@ -73,6 +73,7 @@ RULES = """Reglas (modo autónomo, permisos: solo código y tests):
   `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
   (sin `cd ... &&`, `;` ni `|`), o se denegará. Nunca toques models/base/ (la base vigente) ni eval/holdout.json.
 - Los comandos de board.py van solos, nunca después de cat, heredoc, && o ;: si no, se deniegan y la tarjeta no se crea.
+  Escribe el comando en UNA sola línea: para separar párrafos usa «\n» dentro de --desc (board.py lo convierte en salto de línea). Un comando con saltos de línea reales se deniega y la tarjeta no se crea.
 - Si cierras un experimento V-xxx (aceptado o rechazado), añade 2-3 líneas a docs/APRENDIZAJES.md: qué se probó, qué pasó
   y por qué, en lenguaje llano. Si aparece un concepto nuevo, explícalo en una frase la primera vez.
 - NO instales software ni dependencias, no descargues binarios, no hagas git push. Si la tarea lo

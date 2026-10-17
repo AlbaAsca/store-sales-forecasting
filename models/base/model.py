@@ -178,6 +178,15 @@ def fit_predict(history, future, ctx):
         X, y = build(o, dow0, True)
         Xs.append(X)
         ys.append(y)
+    # V-018: cortes del mismo periodo del año anterior (T-16-364+7j, j=-1..2)
+    for j in range(-1, 3):
+        o = T - HORIZON - 364 + 7 * j
+        if o - PROFILE_DAYS < 0 or o + HORIZON > T:
+            continue
+        dow0 = (start.dayofweek - HORIZON + 7 * j) % 7
+        X, y = build(o, dow0, True)
+        Xs.append(X)
+        ys.append(y)
     pred = None
     if mode in ("direct", "avg"):
         X = pd.concat(Xs, ignore_index=True)
