@@ -5,6 +5,11 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.3 · tercer envío: el LightGBM mejora mucho en local y casi nada en Kaggle — 🏁 LB 0.41341
+Qué: subir base-v3 (LightGBM global + promos + lag 364). · Pasó: backtest 0.4154 → 0.3904 (−0.025) y holdout 0.5244 → 0.4378 (−0.087),
+pero Kaggle solo 0.41457 → 0.41341 (−0.001). · Por qué: aún no lo sabemos (tarjeta de diagnóstico). Lección provisional: la validación local
+puede dejar de predecir el leaderboard cuando el modelo cambia de tipo; hay que entender la brecha antes de fiarse de la siguiente mejora.
+
 ### v0.2 · segundo envío: ¿a quién creer, a los folds o al holdout? — 🏁 LB 0.41457
 Qué: subir base-v2 (escala log), que mejoraba 4/4 folds (0.4304 → 0.4154) pero empeoraba el holdout (0.5109 → 0.5244). · Pasó: Kaggle
 0.45751 → 0.41457, igual que decían los folds. · Por qué: el holdout es una sola quincena (1-15 ago) y mide sobre todo cómo le va al modelo

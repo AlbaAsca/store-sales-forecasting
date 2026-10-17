@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T10:14:46+02:00",
+  "updated": "2026-10-17T10:17:23+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -1143,7 +1143,9 @@
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (M5, DISENO-MODELOS #11): tweedie modela bien series con muchos ceros; ¿gana a L2 sobre log1p cuando la métrica es RMSLE? Cambio: solo el objetivo y el target del LightGBM de models/base. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar en APRENDIZAJES qué es una función de pérdida y por qué debe casar con la métrica.",
-      "deps": [],
+      "deps": [
+        "T-027"
+      ],
       "created": "2026-10-17T10:14:38+02:00",
       "updated": "2026-10-17T10:14:38+02:00",
       "started_at": null,
@@ -1153,6 +1155,11 @@
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:17:23+02:00",
+          "by": "consultor",
+          "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
         }
       ]
     },
@@ -1167,7 +1174,9 @@
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (ceshine, Favorita 5.º; DISENO-MODELOS #9): un modelo por día de horizonte se especializa. Cambio: entrenar 16 LightGBM, uno por h. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar estrategia multi-paso directa.",
-      "deps": [],
+      "deps": [
+        "T-027"
+      ],
       "created": "2026-10-17T10:14:38+02:00",
       "updated": "2026-10-17T10:14:38+02:00",
       "started_at": null,
@@ -1177,6 +1186,11 @@
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:17:23+02:00",
+          "by": "consultor",
+          "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
         }
       ]
     },
@@ -1191,7 +1205,9 @@
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (Holbrook, M5; DISENO-MODELOS #10): el recursivo usa lags cortos (1-7 d) pero acumula error; promediar ambos reduce varianza. Cambio: modelo de 1 paso con lags cortos que se realimenta 16 veces; medir solo recursivo y media con base. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar directo vs recursivo con un dibujo en APRENDIZAJES.",
-      "deps": [],
+      "deps": [
+        "T-027"
+      ],
       "created": "2026-10-17T10:14:38+02:00",
       "updated": "2026-10-17T10:14:38+02:00",
       "started_at": null,
@@ -1201,6 +1217,11 @@
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:17:23+02:00",
+          "by": "consultor",
+          "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
         }
       ]
     },
@@ -1215,7 +1236,9 @@
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (chongzhenjie; DISENO-MODELOS #13): promediar 3 semillas y 2 ventanas (todo / desde 2015) reduce varianza. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Hacerla después de V-007/V-008 sobre la base vigente.",
-      "deps": [],
+      "deps": [
+        "T-027"
+      ],
       "created": "2026-10-17T10:14:38+02:00",
       "updated": "2026-10-17T10:14:38+02:00",
       "started_at": null,
@@ -1225,6 +1248,11 @@
           "t": "2026-10-17T10:14:38+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:17:23+02:00",
+          "by": "consultor",
+          "msg": "espera al diagnóstico T-027: si el CV no predice Kaggle, medir variantes con él no sirve"
         }
       ]
     },
@@ -1280,7 +1308,7 @@
       "id": "T-026",
       "title": "Subir v0.3 (base-v3) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 3.0,
       "actual_min": null,
@@ -1289,12 +1317,41 @@
       "desc": "Primer modelo de ML (LightGBM global).",
       "deps": [],
       "created": "2026-10-17T10:14:46+02:00",
-      "updated": "2026-10-17T10:14:46+02:00",
+      "updated": "2026-10-17T10:17:08+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-17T10:14:46+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-17T10:17:08+02:00",
+          "by": "consultor",
+          "msg": "LB 0.41341 (v0.2 0.41457): −0.001 pese a −0.025 en CV y −0.087 en holdout"
+        }
+      ]
+    },
+    {
+      "id": "T-027",
+      "title": "Diagnóstico: por qué base-v3 mejora −0.025 en CV y solo −0.001 en Kaggle",
+      "owner": "experto",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Datos: CV v2 0.4154 → v3 0.3904; holdout 0.5244 → 0.4378; LB 0.41457 → 0.41341. Comprobar por orden: (1) bug en la ruta de envío: reproducir make_submission cortando train en 2017-07-30 y comparar fila a fila con eval/results/base-v3-holdout/preds; categorías de family/store en test vs train; orden de ids; (2) dónde difieren v2 y v3 en el test (dist/submission-base-v2.csv vs v3) por familia y día: ¿vuelta al cole (SCHOOL AND OFFICE SUPPLIES, final de agosto), paga del 31?; (3) ruido: el LB público es una sola ventana de 16 días, cuánto varía RMSLE entre ventanas de 16 días en nuestro backtest. Entregable: docs/ANALISIS-ERRORES.md (sección nueva, explicada para aprender) + veredicto bug/estacional/ruido + máx. 2 tarjetas (p. ej. un fold que cubra 16-31 ago de 2016). Nunca mirar el holdout para elegir variantes.",
+      "deps": [],
+      "created": "2026-10-17T10:17:23+02:00",
+      "updated": "2026-10-17T10:17:23+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T10:17:23+02:00",
           "by": "consultor",
           "msg": "creada"
         }
