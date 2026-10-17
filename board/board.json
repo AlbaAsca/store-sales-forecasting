@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T11:00:24+02:00",
+  "updated": "2026-10-17T11:01:15+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -42,7 +42,7 @@
     "started": "2026-10-17T11:00:24+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
     "contrib_agent": "modelador",
-    "live": "live-T-027-experto-20261017-105825.jsonl"
+    "live": "live-T-020-desarrollador-20261017-110024.jsonl"
   },
   "agents": [
     {
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-020"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -1137,10 +1137,10 @@
       "id": "T-020",
       "title": "V-007: objetivo tweedie sobre ventas crudas en el LightGBM",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 0.8,
       "auto": true,
       "manual": null,
       "desc": "Hipótesis (M5, DISENO-MODELOS #11): tweedie modela bien series con muchos ceros; ¿gana a L2 sobre log1p cuando la métrica es RMSLE? Cambio: solo el objetivo y el target del LightGBM de models/base. Criterio: RMSLE medio < base-v3 (0.3904) y empeora como mucho 1 de 4 folds; repetir con otra semilla y que la ganancia supere la variación (~0.001). Explicar en APRENDIZAJES qué es una función de pérdida y por qué debe casar con la métrica.",
@@ -1148,9 +1148,9 @@
         "T-027"
       ],
       "created": "2026-10-17T10:14:38+02:00",
-      "updated": "2026-10-17T11:00:24+02:00",
+      "updated": "2026-10-17T11:01:15+02:00",
       "started_at": "2026-10-17T11:00:24+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-17T11:01:15+02:00",
       "log": [
         {
           "t": "2026-10-17T10:14:38+02:00",
@@ -1166,6 +1166,28 @@
           "t": "2026-10-17T11:00:24+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T11:01:06+02:00",
+          "by": "desarrollador",
+          "msg": "V-007 implementada (tweedie p=1.3, target expm1, predicción cruda). Quick fold1 0.4075; falta medición completa + otra semilla por el tester. Tests verdes."
+        },
+        {
+          "t": "2026-10-17T11:01:15+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-007 (tweedie sobre ventas crudas) implementada; quick fold1 RMSLE 0.4075, tests en verde, falta la medición completa y la semilla alternativa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T11:01:15+02:00",
+          "min": 0.8,
+          "turns": 16,
+          "tokens": 173942,
+          "cost_usd": 0.13216969999999997,
+          "verdict": "review"
         }
       ]
     },
