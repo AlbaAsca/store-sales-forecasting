@@ -99,6 +99,9 @@ que las variantes deben recortar. Cualquier variante debe bajar de 0.4745.
 ### T-032 · fold de control de vuelta al cole (c1) — herramienta, sin veredicto
 Qué: añadido `control_folds` (c1 = 16-31 ago 2016, la misma estación que el test de Kaggle) que se mide y se muestra APARTE; no entra en la media ni en el veredicto. · Pasó: base-v3 saca 0.7696 en c1 frente a 0.3904 de media en los 4 folds de mayo-julio. · Por qué: el CV de mayo-julio no ve la vuelta al cole (material escolar en la Sierra), así que una mejora en CV puede no trasladarse al test. Además `backtest.py` avisa si hay hueco entre history y future (25-dic: no hay fila): un modelo con `start = history.max()+1` dejaría el último día sin predecir.
 
+### V-014 · afinado de hiperparámetros del LightGBM — ❌ RECHAZADA (0.3858 → 0.3853/0.3851, mejora < 0.002)
+Qué: probar 63 hojas, lr 0.03×700 rondas, min_data 100 (frente a los valores copiados de ceshine). · Pasó: mejora 4/4 folds con semillas 7 y 11, pero solo −0.0005/−0.0007 y el tiempo se triplica (97 s → ~300 s). · Por qué: los parámetros ya estaban cerca del óptimo; el modelo es poco sensible a ellos, y lo que queda de error está en las variables y la estructura, no en el afinado. Mejoras bajo 0.002 son indistinguibles del ruido de semilla.
+
 <!-- Formato:
 ### V-001 · perfil por día de la semana — ✅ ACEPTADA (RMSLE 0.52 → 0.47, mejora 4/4 folds)
 Qué: … · Pasó: … · Por qué: …
