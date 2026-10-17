@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T20:10:49+02:00",
+  "updated": "2026-10-17T20:11:42+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-047",
-    "heartbeat": "2026-10-17T20:06:04+02:00",
-    "message": "tester con T-047",
+    "current": "T-050",
+    "heartbeat": "2026-10-17T20:10:51+02:00",
+    "message": "desarrollador con T-050",
     "pid": 9572,
-    "agent": "tester",
-    "started": "2026-10-17T20:06:04+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-17T20:10:51+02:00",
     "contrib_at": "2026-10-17T17:59:16+02:00",
     "contrib_agent": "investigador",
-    "live": "live-T-047-tester-20261017-200604.jsonl"
+    "live": "live-T-050-desarrollador-20261017-201051.jsonl"
   },
   "agents": [
     {
@@ -3249,18 +3249,18 @@
       "id": "T-050",
       "title": "V-020: repartir distinto las dos opiniones según el tipo de producto",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 0.8,
       "auto": true,
       "manual": null,
       "desc": "La base actual hace la media de dos maneras de predecir (los 16 días de golpe y día a día), a partes iguales. Puede que para algunos productos funcione mejor una que otra.\n\nLa idea es dejar que cada grupo de productos tenga su propio reparto (por ejemplo, 70/30 para los estables y 40/60 para los que se venden a ratos), con como mucho 3 o 4 grupos para no pasarnos de ajuste.\n\nCómo sabremos si funciona: el error medio baja con dos semillas sin empeorar las prácticas.\n\n## Técnico\n- Fuente: notebook gersonlramos (mezcla 70/30 −0.0051; pesos por familia en 3 familias −0.0015); M5 1.º promedia directo y recursivo.\n- Cambio sobre base-v5: peso w por grupo de familias en la mezcla en log, fijado con folds anteriores sin mirar el fold evaluado.\n- Criterio: RMSLE medio < base-v5 (0.3852) con 2 semillas (42 y otra), empeora como mucho 1 de 4 folds; anotar c1 sin tiendas 18 y 25 cerradas y el holdout. Ya no se rechaza solo por mejorar menos que el ruido de semilla (CLAUDE.md).",
       "deps": [],
       "created": "2026-10-17T18:16:45+02:00",
-      "updated": "2026-10-17T18:16:45+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-17T20:11:42+02:00",
+      "started_at": "2026-10-17T20:10:51+02:00",
+      "finished_at": "2026-10-17T20:11:42+02:00",
       "log": [
         {
           "t": "2026-10-17T18:16:45+02:00",
@@ -3271,6 +3271,28 @@
           "t": "2026-10-17T18:29:06+02:00",
           "by": "consultor",
           "msg": "descripción reescrita en lenguaje llano (datos técnicos abajo)"
+        },
+        {
+          "t": "2026-10-17T20:10:51+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-17T20:11:42+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-020 implementada: mezcla directo/recursivo con pesos por grupo de intermitencia, quick fold1 0.3900, tests en verde; falta medición completa con 2 semillas por el tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-17T20:11:42+02:00",
+          "min": 0.9,
+          "turns": 9,
+          "tokens": 93087,
+          "cost_usd": 0.076896,
+          "verdict": "review"
         }
       ]
     },
