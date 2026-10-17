@@ -6,7 +6,83 @@ problema). **Sesgo** = media de `log(1+pred) − log(1+real)`: positivo = el mod
 Solo folds de `eval/folds.json`; el holdout no se ha mirado.
 
 Scripts (reproducibles): `python scripts/analysis/errors_base.py base-v0` (desglose y casos),
-`python scripts/analysis/errors_cf.py` (contrafactuales), `python scripts/analysis/errors_promo.py` (promociones).
+`python scripts/analysis/errors_cf.py` (contrafactuales), `python scripts/analysis/errors_promo.py` (promociones). T-027: `diag_lb_gap.py`, `diag_window.py`.
+
+## 2026-10-17 · T-027 · ¿Por qué base-v3 gana −0.025 en CV y solo −0.001 en Kaggle?
+
+Datos de partida: CV v2 0.4154 → v3 0.3904 · LB público v2 0.41457 → v3 0.41341. Scripts:
+`python scripts/analysis/diag_lb_gap.py` (bug, test, ruido; tabla en `scripts/analysis/diag_lb_gap_windows.csv`) y
+`python scripts/analysis/diag_window.py <inicio>` (desglose v2/v3 de una ventana). En el holdout solo se comparan
+predicciones entre sí; sus ventas reales no se han mirado.
+
+**Veredicto: no es un bug. Es sobre todo un problema de *distribución distinta* en el test de Kaggle (un pico de
+promociones el 16-ago que no existe en ningún dato de entrenamiento + vuelta al cole), con algo de mala suerte encima.**
+
+### (1) ¿Bug en la ruta de envío? No
+| Comprobación | Resultado |
+|---|---|
+| Reproducir `make_submission` cortando en 2017-07-30 (future barajado, `family` recategorizada) vs `eval/results/base-v3-holdout` | 0 filas sin pareja, \|Δlog\| máx 4e-16 → idéntico |
+| ids de test únicos y crecientes; `dist/*.csv` mismos ids y orden | sí |
+| familias y tiendas de test = train; categorías en el mismo orden | sí |
+| último día de train completo (1782 series) | sí |
+
+Concepto: **reproducir la ruta de envío** = ejecutar el mismo código que genera el CSV de Kaggle pero en una ventana
+donde ya tenemos la predicción del backtest. Si coinciden, el fallo no está en el «fontanero» (ids, orden, tipos).
+
+### (2) Dónde difieren v2 y v3 en el test de Kaggle
+RMS de `log(1+v3) − log(1+v2)` = 0.243 (media +0.002: no hay sesgo global). El reparto está muy concentrado:
+
+| Familia | share de la diferencia | media Δlog |
+|---|---|---|
+| SCHOOL AND OFFICE SUPPLIES | 37 % | +0.11 |
+| LINGERIE | 12 % | +0.12 |
+| LAWN AND GARDEN | 12 % | +0.07 |
+| resto (30 familias) | 39 % | ≈0 |
+
+Por día, el **16-ago** es la anomalía: RMS Δlog 0.615 (los demás días 0.17–0.24). Ese día el test trae un **pico de
+promociones fuera de rango**: 30 539 artículos en promo en total (mediana de jun-ago 11 670), y por familia:
+
+| Familia (suma 54 tiendas) | promo 16-ago | promo resto de días | máx. histórico en train | v2 16-ago | v3 16-ago | v3 17-ago |
+|---|---|---|---|---|---|---|
+| SCHOOL AND OFFICE SUPPLIES | 734 | ~150 | — | 2 242 | **3 887** | 1 182 |
+| LAWN AND GARDEN | 842 | 0–184 | 212 | 833 | **2 495** | 638 |
+| LINGERIE | 255 | ~50 | — | 320 | **780** | 336 |
+
+v3 tiene `promo_day` y `promo_ratio`; LightGBM extrapola con el valor más alto que vio y **triplica** la venta ese día.
+¿Es creíble? En train, los días en que la promo de una familia se multiplica ×4 o más sobre su mediana de 14 días
+(1 012 casos, antes del holdout) la venta sube de mediana solo **×1.11**. Si la venta real del 16-ago se parece a la de
+v2, esas ~160 filas añaden ≈0.02 de MSE, es decir **≈+0.025 de RMSLE**: del orden exacto de la ganancia que «desaparece».
+Es una estimación (no conocemos la venta real), pero es el candidato principal.
+
+Segundo foco, **vuelta al cole (régimen Sierra, septiembre)**: v3 predice para SCHOOL 1 100–1 900 u/día, la mitad que
+v2 (2 200–5 300), justo cuando en 2016 la venta subía cada semana (16-ago 656 → 31-ago 833 → 8-sep 1 502 u/día).
+Ningún fold de CV (28-may a 30-jul) contiene esta estación, así que el CV no podía premiar ni castigar ese cambio.
+
+### (3) ¿Ruido? En parte
+v2 y v3 reentrenados en 23 ventanas de 16 días (jun-2016 a may-2017):
+
+| | valor |
+|---|---|
+| Δ(v3−v2) mediana | −0.031 (v3 gana en 20/23) |
+| ventanas con Δ > −0.005 (como el LB) | 3/23: 26-dic (+0.34), 28-feb (+0.15), 3-may (+0.03) |
+| RMSLE de v3 entre ventanas «normales» | 0.39–0.53; con festivos hasta 1.62 |
+| ventanas análogas al test (16-ago-2016, 20-ago-2016) | Δ −0.018 y −0.031: en agosto normal v3 sí gana |
+
+Lectura: una sola ventana de 16 días mueve el RMSLE ±0.05 sin cambiar el modelo, y la ventaja v3−v2 varía mucho. Un
+−0.001 cae en la cola mala (≈13 % de ventanas), y **todas** las ventanas de esa cola tienen un evento raro. El test
+de Kaggle tiene el suyo (el pico de promo), así que encaja con «evento + ruido», no con «v3 no generaliza».
+
+### Hallazgos colaterales (no explican el LB, pero son reales)
+- **26-dic-2016**: train no tiene filas del 25-dic, así que `history.max()` = 24-dic y `fit_predict` calcula
+  `start` = 25-dic; las fechas predichas van del 25-dic al 9-ene y **el 10-ene queda sin predicción → 0** (sesgo −3.46).
+  Afecta solo a ventanas que empiezan el 26-dic (no al test de Kaggle). Arreglo: `start = future.date.min()`.
+- **28-feb-2017 (Carnaval)**: v3 predice de menos los domingos (sesgo −0.69 y −0.80) y el martes de Carnaval (−0.46);
+  pierde sobre todo en perecederos (PREPARED FOODS, MEATS, POULTRY). v3 es menos robusto que v2 alrededor de festivos.
+
+### Qué hacer
+1. Que v3 no extrapole promociones fuera del rango visto (tarjeta V-011).
+2. Medir también en un fold de control de finales de agosto de 2016 para que el CV vea la vuelta al cole y no
+   volvamos a fiarnos solo de mayo-julio (tarjeta del arquitecto).
 
 ## 2026-10-15 · base-v0 (media de 14 días) — RMSLE 0.4745
 

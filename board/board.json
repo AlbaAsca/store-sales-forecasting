@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-17T10:31:51+02:00",
+  "updated": "2026-10-17T10:58:25+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,13 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-027",
-    "heartbeat": "2026-10-17T10:31:51+02:00",
+    "heartbeat": "2026-10-17T10:58:25+02:00",
     "message": "experto con T-027",
-    "pid": 6188,
+    "pid": 20528,
     "agent": "experto",
-    "started": "2026-10-17T10:31:51+02:00",
+    "started": "2026-10-17T10:58:25+02:00",
     "contrib_at": "2026-10-15T19:30:08+02:00",
-    "contrib_agent": "modelador"
+    "contrib_agent": "modelador",
+    "live": "live-T-027-experto-20261017-103151.jsonl"
   },
   "agents": [
     {
@@ -1340,14 +1341,14 @@
       "status": "doing",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": 11.8,
+      "actual_min": 38.4,
       "auto": true,
       "manual": null,
       "desc": "Datos: CV v2 0.4154 → v3 0.3904; holdout 0.5244 → 0.4378; LB 0.41457 → 0.41341. Comprobar por orden: (1) bug en la ruta de envío: reproducir make_submission cortando train en 2017-07-30 y comparar fila a fila con eval/results/base-v3-holdout/preds; categorías de family/store en test vs train; orden de ids; (2) dónde difieren v2 y v3 en el test (dist/submission-base-v2.csv vs v3) por familia y día: ¿vuelta al cole (SCHOOL AND OFFICE SUPPLIES, final de agosto), paga del 31?; (3) ruido: el LB público es una sola ventana de 16 días, cuánto varía RMSLE entre ventanas de 16 días en nuestro backtest. Entregable: docs/ANALISIS-ERRORES.md (sección nueva, explicada para aprender) + veredicto bug/estacional/ruido + máx. 2 tarjetas (p. ej. un fold que cubra 16-31 ago de 2016). Nunca mirar el holdout para elegir variantes.",
       "deps": [],
       "created": "2026-10-17T10:17:23+02:00",
-      "updated": "2026-10-17T10:31:51+02:00",
-      "started_at": "2026-10-17T10:31:51+02:00",
+      "updated": "2026-10-17T10:58:25+02:00",
+      "started_at": "2026-10-17T10:58:25+02:00",
       "finished_at": null,
       "log": [
         {
@@ -1377,6 +1378,16 @@
         },
         {
           "t": "2026-10-17T10:31:51+02:00",
+          "by": "runner",
+          "msg": "empieza experto"
+        },
+        {
+          "t": "2026-10-17T10:58:25+02:00",
+          "by": "tú",
+          "msg": "parada desde el panel; se reintentará"
+        },
+        {
+          "t": "2026-10-17T10:58:25+02:00",
           "by": "runner",
           "msg": "empieza experto"
         }
@@ -1447,6 +1458,78 @@
           "t": "2026-10-17T10:27:31+02:00",
           "by": "consultor",
           "msg": "stream-json → board/runs/live-*.jsonl; /api/runner/live; panel «Ver en directo»; probado con una ejecución real mínima"
+        }
+      ]
+    },
+    {
+      "id": "T-030",
+      "title": "Revisión de rumbo: ¿vamos por buen camino o hay formas mejores de abordar el problema?",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 40.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Petición de Alba. Leer README, docs/APRENDIZAJES.md, docs/DISENO-MODELOS.md, docs/ANALISIS-ERRORES.md (incl. diagnóstico T-027 si ya está) y eval/results. Contrastar con: soluciones top y discusión de Store Sales (qué RMSLE consiguen y con qué), ganadores de Favorita 2018 y M5, y enfoques alternativos (modelos por familia/tienda, reconciliación jerárquica, estadísticos clásicos ETS/ARIMA vía statsforecast, redes globales N-BEATS/TFT, ensembles). Responder en docs/REVISION-RUMBO.md, en lenguaje para alguien que aprende: (1) dónde estamos frente a lo habitual en el LB (0.413 hoy; ¿qué es bueno?); (2) qué hacemos bien y qué mal en método (backtest de 4 folds, holdout, criterio, variantes encadenadas); (3) 3-5 cambios de enfoque ordenados por ganancia esperada × aprendizaje / coste (CPU vs GPU, horas de GPU si aplica); (4) qué tarjetas existentes (T-020..T-023) sobran o cambiarían. Máx. 3 tarjetas nuevas con criterio. No tocar models/base ni el holdout.",
+      "deps": [],
+      "created": "2026-10-17T10:35:39+02:00",
+      "updated": "2026-10-17T10:35:39+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T10:35:39+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-031",
+      "title": "V-011: acotar los rasgos de promoción al rango visto en entrenamiento (sin extrapolar picos)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hipótesis (T-027, ANALISIS-ERRORES 2026-10-17): el test de Kaggle trae el 16-ago un pico de promos fuera de rango (LAWN 842 vs máx histórico 212; total 30.5k vs mediana 11.7k) y v3 triplica la venta de SCHOOL/LAWN/LINGERIE ese día; en train un salto de promo ×4 sube la venta solo ×1.11. Estimado ≈+0.025 RMSLE perdido. · Cambio: en _features, recortar promo_day y promo_ratio por familia al percentil 99 de los cortes de entrenamiento (o log1p(promo_day) recortado); nada más. · Criterio fijado antes de medir: CV medio ≤ base-v3 + 0.001 y ningún fold empeora > 0.003 (los folds no tienen el pico, solo debe no estropear); y en dist/ la predicción del 16-ago de SCHOOL/LAWN/LINGERIE queda ≤ ×1.5 de la del 17-ago (comprueba solo predicciones, sin labels). Si pasa, se acepta aunque el CV empate.",
+      "deps": [],
+      "created": "2026-10-17T10:40:15+02:00",
+      "updated": "2026-10-17T10:40:15+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T10:40:15+02:00",
+          "by": "experto",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-032",
+      "title": "Fold de control de vuelta al cole (2016-08-16..31) y 'start' robusto al 25-dic en el backtest",
+      "owner": "arquitecto",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Motivo (T-027): los 4 folds son de mayo-julio y el test de Kaggle es 16-31 ago (vuelta al cole Sierra, SCHOOL 37% de la diferencia v2-v3); el CV no ve esa estación. · Cambio: añadir en eval/folds.json un fold de control 'c1' 2016-08-16..2016-08-31 que backtest.py y results.py compare reporten APARTE (no entra en la media ni en el criterio por defecto, para no romper la comparabilidad con bases anteriores). Además documentar/avisar: si history.max()+1 != future.date.min() (caso 25-dic, train no tiene esa fecha) los modelos que calculan start así dejan el último día sin predicción (ventana 26-dic: 10-ene predicho 0); añadir test que lo detecte. · Criterio: tests verdes, base-v3 medido con c1 y anotado; la media de los 4 folds no cambia.",
+      "deps": [],
+      "created": "2026-10-17T10:40:19+02:00",
+      "updated": "2026-10-17T10:40:19+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-17T10:40:19+02:00",
+          "by": "experto",
+          "msg": "creada"
         }
       ]
     }
