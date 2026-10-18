@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T15:36:49+02:00",
+  "updated": "2026-10-18T15:39:58+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5739,23 +5739,45 @@
       "id": "T-095",
       "title": "V-037: los días de tienda cerrada son datos que faltan, no ceros",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 60.0,
-      "actual_min": null,
+      "actual_min": 3.0,
       "auto": true,
       "manual": null,
       "desc": "Cuando una tienda está cerrada (25 de diciembre, cierres de 2016 de dos tiendas, días antes de abrir) el modelo lo cuenta como si se hubiera vendido cero, y eso rebaja los promedios y arrastra el cierre de 2016 a las predicciones de agosto de 2017. Probamos a tratar esos días como datos que faltan.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la quincena de control sin tiendas cerradas no empeora y las predicciones de esas dos tiendas dejan de hundirse.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (modelador 1; N4 se solapa). Cambio único: antes de calcular rasgos, en M poner NaN en los días en que la tienda entera vende 0 (incluye 25-dic y días anteriores a su primera venta) y usar nanmean en medias y ly_*; objetivos de entrenamiento sin tocar. La regla del cero (V-023) debe seguir viendo la M original. Criterio por defecto; anotar control sin cerradas y la predicción media en log de las tiendas 18 y 25 en el test frente a base-v9. Ganancia -0.0005…-0.002.",
       "deps": [],
       "created": "2026-10-18T14:48:52+02:00",
-      "updated": "2026-10-18T14:48:52+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T15:39:58+02:00",
+      "started_at": "2026-10-18T15:36:58+02:00",
+      "finished_at": "2026-10-18T15:39:58+02:00",
       "log": [
         {
           "t": "2026-10-18T14:48:52+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T15:36:58+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T15:39:58+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-037 implementada (días de tienda cerrada como NaN en los rasgos), corre en quick (0.3878, semilla 42) y los tests pasan; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T15:39:58+02:00",
+          "min": 3.0,
+          "turns": 10,
+          "tokens": 117751,
+          "cost_usd": 0.1042728,
+          "verdict": "review"
         }
       ]
     },
@@ -5926,13 +5948,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-097",
-      "message": "desarrollador con T-097",
+      "current": "T-095",
+      "message": "desarrollador con T-095",
       "pid": 8496,
-      "heartbeat": "2026-10-18T15:25:00+02:00",
+      "heartbeat": "2026-10-18T15:36:58+02:00",
       "agent": "desarrollador",
-      "started": "2026-10-18T15:25:00+02:00",
-      "live": "live-T-097-desarrollador-20261018-152500.jsonl",
+      "started": "2026-10-18T15:36:58+02:00",
+      "live": "live-T-095-desarrollador-20261018-153658.jsonl",
       "enabled": true,
       "mechanical": false
     }
