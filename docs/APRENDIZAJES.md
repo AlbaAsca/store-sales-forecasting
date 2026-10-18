@@ -159,6 +159,9 @@ Qué: añadir al entrenamiento del modelo directo 4 cortes de hace un año (mism
 ### V-020 · reparto distinto directo/recursivo por tipo de producto — ❌ RECHAZADA (0.3856 / 0.3857 vs 0.3852)
 Qué: en vez de mezclar 50/50 «16 días de golpe» y «día a día», usar 65/35, 50/50 o 35/65 según lo a ratos que se vende el producto. · Pasó: empeora 3 de 4 prácticas (+0.0004 a +0.0007) con dos semillas; c1 0.7552 (base 0.7526). · Por qué: los dos métodos fallan de forma parecida en todos los grupos, así que el 50/50 ya estaba cerca del óptimo y los pesos a priori solo añaden ruido.
 
+### V-029 · un modelo por familia de producto — ❌ RECHAZADA (0.3870 / 0.3870 vs 0.3838)
+Qué: entrenar 33 modelos (uno por familia, directo y recursivo) en vez de uno global, con árboles más pequeños. · Pasó: peor en los 4 tramos con dos semillas (+0.0003 a +0.0061); BREAD/BAKERY +0.046, BEAUTY +0.015; en la quincena de control sin cerradas mejora un pelo (0.3849 vs 0.3857); tiempo 78 s → 115 s. · Por qué: cada modelo ve ~33 veces menos ejemplos y pierde lo que las familias se enseñan entre sí (festivos, tendencias de tienda); el modelo global ya distingue la familia con su identificador.
+
 ### V-028 · nivel reciente de la tienda entera y de la familia en todo el país — ❌ RECHAZADA (0.3845 / 0.3848 vs 0.3838)
 Qué: añadir a cada serie la media reciente (7 y 28 días) de su tienda completa y de su familia en las 54 tiendas, más la tendencia de la tienda. · Pasó: empeora 3 de 4 prácticas con dos semillas (f1 +0.002); LIQUOR +0.012/+0.016, BEVERAGES +0.005; c1 sin cerradas 0.3863/0.3853 (base 0.3857); tiempo 78 s → ~205 s. · Por qué: el modelo ya recibe tienda y familia como identificadores, así que el nivel agregado apenas aporta y añade ruido (y casi triplica el tiempo).
 
