@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:32:59+02:00",
+  "updated": "2026-10-18T09:34:32+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,16 +33,16 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "stopped",
+    "state": "idle",
     "current": null,
-    "heartbeat": "2026-10-17T21:06:31+02:00",
-    "message": "Runner parado (pid muerto)",
-    "pid": null,
-    "agent": "tester",
-    "started": "2026-10-17T20:51:08+02:00",
-    "contrib_at": "2026-10-17T17:59:16+02:00",
-    "contrib_agent": "investigador",
-    "live": "live-T-060-tester-20261017-205108.jsonl"
+    "heartbeat": "2026-10-18T09:34:32+02:00",
+    "message": "aportación experto (T-066): sin RESULT",
+    "pid": 19616,
+    "agent": "experto",
+    "started": "2026-10-18T09:34:06+02:00",
+    "contrib_at": "2026-10-18T09:34:32+02:00",
+    "contrib_agent": "experto",
+    "live": "live-T-066-experto-20261018-093406.jsonl"
   },
   "agents": [
     {
@@ -4026,14 +4026,61 @@
           "verdict": "done"
         }
       ]
+    },
+    {
+      "id": "T-066",
+      "title": "Ronda de aportación: experto",
+      "owner": "experto",
+      "status": "blocked",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 0.4,
+      "auto": true,
+      "manual": null,
+      "desc": "Si hay resultados en eval/results/*/ que nadie haya analizado, mira dónde se equivoca más el modelo (fold, tienda, familia, días festivos) y qué haría un data scientist senior.",
+      "deps": [],
+      "created": "2026-10-18T09:34:06+02:00",
+      "updated": "2026-10-18T09:34:32+02:00",
+      "started_at": "2026-10-18T09:34:06+02:00",
+      "finished_at": "2026-10-18T09:34:32+02:00",
+      "log": [
+        {
+          "t": "2026-10-18T09:34:06+02:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T09:34:06+02:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-18T09:34:32+02:00",
+          "by": "experto",
+          "msg": "BLOCKED: sin RESULT"
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "experto",
+          "mode": "contrib",
+          "at": "2026-10-18T09:34:32+02:00",
+          "min": 0.4,
+          "turns": 10,
+          "tokens": 122114,
+          "cost_usd": 0.24746300000000004,
+          "verdict": "blocked"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado",
-      "pid": 3376,
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
       "heartbeat": "2026-10-17T22:31:35+02:00",
       "agent": "modelador",
       "started": "2026-10-17T22:30:03+02:00",
@@ -4044,8 +4091,8 @@
     "measure": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado",
-      "pid": 1832,
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
       "heartbeat": "2026-10-17T22:30:02+02:00",
       "agent": "tester",
       "started": "2026-10-17T16:30:02+02:00",
