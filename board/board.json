@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T12:06:44+02:00",
+  "updated": "2026-10-18T12:07:18+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4814,6 +4814,54 @@
         "base": "base-v9",
         "variant": "V-031"
       }
+    },
+    {
+      "id": "T-080",
+      "title": "V-033: predecir también una banda de incertidumbre (intervalos)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hoy damos un solo número por día. La práctica estándar (FPP, pista de incertidumbre de M5) es dar además una banda: «entre 80 y 130 unidades con un 90 % de confianza». A una tienda le sirve para decidir cuánto stock de seguridad tener, y nos enseña cuánto nos podemos fiar de cada previsión.\n\nCómo sabremos si funciona: las bandas aciertan lo que prometen (la del 80 % contiene la venta real en torno al 80 % de los días de las prácticas) y la mediana no empeora la RMSLE de la base.\n\n## Técnico\n- Fuente: docs/LECTURAS.md (FPP cap. de intervalos; M5 Uncertainty; DeepAR).\n- Cambio: además del modelo base, entrenar LightGBM con objective=quantile en log1p para alpha 0.1, 0.5 y 0.9 (mismos rasgos que base-v8).\n- Métricas nuevas en backtest (sin cambiar el veredicto): cobertura del intervalo 10-90 y pinball loss por fold; guardar en eval/results/V-033.json.\n- Criterio: cobertura 10-90 entre 0,75 y 0,85 en los 4 folds; la mediana no empeora la RMSLE de base-v8 en más de 0,001. No se promueve a base (no cambia el envío): se documenta como aprendizaje.",
+      "deps": [],
+      "created": "2026-10-18T12:07:18+02:00",
+      "updated": "2026-10-18T12:07:18+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T12:07:18+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-081",
+      "title": "V-034: que tiendas, familias y total cuadren (reconciliación jerárquica)",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Predecimos cada tienda×familia por separado y nada obliga a que la suma coincida con lo que predeciríamos para la tienda entera o para todo el país. Reconciliar ajusta todos los niveles a la vez para que cuadren y, a veces, mejora las series pequeñas al tomar información de los niveles agregados.\n\nCómo sabremos si funciona: la RMSLE de las prácticas baja con dos semillas, sobre todo en las familias con pocas ventas, sin empeorar más de una práctica.\n\n## Técnico\n- Fuente: docs/LECTURAS.md (MinT, Wickramasuriya, Athanasopoulos y Hyndman 2019; hierarchicalforecast de Nixtla).\n- Jerarquía: total → tienda (54) → tienda×familia (1782); opcional familia (33).\n- Cambio: predecir cada nivel con el mismo LightGBM (agregando ventas) y reconciliar con MinT (shrink) implementado con numpy, sin instalar paquetes; reconciliar en escala original y volver a log para la métrica.\n- Criterio: RMSLE medio < base-v8 con semillas 42 y 7, ≤ 1 fold peor; anotar RMSLE de las 10 familias con menos ventas.",
+      "deps": [],
+      "created": "2026-10-18T12:07:18+02:00",
+      "updated": "2026-10-18T12:07:18+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T12:07:18+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {

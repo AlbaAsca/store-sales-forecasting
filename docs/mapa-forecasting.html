@@ -1,0 +1,321 @@
+<title>Mapa de la previsión de ventas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: una columna de lectura; lo que ya pasó en tinta pizarra, lo que se predice en ámbar (la convención de los gráficos de previsión). */
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --ink: #17202b;
+  --muted: #5d6b7a;
+  --line: #d5dde6;
+  --past: #2f4a66;
+  --future: #d9822b;
+  --future-soft: #f8e3cc;
+  --ok: #1f7a3d;
+  --ok-soft: #e1f3e6;
+  --todo: #9a5b00;
+  --todo-soft: #fbefd8;
+  --accent: #0f6e64;
+  --accent-soft: #dcefeb;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141a; --surface: #171e27; --ink: #e6ecf2; --muted: #9aa8b6; --line: #2a3542;
+    --past: #9ab8d6; --future: #f0a65a; --future-soft: #3a2a17; --ok: #6fd18f; --ok-soft: #173322;
+    --todo: #e8b55a; --todo-soft: #33290f; --accent: #5cc4b6; --accent-soft: #173a35; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141a; --surface: #171e27; --ink: #e6ecf2; --muted: #9aa8b6; --line: #2a3542;
+  --past: #9ab8d6; --future: #f0a65a; --future-soft: #3a2a17; --ok: #6fd18f; --ok-soft: #173322;
+  --todo: #e8b55a; --todo-soft: #33290f; --accent: #5cc4b6; --accent-soft: #173a35; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.6 var(--f-body); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; display: grid; gap: 64px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.3rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; }
+h3 { font-size: 1.12rem; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 600 0.78rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--future); }
+.lead { font-size: 1.12rem; color: var(--muted); }
+section { display: grid; gap: 20px; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--f-mono); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.scroll { overflow-x: auto; }
+svg text { font-family: var(--f-mono); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 36px; align-items: center; }
+.hero > div { display: grid; gap: 16px; min-width: 0; }
+.hero svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.88rem; color: var(--muted); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.sw { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
+
+/* flujo */
+.flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; counter-reset: paso; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 12px; display: grid; gap: 8px; align-content: start; position: relative; min-width: 0; }
+.step::before { counter-increment: paso; content: counter(paso); font: 700 0.8rem/1 var(--f-mono); color: var(--future); }
+.step h3 { font-size: 1rem; }
+.step p { font-size: 0.9rem; color: var(--muted); }
+.us { font: 600 0.72rem/1.35 var(--f-mono); padding: 5px 7px; border-radius: 6px; background: var(--ok-soft); color: var(--ok); }
+.us.todo { background: var(--todo-soft); color: var(--todo); }
+
+/* línea de tiempo */
+.tl { position: relative; display: grid; gap: 0; padding-left: 26px; }
+.tl::before { content: ""; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 3px; background: var(--line); border-radius: 2px; }
+.ev { position: relative; padding: 0 0 18px; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; }
+.ev::before { content: ""; position: absolute; left: -24px; top: 7px; width: 13px; height: 13px; border-radius: 50%; background: var(--surface); border: 3px solid var(--past); }
+.ev.kaggle::before { border-color: var(--accent); }
+.ev.hit::before { background: var(--future); border-color: var(--future); }
+.ev .yr { font: 700 1rem/1.4 var(--f-mono); color: var(--past); }
+.ev h3 { font-size: 1rem; }
+.ev p { font-size: 0.93rem; color: var(--muted); }
+.tag { font: 600 0.7rem/1 var(--f-mono); padding: 3px 6px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: 2px; white-space: nowrap; }
+
+/* tarjeta de puntuación */
+.score { display: grid; gap: 8px; }
+.row { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.1fr); gap: 12px; align-items: start; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.row .mark { font: 700 1.1rem/1 var(--f-mono); width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+.row.ok .mark { background: var(--ok-soft); color: var(--ok); }
+.row.half .mark { background: var(--todo-soft); color: var(--todo); }
+.row.no .mark { background: var(--future-soft); color: var(--future); }
+.row b { font-family: var(--f-display); }
+.row span { font-size: 0.93rem; color: var(--muted); }
+
+/* estantería */
+.shelf { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+.book { display: grid; grid-template-columns: 14px minmax(0, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.book .spine { background: var(--c); }
+.book > div:last-child { padding: 14px; display: grid; gap: 6px; align-content: start; }
+.book .who { font-size: 0.86rem; color: var(--muted); }
+.book p { font-size: 0.93rem; }
+.lvl { font: 600 0.7rem/1 var(--f-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--c); }
+.free { font: 600 0.7rem/1 var(--f-mono); color: var(--ok); }
+
+/* artículos */
+.papers { display: grid; gap: 10px; }
+.paper { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.paper .yr { font: 700 1.05rem/1.3 var(--f-mono); color: var(--past); }
+.paper h3 { font-size: 1rem; }
+.paper p { font-size: 0.92rem; color: var(--muted); }
+.paper .ref { font-size: 0.82rem; font-family: var(--f-mono); color: var(--muted); }
+
+/* librerías */
+.libs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.lib { display: grid; gap: 8px; align-content: start; }
+.lib h3 { font-size: 0.95rem; font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.chip { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.chip a { font-family: var(--f-mono); font-weight: 600; text-decoration: none; }
+.chip a:hover { text-decoration: underline; }
+.chip span { font-size: 0.88rem; color: var(--muted); }
+
+/* lo que falta */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.pair .panel { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.pair svg { width: 100%; height: auto; display: block; }
+.pair p { font-size: 0.95rem; }
+.next { border-left: 4px solid var(--future); padding-left: 12px; font-size: 0.93rem; }
+
+footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 6px; }
+
+@media (max-width: 860px) {
+  .hero, .pair { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row { grid-template-columns: 34px minmax(0, 1fr); }
+  .row span { grid-column: 2; }
+}
+@media (max-width: 420px) { .flow { grid-template-columns: 1fr; } .ev { grid-template-columns: 1fr; gap: 2px; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <span class="eyebrow">Para saber más · store-sales-forecasting</span>
+    <h1>Mapa de la previsión de ventas</h1>
+    <p class="lead">Predecir cuánto se venderá es uno de los problemas más estudiados de la ciencia de datos. Hay libros de referencia, competiciones que llevan cuarenta años comparando métodos y una forma de trabajar en la que casi todo el mundo coincide.</p>
+    <p>Esta página reúne lo esencial, con un ojo puesto en lo que ya hacemos en este proyecto y en lo que nos falta. Todos los enlaces están comprobados (octubre de 2026).</p>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--past)"></i>lo que ya pasó</span>
+      <span><i class="sw" style="background:var(--future)"></i>la previsión</span>
+      <span><i class="sw" style="background:var(--future-soft);height:10px"></i>intervalo del 80 %</span>
+    </div>
+  </div>
+  <div class="panel" role="img" aria-label="Gráfico de previsión: ventas diarias de las últimas semanas en azul y los 16 días siguientes en ámbar, con una banda de incertidumbre que se ensancha hacia el futuro">
+    <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" id="fan"></svg>
+  </div>
+</header>
+
+<section id="flujo">
+  <span class="eyebrow">La forma estándar de trabajar</span>
+  <h2>Seis pasos en los que coinciden los libros</h2>
+  <p>No hay una norma oficial como las ISO, pero el libro de referencia (Hyndman y Athanasopoulos) y las competiciones M describen el mismo recorrido. Debajo de cada paso, cómo lo hemos hecho nosotros.</p>
+  <div class="flow">
+    <div class="step"><h3>Entender el problema</h3><p>Qué se predice, para qué, con qué horizonte y cómo se mide el error.</p><span class="us">16 días · RMSLE</span></div>
+    <div class="step"><h3>Mirar los datos</h3><p>Tendencia, ciclos semanales y anuales, ceros, días raros.</p><span class="us">gráficos del README</span></div>
+    <div class="step"><h3>Empezar por lo ingenuo</h3><p>Un modelo tonto que haya que ganar: «como la semana pasada».</p><span class="us">base-v0</span></div>
+    <div class="step"><h3>Validar con el tiempo</h3><p>Entrenar con el pasado y medir en el futuro, en varias fechas.</p><span class="us">4 prácticas + examen</span></div>
+    <div class="step"><h3>Modelar y combinar</h3><p>Modelos globales, variables de calendario y medias de modelos.</p><span class="us">LightGBM + media</span></div>
+    <div class="step"><h3>Medir y vigilar</h3><p>Comparar siempre con el ingenuo y revisar los errores grandes.</p><span class="us todo">a medias</span></div>
+  </div>
+</section>
+
+<section id="historia">
+  <span class="eyebrow">Cuarenta años comparando métodos</span>
+  <h2>Las competiciones que marcaron el camino</h2>
+  <p>Spyros Makridakis organiza desde 1982 las «competiciones M», donde cientos de equipos predicen las mismas series y se publica qué funciona. Kaggle hizo lo mismo con datos de tiendas reales.</p>
+  <div class="tl panel">
+    <div class="ev"><span class="yr">1982</span><div><h3>M1 <span class="tag">1001 series</span></h3><p>Primera gran comparación: los métodos sencillos aguantan sorprendentemente bien frente a los complejos.</p></div></div>
+    <div class="ev"><span class="yr">2000</span><div><h3>M3 <span class="tag">3003 series</span></h3><p>Gana el método Theta, una variante sencilla del suavizado exponencial. Se convierte en referencia durante años.</p></div></div>
+    <div class="ev kaggle"><span class="yr">2014</span><div><h3>Walmart Store Sales <span class="tag">Kaggle</span></h3><p>Ventas semanales por departamento con festivos que pesan más en la nota.</p></div></div>
+    <div class="ev kaggle"><span class="yr">2015</span><div><h3>Rossmann Store Sales <span class="tag">Kaggle</span></h3><p>Droguerías alemanas: aquí se popularizan los árboles de decisión (XGBoost) para previsión.</p></div></div>
+    <div class="ev kaggle"><span class="yr">2018</span><div><h3>Corporación Favorita <span class="tag">Kaggle</span></h3><p>La misma cadena de nuestro proyecto, pero por artículo. Los ganadores combinaron LightGBM y redes neuronales.</p></div></div>
+    <div class="ev"><span class="yr">2018</span><div><h3>M4 <span class="tag">100 000 series</span></h3><p>Gana un híbrido de suavizado exponencial y red neuronal. La lección: combinar métodos gana a cualquiera por separado.</p></div></div>
+    <div class="ev hit"><span class="yr">2020</span><div><h3>M5 <span class="tag">Walmart · Kaggle</span></h3><p>Ventas diarias de 3049 productos en 10 tiendas. Gana un <b>LightGBM global</b> con variables de calendario y precio, el mismo enfoque que el nuestro. Tuvo una segunda pista para predecir <b>intervalos</b>.</p></div></div>
+    <div class="ev kaggle hit"><span class="yr">2021–</span><div><h3>Store Sales <span class="tag">Kaggle · Getting Started</span></h3><p>Nuestra competición: Favorita a nivel de tienda y familia. Leaderboard abierto para aprender.</p></div></div>
+  </div>
+</section>
+
+<section id="nosotros">
+  <span class="eyebrow">Nuestra tarjeta de notas</span>
+  <h2>Lo que ya hacemos y lo que nos falta</h2>
+  <div class="score">
+    <div class="row ok"><span class="mark">✓</span><b>Empezar por un modelo ingenuo y exigir ganarle</b><span>base-v0: la media de las dos últimas semanas.</span></div>
+    <div class="row ok"><span class="mark">✓</span><b>Validar con el tiempo, nunca al azar</b><span>4 prácticas de 16 días, examen final guardado y un control del año anterior.</span></div>
+    <div class="row ok"><span class="mark">✓</span><b>Medir con la métrica que importa</b><span>RMSLE, la de Kaggle, y entrenando en su misma escala (V-002).</span></div>
+    <div class="row ok"><span class="mark">✓</span><b>Modelo global y combinación de modelos</b><span>Un LightGBM para todas las series y la media de dos formas de predecir (V-009).</span></div>
+    <div class="row ok"><span class="mark">✓</span><b>Limpiar anomalías antes de aprender de ellas</b><span>Aprendido a golpes en v0.6: los cierres de 2016 viajaban al test.</span></div>
+    <div class="row half"><span class="mark">~</span><b>Comparar siempre contra el ingenuo con una métrica sin escala</b><span>Lo hacemos con la RMSLE, pero no calculamos la MASE, que es la estándar para comparar entre proyectos.</span></div>
+    <div class="row no"><span class="mark">○</span><b>Previsión probabilística (intervalos)</b><span>Damos un solo número por día; no decimos cuánto podemos fallar.</span></div>
+    <div class="row no"><span class="mark">○</span><b>Reconciliación jerárquica</b><span>Las previsiones de tiendas, familias y el total no tienen por qué cuadrar entre sí.</span></div>
+  </div>
+</section>
+
+<section id="libros">
+  <span class="eyebrow">La estantería</span>
+  <h2>Libros, de por dónde empezar a lo avanzado</h2>
+  <div class="shelf">
+    <div class="book" style="--c:var(--accent)"><span class="spine"></span><div><span class="lvl">Empieza aquí</span><h3><a href="https://otexts.com/fpp3/">Forecasting: Principles and Practice</a></h3><span class="who">Hyndman y Athanasopoulos · 3.ª ed. · R</span><p>El libro de referencia. Explica el flujo completo con ejemplos y ejercicios.</p><span class="free">Gratis en línea</span></div></div>
+    <div class="book" style="--c:var(--accent)"><span class="spine"></span><div><span class="lvl">Empieza aquí</span><h3><a href="https://otexts.com/fpppy/">FPP, the Pythonic Way</a></h3><span class="who">Versión en Python del anterior, con las librerías de Nixtla</span><p>El mismo contenido, en el lenguaje de este proyecto.</p><span class="free">Gratis en línea</span></div></div>
+    <div class="book" style="--c:var(--future)"><span class="spine"></span><div><span class="lvl">Práctico, de empresa</span><h3><a href="https://www.manning.com/books/demand-forecasting-best-practices">Demand Forecasting Best Practices</a></h3><span class="who">Nicolas Vandeput · Manning</span><p>Cómo se organiza la previsión de demanda en una compañía: procesos, métricas y personas.</p></div></div>
+    <div class="book" style="--c:var(--future)"><span class="spine"></span><div><span class="lvl">Práctico, de empresa</span><h3><a href="https://www.wiley.com/en-us/Business+Forecasting%3A+Practical+Problems+and+Solutions-p-9781119224563">Business Forecasting</a></h3><span class="who">Gilliland, Tashman y Sglavo · Wiley</span><p>Artículos cortos de practicantes. De aquí viene el «valor añadido de la previsión»: medir si cada paso mejora al ingenuo.</p></div></div>
+    <div class="book" style="--c:var(--past)"><span class="spine"></span><div><span class="lvl">Avanzado</span><h3><a href="https://www.packtpub.com/en-us/product/modern-time-series-forecasting-with-python-9781835883181">Modern Time Series Forecasting with Python</a></h3><span class="who">Manu Joseph · Packt · 2.ª ed.</span><p>Modelos globales con árboles y redes neuronales, justo el terreno en el que estamos ahora.</p></div></div>
+  </div>
+</section>
+
+<section id="articulos">
+  <span class="eyebrow">Los artículos que se citan siempre</span>
+  <h2>Cinco lecturas que explican el porqué</h2>
+  <div class="papers">
+    <div class="paper"><span class="yr">2000</span><div><h3><a href="https://doi.org/10.1016/S0169-2070(00)00065-0">Out-of-sample tests of forecasting accuracy</a></h3><p>Por qué hay que validar «entrenando con el pasado y midiendo en el futuro» en varias fechas. Es la base de nuestro backtesting.</p><span class="ref">Tashman · International Journal of Forecasting</span></div></div>
+    <div class="paper"><span class="yr">2006</span><div><h3><a href="https://doi.org/10.1016/j.ijforecast.2006.03.001">Another look at measures of forecast accuracy</a></h3><p>Qué métrica usar y por qué. Propone la MASE, que compara el error con el de un modelo ingenuo.</p><span class="ref">Hyndman y Koehler · IJF</span></div></div>
+    <div class="paper"><span class="yr">2020</span><div><h3><a href="https://doi.org/10.1016/j.ijforecast.2019.04.014">The M4 Competition: 100,000 time series and 61 forecasting methods</a></h3><p>Resultados de la M4: las combinaciones de métodos ganan a los métodos solos.</p><span class="ref">Makridakis, Spiliotis y Assimakopoulos · IJF</span></div></div>
+    <div class="paper"><span class="yr">2022</span><div><h3><a href="https://doi.org/10.1016/j.ijforecast.2021.11.013">M5 accuracy competition: Results, findings, and conclusions</a></h3><p>Por qué ganaron los LightGBM globales en ventas de supermercado. El más cercano a nuestro problema.</p><span class="ref">Makridakis, Spiliotis y Assimakopoulos · IJF</span></div></div>
+    <div class="paper"><span class="yr">2022</span><div><h3><a href="https://arxiv.org/abs/2012.03854">Forecasting: theory and practice</a></h3><p>Un repaso enciclopédico de todo el campo, escrito por decenas de especialistas. Para consultar, no para leer de corrido.</p><span class="ref">Petropoulos et al. · IJF · gratis en arXiv</span></div></div>
+  </div>
+</section>
+
+<section id="herramientas">
+  <span class="eyebrow">Herramientas de código abierto</span>
+  <h2>Librerías, según lo que quieras hacer</h2>
+  <div class="libs">
+    <div class="lib"><h3>Métodos clásicos</h3>
+      <div class="chip"><a href="https://github.com/Nixtla/statsforecast">statsforecast</a><span>ETS, ARIMA, Theta… rápidos y para miles de series.</span></div>
+      <div class="chip"><a href="https://github.com/facebook/prophet">Prophet</a><span>Tendencia y estacionalidad con pocas líneas (Meta).</span></div></div>
+    <div class="lib"><h3>Machine learning</h3>
+      <div class="chip"><a href="https://github.com/Nixtla/mlforecast">mlforecast</a><span>LightGBM global con retardos y ventanas, como el nuestro.</span></div>
+      <div class="chip"><a href="https://github.com/sktime/sktime">sktime</a><span>Interfaz tipo scikit-learn para series temporales.</span></div></div>
+    <div class="lib"><h3>Redes neuronales</h3>
+      <div class="chip"><a href="https://github.com/Nixtla/neuralforecast">neuralforecast</a><span>N-BEATS, N-HiTS, TFT y otras.</span></div>
+      <div class="chip"><a href="https://github.com/awslabs/gluonts">GluonTS</a><span>De Amazon; incluye DeepAR, previsión probabilística.</span></div>
+      <div class="chip"><a href="https://github.com/unit8co/darts">darts</a><span>Lo clásico y lo neuronal con la misma interfaz.</span></div></div>
+    <div class="lib"><h3>Que todo cuadre</h3>
+      <div class="chip"><a href="https://github.com/Nixtla/hierarchicalforecast">hierarchicalforecast</a><span>Reconciliación jerárquica: tiendas, familias y total coherentes.</span></div></div>
+  </div>
+</section>
+
+<section id="falta">
+  <span class="eyebrow">Lo que nos falta, explicado</span>
+  <h2>Dos ideas estándar que aún no hemos probado</h2>
+  <div class="pair">
+    <div class="panel">
+      <h3>Intervalos: decir cuánto podemos fallar</h3>
+      <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Previsión con bandas del 50 y 90 por ciento que se ensanchan con el horizonte">
+        <polygon points="160,70 316,40 316,128 160,92" fill="var(--future-soft)"/>
+        <polygon points="160,76 316,62 316,108 160,86" fill="var(--future)" opacity="0.35"/>
+        <polyline points="4,92 24,80 44,96 64,74 84,88 104,70 124,84 144,72 160,81" fill="none" stroke="var(--past)" stroke-width="3" stroke-linejoin="round"/>
+        <polyline points="160,81 186,79 212,86 238,78 264,84 290,80 316,85" fill="none" stroke="var(--future)" stroke-width="3" stroke-dasharray="6 4"/>
+        <line x1="160" y1="20" x2="160" y2="140" stroke="var(--line)" stroke-width="2"/>
+        <text x="166" y="22" font-size="11" fill="var(--muted)">hoy</text>
+        <text x="250" y="36" font-size="11" fill="var(--muted)">90 %</text>
+        <text x="250" y="58" font-size="11" fill="var(--muted)">50 %</text>
+      </svg>
+      <p>Hoy damos un número por día. Una previsión probabilística da además una banda: «entre 80 y 130 unidades con un 90 % de confianza». A una tienda le sirve más, porque decide cuánto stock de seguridad tener. La M5 tuvo una pista entera para esto.</p>
+      <p class="next">Experimento propuesto: <b>V-033</b>, entrenar LightGBM por cuantiles (10 %, 50 %, 90 %) y medir si las bandas aciertan lo que prometen.</p>
+    </div>
+    <div class="panel">
+      <h3>Reconciliación: que las piezas sumen el total</h3>
+      <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Árbol jerárquico: el total arriba, dos tiendas debajo y sus familias abajo; las previsiones de cada nivel suman la del nivel superior">
+        <g font-size="11" text-anchor="middle">
+          <line x1="160" y1="36" x2="80" y2="72" stroke="var(--line)" stroke-width="2"/><line x1="160" y1="36" x2="240" y2="72" stroke="var(--line)" stroke-width="2"/>
+          <line x1="80" y1="92" x2="40" y2="118" stroke="var(--line)" stroke-width="2"/><line x1="80" y1="92" x2="120" y2="118" stroke="var(--line)" stroke-width="2"/>
+          <line x1="240" y1="92" x2="200" y2="118" stroke="var(--line)" stroke-width="2"/><line x1="240" y1="92" x2="280" y2="118" stroke="var(--line)" stroke-width="2"/>
+          <rect x="112" y="12" width="96" height="26" rx="6" fill="var(--past)"/><text x="160" y="29" fill="var(--surface)">Total · 1000</text>
+          <rect x="40" y="70" width="80" height="24" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="80" y="86" fill="var(--ink)">Tienda A · 600</text>
+          <rect x="200" y="70" width="80" height="24" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="240" y="86" fill="var(--ink)">Tienda B · 400</text>
+          <rect x="6" y="116" width="68" height="24" rx="6" fill="var(--future-soft)" stroke="var(--future)"/><text x="40" y="132" fill="var(--ink)">Pan · 350</text>
+          <rect x="86" y="116" width="68" height="24" rx="6" fill="var(--future-soft)" stroke="var(--future)"/><text x="120" y="132" fill="var(--ink)">Leche · 250</text>
+          <rect x="166" y="116" width="68" height="24" rx="6" fill="var(--future-soft)" stroke="var(--future)"/><text x="200" y="132" fill="var(--ink)">Pan · 180</text>
+          <rect x="246" y="116" width="68" height="24" rx="6" fill="var(--future-soft)" stroke="var(--future)"/><text x="280" y="132" fill="var(--ink)">Leche · 220</text>
+        </g>
+      </svg>
+      <p>Nuestro modelo predice cada tienda×familia por separado, y nada obliga a que la suma coincida con lo que predeciríamos para la tienda entera o para todo el país. Reconciliar es ajustar todos los niveles a la vez para que cuadren. A veces, de paso, mejora las series pequeñas, que toman información de los niveles agregados.</p>
+      <p class="next">Experimento propuesto: <b>V-034</b>, reconciliar con el método MinT (Wickramasuriya, Athanasopoulos y Hyndman, 2019) y ver si mejora la RMSLE de las familias con pocas ventas.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span><b>Comunidad profesional:</b> <a href="https://forecasters.org/">International Institute of Forecasters</a> (edita el <i>International Journal of Forecasting</i>) e <a href="https://ibf.org/">Institute of Business Forecasting</a> (certificación de práctica en empresa). En empresa, la previsión se integra en el proceso S&amp;OP de planificación de ventas y operaciones.</span>
+  <span>Más competiciones: <a href="https://www.kaggle.com/competitions/m5-forecasting-uncertainty">M5 Uncertainty</a> (intervalos) · <a href="https://www.kaggle.com/competitions/web-traffic-time-series-forecasting">Web Traffic</a> · <a href="https://arxiv.org/abs/1704.04110">DeepAR</a>, el modelo probabilístico de Amazon.</span>
+  <span>Enlaces comprobados el 18 de octubre de 2026. Versión en texto: <code>docs/LECTURAS.md</code> del repositorio.</span>
+</footer>
+</div>
+
+<script>
+// Gráfico de la cabecera: 42 días de historia y 16 de previsión con un intervalo que se ensancha (datos ilustrativos, con ciclo semanal)
+(function () {
+  const svg = document.getElementById("fan");
+  const W = 520, H = 250, L = 16, R = 504, T = 24, B = 214, nPast = 42, nFut = 16, n = nPast + nFut;
+  const x = (i) => L + (R - L) * i / (n - 1);
+  const weekly = [0.92, 0.88, 0.9, 0.95, 1.05, 1.2, 1.1];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const v = Array.from({ length: n }, (_, i) => 100 * (1 + i * 0.004) * weekly[i % 7] * (i < nPast ? 0.92 + rnd() * 0.16 : 1));
+  const lo = 70, hi = 150, y = (val) => B - (B - T) * (val - lo) / (hi - lo);
+  const pts = (a, b, f = (i) => v[i]) => Array.from({ length: b - a }, (_, k) => `${x(a + k).toFixed(1)},${y(f(a + k)).toFixed(1)}`).join(" ");
+  const band = (w) => { const up = [], dn = []; for (let i = nPast - 1; i < n; i++) { const s = (i - nPast + 1) / nFut; up.push(`${x(i).toFixed(1)},${y(v[i] * (1 + w * (0.15 + s))).toFixed(1)}`); dn.unshift(`${x(i).toFixed(1)},${y(v[i] * (1 - w * (0.15 + s))).toFixed(1)}`); } return up.concat(dn).join(" "); };
+  const xNow = x(nPast - 1);
+  svg.innerHTML = `
+    <line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="var(--line)" stroke-width="1.5"/>
+    ${[90, 110, 130].map((g) => `<line x1="${L}" y1="${y(g)}" x2="${R}" y2="${y(g)}" stroke="var(--line)" stroke-dasharray="2 5"/>`).join("")}
+    <polygon points="${band(0.22)}" fill="var(--future-soft)"/>
+    <polyline points="${pts(0, nPast)}" fill="none" stroke="var(--past)" stroke-width="2.5" stroke-linejoin="round"/>
+    <polyline points="${pts(nPast - 1, n)}" fill="none" stroke="var(--future)" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <line x1="${xNow}" y1="${T - 8}" x2="${xNow}" y2="${B}" stroke="var(--muted)" stroke-width="1.5"/>
+    <text x="${xNow - 6}" y="${T - 10}" font-size="12" text-anchor="end" fill="var(--muted)">hoy</text>
+    <text x="${L}" y="${B + 22}" font-size="12" fill="var(--muted)">6 semanas de ventas</text>
+    <text x="${R}" y="${B + 22}" font-size="12" text-anchor="end" fill="var(--future)">16 días a predecir</text>`;
+})();
+</script>

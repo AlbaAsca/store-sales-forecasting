@@ -248,7 +248,20 @@ docs/               APRENDIZAJES.md (bitácora), análisis de errores, diseño d
 
 ---
 
-## 8. Qué he aprendido
+## 8. Para saber más
+
+Este no es el primer proyecto de previsión de ventas ni será el último: hay un libro de referencia gratuito, cuarenta años de
+competiciones que comparan métodos y una forma de trabajar en la que casi todo el mundo coincide.
+[**docs/LECTURAS.md**](docs/LECTURAS.md) reúne libros, artículos, competiciones y librerías, con diagramas y la tarjeta de notas de
+este proyecto frente a la práctica estándar (versión gráfica en [`docs/mapa-forecasting.html`](docs/mapa-forecasting.html)).
+
+| Ya lo hacemos | Nos falta |
+|---|---|
+| modelo ingenuo de partida · validación temporal · métrica de la competición · modelo global y combinaciones · limpieza de anomalías | intervalos de predicción (V-033) · reconciliación jerárquica (V-034) · comparar con MASE |
+
+---
+
+## 9. Qué he aprendido
 
 1. **Lo sencillo primero.** Fijarse en el día de la semana bajó el error más que todo lo demás junto.
 2. **Mide como te van a medir.** Calcular en proporciones (V-002) mejoró; entrenar con otra vara (V-007) empeoró.
