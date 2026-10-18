@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T18:24:23+02:00",
+  "updated": "2026-10-18T18:45:40+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-105"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -6500,18 +6500,18 @@
       "id": "T-105",
       "title": "V-040: corregir el sesgo por familia y día de la semana",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 50.0,
-      "actual_min": null,
+      "actual_min": 23.5,
       "auto": true,
       "manual": null,
       "desc": "La base acierta la forma de las ventas pero en algunas familias se queda corta siempre: GROCERY II un 20 % por debajo y los licores los viernes y sábados un 15 % por debajo (gráfica de base-v9, tienda 17). Idea: medir cuánto se equivoca de media el modelo en cada familia y día de la semana en el pasado reciente y corregirlo, con prudencia para no perseguir ruido.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que el sesgo medio de GROCERY II y de LIQUOR en viernes y sábado se acerque a 0.\n\n## Técnico\nMedido por el consultor en base-v9, fold f1 sin tiendas 18/25/52 (eval/tmp/theory/base-v9-f1-s42.csv.gz): sesgo log global −0.009 (desplazar todo no sirve: ±0.0001); por familia GROCERY II −0.224, HOME AND KITCHEN II −0.101, BEAUTY −0.091, HOME APPLIANCES +0.154; LIQUOR por día vie −0.167, sáb −0.165. Variante sobre models/base (base-v10): dentro de model.py, sin mirar el periodo a predecir, reservar las últimas 2-4 ventanas de 16 días antes del corte, predecirlas con el mismo modelo (o usar los residuos fuera de muestra del entrenamiento directo) y calcular el residuo medio en log por (familia, día de la semana). Encoger hacia 0 (b × n/(n+k), k por defecto 200 filas) y recortar a ±0.25. Sumar −b al log de la predicción. Parámetros por env (V040_K, V040_CLIP) para probar sin cambiar código. Ojo al coste: si reentrenar para las ventanas pasa de 15 min por medición, usa la versión barata (residuos de la última ventana del entrenamiento). Una sola cosa cambiada; NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-18T17:50:05+02:00",
-      "updated": "2026-10-18T18:22:08+02:00",
+      "updated": "2026-10-18T18:45:40+02:00",
       "started_at": "2026-10-18T18:22:08+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-18T18:45:40+02:00",
       "log": [
         {
           "t": "2026-10-18T17:50:05+02:00",
@@ -6522,6 +6522,33 @@
           "t": "2026-10-18T18:22:08+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T18:45:40+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-040 corre (f1 rápido 0,3873 con 1 ventana y 0,3867 con 2, frente a 0,3878 de la base); coste alto (~667 s por fold), falta la verificación completa del tester."
+        },
+        {
+          "t": "2026-10-18T18:45:40+02:00",
+          "by": "desarrollador",
+          "msg": "⚠ 1 comandos denegados: python - <<'EOF' import re p='variants/V-040/model.py' s=open(p,encoding='utf-8'"
+        },
+        {
+          "t": "2026-10-18T18:45:40+02:00",
+          "by": "runner",
+          "msg": "✗ «python - <<'EOF' import re p='variants/V-040/model.py' s=open(p,encoding='utf-8').read() i»: borrar o mover ficheros: usa Write/Edit"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T18:45:40+02:00",
+          "min": 23.5,
+          "turns": 2,
+          "tokens": 58526,
+          "cost_usd": 0.23561639999999998,
+          "verdict": "review"
         }
       ]
     },
@@ -6599,11 +6626,11 @@
   ],
   "runners": {
     "think": {
-      "state": "idle",
+      "state": "stopped",
       "current": null,
-      "message": "aportación experto (T-106): hallado sesgo de cambio de mes/paga (techo −0.0013) que T-090 dio por descartado; tarjeta T-107 (V-041), script errors_daybias.py y nota en docs/NOTAS-experto.md",
+      "message": "Runner parado",
       "pid": 23064,
-      "heartbeat": "2026-10-18T18:24:23+02:00",
+      "heartbeat": "2026-10-18T18:24:26+02:00",
       "agent": "experto",
       "started": "2026-10-18T18:22:08+02:00",
       "live": "live-T-106-experto-20261018-182208.jsonl",

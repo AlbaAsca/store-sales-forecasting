@@ -258,7 +258,7 @@ def _ensemble_log(history, future, ctx):
 def _bias(history, ctx, keys):
     """V-040: sesgo medio en log por (familia, dia de la semana) en las ultimas V040_WIN ventanas de 16 dias
     antes del corte (se predicen con el mismo modelo sin ver esa ventana). Encogido b*n/(n+K), recortado a +-CLIP."""
-    nwin = int(os.environ.get("V040_WIN", 2))
+    nwin = int(os.environ.get("V040_WIN", 1))
     k = float(os.environ.get("V040_K", 200))
     clip = float(os.environ.get("V040_CLIP", 0.25))
     last = history["date"].max()
