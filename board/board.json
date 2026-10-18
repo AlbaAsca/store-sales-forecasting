@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:35:08+02:00",
+  "updated": "2026-10-18T16:39:19+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6310,23 +6310,33 @@
       "id": "T-104",
       "title": "Promover V-038 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "blocked",
       "priority": "alta",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 4.1,
       "auto": true,
       "manual": null,
       "desc": "Cambiamos la forma en que el modelo mide su error para que los días con ventas disparatadas (picos aislados) no le obliguen a perseguirlos. Con dos semillas el error baja un poco en las cuatro partes de validación y el control sin tiendas cerradas también mejora. Es una ganancia pequeña pero repetida.\n\nCómo sabremos si funciona: el error medio de la nueva base sigue por debajo de la anterior en el examen final de Kaggle, sin empeorar en las series irregulares.\n\n## Técnico\nV-038: objective=huber, alpha=1.0, sobre log1p (directo y recursivo). Prácticas: s42 0.3811→0.3806, s7 0.3813→0.3804 (base-v10). Folds peores: f1 +0.0001 con s42 (1/4, dentro del criterio). Control sin cerradas 0.3845→0.3838. Tiempo 501→395 s. Tests 74/74. Veredicto: ACEPTADA. Pendiente: sesgo medio en log no medido.",
       "deps": [],
       "created": "2026-10-18T16:35:05+02:00",
-      "updated": "2026-10-18T16:35:05+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T16:39:19+02:00",
+      "started_at": "2026-10-18T16:35:11+02:00",
+      "finished_at": "2026-10-18T16:39:19+02:00",
       "log": [
         {
           "t": "2026-10-18T16:35:05+02:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:35:11+02:00",
+          "by": "runner",
+          "msg": "promoción automática de V-038 (scripts/promote.py)"
+        },
+        {
+          "t": "2026-10-18T16:39:19+02:00",
+          "by": "consultor",
+          "msg": "NO se promueve V-038 (comprobación automática): prácticas (V-038): 0.3811 → 0.3806, empeora 1 fold(s); prácticas (V-038-s7): 0.3813 → 0.3804, empeora 0 fold(s); examen final empeora: 0.4085 → 0.4134; control sin cerradas: 0.3845 → 0.3838; test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.018, familia 0.023)"
         }
       ]
     }
@@ -6347,12 +6357,12 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-096",
-      "message": "verificación mecánica de V-038: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-104",
+      "message": "promoción automática de V-038",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:34:12+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T16:16:35+02:00",
+      "heartbeat": "2026-10-18T16:35:11+02:00",
+      "agent": "consultor",
+      "started": "2026-10-18T16:35:11+02:00",
       "live": "live-T-096-tester-20261018-163412.jsonl",
       "enabled": true,
       "mechanical": false
