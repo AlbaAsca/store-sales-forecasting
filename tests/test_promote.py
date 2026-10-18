@@ -73,3 +73,12 @@ def test_runner_reconoce_variantes_para_verificar():
     assert runner.VARIANT_RE.match("V-031: juntar los tres historiales").group(1) == "V-031"
     assert runner.VARIANT_RE.match("Runner: no bloquear la tarjeta") is None
     assert runner.MAX_TURNS["modelador"] <= 40 and runner.MAX_TURNS["experto"] <= 40
+
+
+def test_carril_espera_si_hay_dependencias_pendientes():
+    b = {"tasks": [{"id": "T-1", "owner": "desarrollador", "status": "review", "deps": []},
+                   {"id": "T-2", "owner": "arquitecto", "status": "next", "deps": ["T-1"]}]}
+    assert runner.waiting(b, "think")
+    b["tasks"][0]["status"] = "done"
+    b["tasks"][1]["status"] = "done"
+    assert not runner.waiting(b, "think")

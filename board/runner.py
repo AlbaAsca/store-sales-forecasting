@@ -179,6 +179,14 @@ def pick(b, lane="all"):
     return None, None
 
 
+def waiting(b, lane):
+    """¿Hay tareas de este carril que solo esperan a que acabe otra (dependencias o revisión en el otro carril)?
+    Con --until-idle el carril no sale mientras las haya: si no, T-098 se quedaba sin hacer al acabar T-097."""
+    pend = [t for t in b["tasks"] if t["status"] in ("backlog", "next") and t["owner"] != "consultor"
+            and t.get("kind") != "contrib" and bd.lane_owns(lane, t["owner"])]
+    return any(not bd.deps_done(b, t) for t in pend) or (bool(pend) and any(t["status"] == "review" for t in b["tasks"]))
+
+
 PROMOTE_RE = re.compile(r"^Promover (V-\d{3}[A-Za-z0-9-]*)\b")
 
 
@@ -631,7 +639,7 @@ def main():
                 set_runner(state="idle", current=None, message="Sin tareas ejecutables")
                 if o.contribute and contribute(o) and o.dry_run:
                     break
-                if o.once or o.until_idle:
+                if o.once or (o.until_idle and not waiting(b, LANE)):
                     break
                 time.sleep(o.idle)
                 continue
