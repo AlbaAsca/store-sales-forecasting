@@ -227,11 +227,15 @@ def precheck(t):
     if not m or not (ROOT / "variants" / m.group(1) / "model.py").exists() or not (ROOT / "scripts" / "verify_variant.py").exists():
         return None
     print(f"  verificación mecánica de {m.group(1)} (sin agente)…")
+    set_runner(live=None, mechanical=True, started=now(),
+               message=f"verificación mecánica de {m.group(1)}: backtest con 2 semillas, sin agente (0 tokens)")
     try:
         r = subprocess.run([sys.executable, str(ROOT / "scripts" / "verify_variant.py"), m.group(1)], cwd=ROOT, capture_output=True,
                            text=True, encoding="utf-8", errors="replace", timeout=45 * 60, env={**os.environ, "PYTHONUTF8": "1"})
     except subprocess.TimeoutExpired:
         return None
+    finally:
+        set_runner(mechanical=False)
     return r.stdout.strip() if r.returncode in (0, 1) else None
 
 

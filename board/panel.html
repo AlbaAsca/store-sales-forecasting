@@ -203,7 +203,8 @@ function laneInfo(r, st, dead) {
   if (st === "working" && r.current) {
     const t = B.tasks.find((x) => x.id === r.current);
     let info = `<b>${esc(agentOf(r.agent).name)}</b> con ${r.current}${t ? " · " + esc(t.title) : ""} · lleva <b>${fmtMin(minsSince(r.started))}</b>${t?.estimate_min ? " de " + fmtMin(t.estimate_min) + " estimados" : ""}`;
-    const act = r.last_activity ? minsSince(r.last_activity) : null;
+    if (r.mechanical) { info += ` · <b>${esc(r.message || "verificación mecánica")}</b> · lleva ${fmtMin(minsSince(r.started))}`; }
+    const act = r.mechanical ? null : r.last_activity ? minsSince(r.last_activity) : null;
     if (act != null) info += act < 1 ? ` · <b>activo</b> (última acción hace ${Math.round(act * 60)} s)`
       : ` · última acción hace <b>${fmtMin(act)}</b>${act > 10 ? " (pensando o atascado)" : ""}`;
     return info;
