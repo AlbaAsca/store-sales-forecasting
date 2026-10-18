@@ -64,3 +64,33 @@ Observación: nuestro LB 0.3972 es peor que el 0.38558 de 2022 (ese LB era de ot
 
 ### Tarjetas creadas
 - V-029 (un modelo por familia) y V-030 (ensemble con ventanas de historial distintas). Ver panel.
+
+## 2026-10-18 · T-082 spec-kit (GitHub) para la plantilla agent-board
+
+**Qué es.** Flujo «desarrollo guiado por especificaciones»: Constitución → Specify → Plan → Tasks → Implement → Converge. Se instala con `uv tool install specify-cli` y `specify init <proyecto> --integration <agente>`; los comandos son «skills» del agente (`/speckit-specify`… en la doc actual; `/speckit.specify`… en la doc de método). Número de versión: no verificable desde las páginas leídas (docs actualizadas 2026-09-28).
+
+**Ficheros** (según spec-driven.md): `memory/constitution.md` (único, 9 artículos con «gates») y, por funcionalidad, `specs/NNN-nombre/` con `spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, `tasks.md`. Además checklists de calidad y marcadores `[NEEDS CLARIFICATION]`.
+
+**Contexto añadido por tarea (estimación, no medido: no se instaló nada).** 7+ documentos de ~3–8 KB ya rellenos → **≈ 20–40 KB por funcionalidad** (+ constitución 5–10 KB releída siempre), frente a **≈ 1–2 KB** de una tarjeta nuestra (título + descripción llana + `## Técnico`). Es ×15–30 de contexto. Un agente que implementa lee como mínimo spec + plan + tasks.
+
+### Comparación
+| Criterio | Tarjeta actual (board + agentes) | spec-kit |
+|---|---|---|
+| Contexto por tarea | ≈1–2 KB | ≈20–40 KB (est.) |
+| Define «hecho» | «Cómo sabremos…» + criterio exacto | Criterios de aceptación en spec + checklist |
+| Reglas permanentes | CLAUDE.md + agentes | constitution.md (equivalente) |
+| Requisitos que cambian | Se reescribe la tarjeta | Bueno: spec versionada, clarificaciones, converge |
+| Trazabilidad requisito→tarea→código | Débil | Fuerte |
+| Coste de ceremonia | Mínimo | Alto; mal para tareas de 30 min |
+| Encaja en forecasting/experimentos | Sí | No (el criterio es una métrica, no una historia de usuario) |
+
+### Recomendación: usar SOLO UNA PARTE en agent-board, y solo en proyectos de producto
+- **No** adoptarlo entero: duplica lo que ya cubren tarjeta + CLAUDE.md + agentes y multiplica el contexto.
+- **Sí** copiar dos ideas baratas como plantilla opcional (`docs/spec-plantilla.md`, ≤3 KB): (1) una *spec* corta por funcionalidad con historias, criterios de aceptación y marcadores `[NEEDS CLARIFICATION]`; (2) un paso de *clarificar* antes de crear tarjetas. La tarjeta enlaza la spec en vez de duplicarla; la «constitución» ya es CLAUDE.md.
+- Reconsiderar el flujo completo solo si un proyecto de producto tiene >5 funcionalidades con requisitos cambiantes y varios agentes escribiendo código.
+- Límite: tamaños estimados; medirlos exige instalar `specify-cli` (no permitido en modo autónomo).
+
+Fuentes: github.com/github/spec-kit · github.github.io/spec-kit/ · raw.githubusercontent.com/github/spec-kit/main/spec-driven.md
+
+### Tarjetas creadas
+- T-088 (plantilla de especificación corta para agent-board, prio baja). Ver panel.
