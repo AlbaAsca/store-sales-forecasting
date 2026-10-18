@@ -71,6 +71,10 @@ Todos los scripts que imprimen fuerzan UTF-8 (`sys.stdout.reconfigure(encoding="
 ## Envíos a Kaggle
 `python scripts/make_submission.py --src models/base --name base-vX` → `dist/`. Tag `vX.Y` antes de subir; el mensaje incluye el tag
 y el RMSLE de backtest y holdout. Subir es tarea `--manual` para Alba. Los agentes nunca envían.
+**Botón «Subir a Kaggle»** (18-oct): la tarjeta de subida que crea la promoción automática lleva los datos del envío; Alba pulsa el
+botón en el panel y `scripts/kaggle_submit.py` (CLI de Kaggle de KaggleFarm) sube el CSV, respeta el límite diario, espera la nota,
+la apunta en eval/kaggle.json, la tarjeta y el gráfico, y si es peor que la mejor base activa vuelve a esa base, marca la nueva como
+retirada y abre una tarjeta de diagnóstico para el analista. Un clic de Alba = un envío; los agentes siguen sin poder subir.
 **Automático** (petición de Alba, 18-oct): cuando el tester acepta una variante crea la tarjeta «Promover V-xxx…» para el
 consultor, y el runner ejecuta `scripts/promote.py V-xxx` sin agente: prácticas con todas las semillas, examen final, control sin
 cerradas y que ninguna tienda o familia del test cambie de golpe frente a la base. Si pasa, promueve a base-vN, genera el CSV, pone

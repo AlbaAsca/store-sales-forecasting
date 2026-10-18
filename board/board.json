@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:53:37+02:00",
+  "updated": "2026-10-18T10:58:30+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4528,7 +4528,7 @@
       "estimate_min": 3,
       "actual_min": null,
       "auto": false,
-      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-base-v8.csv con el mensaje: v0.8 · base-v8 (V-027) · backtest 0.3829 · holdout 0.4073. Pasar la puntuación al consultor.",
+      "manual": "Pulsa «Subir a Kaggle» en esta tarjeta: sube el CSV, espera la nota y la apunta sola.",
       "desc": "La comprobación automática ha preparado una nueva base: mejora en las prácticas y no empeora el examen final, el control ni ninguna tienda del test. Toca subirla y ver qué dice Kaggle.\n\n## Técnico\n- prácticas (V-027): 0.3838 → 0.3829, empeora 0 fold(s)\n- prácticas (V-027-s7): 0.3836 → 0.3829, empeora 0 fold(s)\n- examen final: 0.4139 → 0.4073\n- control sin cerradas: 0.3857 → 0.3876\n- test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.012, familia 0.021)\n- CSV: dist/submission-base-v8.csv",
       "deps": [],
       "created": "2026-10-18T10:52:24+02:00",
@@ -4540,8 +4540,20 @@
           "t": "2026-10-18T10:52:24+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T10:57:57+02:00",
+          "by": "consultor",
+          "msg": "añadido el botón «Subir a Kaggle»"
         }
-      ]
+      ],
+      "upload": {
+        "csv": "dist/submission-base-v8.csv",
+        "message": "v0.8 · base-v8 (V-027) · backtest 0.3829 · holdout 0.4073",
+        "tag": "v0.8",
+        "base": "base-v8",
+        "variant": "V-027"
+      }
     },
     {
       "id": "T-075",

@@ -183,12 +183,14 @@ def _close_card(card, msg, promoted, upload=None):
             bd.set_status(b, t, "done" if promoted else "blocked", "consultor", msg[:900])
         if upload:
             nb, tag, m, reasons = upload
-            bd.new_task(b, f"Subir {tag} ({nb}) a Kaggle y apuntar la puntuación", "consultor", 3, "alta",
+            up = bd.new_task(b, f"Subir {tag} ({nb}) a Kaggle y apuntar la puntuación", "consultor", 3, "alta",
                         f"La comprobación automática ha preparado una nueva base: mejora en las prácticas y no empeora el examen "
                         f"final, el control ni ninguna tienda del test. Toca subirla y ver qué dice Kaggle.\n\n## Técnico\n"
                         + "\n".join(f"- {r}" for r in reasons) + f"\n- CSV: dist/submission-{nb}.csv",
-                        status="human", manual=f"Kaggle > Store Sales > Submit Prediction > subir dist/submission-{nb}.csv con el "
-                                               f"mensaje: {m}. Pasar la puntuación al consultor.", by="consultor")
+                        status="human", manual="Pulsa «Subir a Kaggle» en esta tarjeta: sube el CSV, espera la nota y la apunta sola.",
+                        by="consultor")
+            up["upload"] = {"csv": f"dist/submission-{nb}.csv", "message": m, "tag": tag, "base": nb,
+                            "variant": m.split("(")[1].split(")")[0] if "(" in m else ""}
     bd.update(f)
 
 

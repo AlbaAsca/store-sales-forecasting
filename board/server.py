@@ -300,6 +300,27 @@ def runner_stop(lane: str = None):
     return {"ok": True, "killed": killed}
 
 
+@app.post("/api/kaggle/submit/{tid}")
+def kaggle_submit(tid: str):
+    """Botón «Subir a Kaggle» de una tarjeta de subida: lanza scripts/kaggle_submit.py en segundo plano (un clic = un envío)."""
+    bd = _bd()
+    try:
+        t = bd.task(bd.load(), tid)
+    except StopIteration:
+        raise HTTPException(404, "tarjeta no encontrada")
+    if not t.get("upload") or t["status"] != "human":
+        raise HTTPException(409, "Esta tarjeta no tiene un envío pendiente (o ya se está subiendo)")
+    bd.update(lambda b: bd.set_status(b, bd.task(b, tid), "doing", "tú", "pulsado «Subir a Kaggle»"))
+    (HERE / "runs").mkdir(exist_ok=True)
+    log = open(HERE / "runs" / f"kaggle-{tid}.log", "a", encoding="utf-8")
+    venv = ROOT / ".venv" / ("Scripts" if os.name == "nt" else "bin")
+    env = dict(os.environ, PYTHONUTF8="1", PATH=f"{venv}{os.pathsep}{os.environ.get('PATH', '')}")
+    flags = 0x00000008 | 0x00000200 | 0x08000000 if os.name == "nt" else 0
+    subprocess.Popen([sys.executable, str(ROOT / "scripts" / "kaggle_submit.py"), "--card", tid], cwd=ROOT, env=env,
+                     stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, creationflags=flags)
+    return {"ok": True}
+
+
 if __name__ == "__main__":
     import uvicorn
     ap = argparse.ArgumentParser()
