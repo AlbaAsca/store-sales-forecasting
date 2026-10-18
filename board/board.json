@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T15:39:58+02:00",
+  "updated": "2026-10-18T16:02:15+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5739,7 +5739,7 @@
       "id": "T-095",
       "title": "V-037: los días de tienda cerrada son datos que faltan, no ceros",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 60.0,
       "actual_min": 3.0,
@@ -5748,7 +5748,7 @@
       "desc": "Cuando una tienda está cerrada (25 de diciembre, cierres de 2016 de dos tiendas, días antes de abrir) el modelo lo cuenta como si se hubiera vendido cero, y eso rebaja los promedios y arrastra el cierre de 2016 a las predicciones de agosto de 2017. Probamos a tratar esos días como datos que faltan.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la quincena de control sin tiendas cerradas no empeora y las predicciones de esas dos tiendas dejan de hundirse.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (modelador 1; N4 se solapa). Cambio único: antes de calcular rasgos, en M poner NaN en los días en que la tienda entera vende 0 (incluye 25-dic y días anteriores a su primera venta) y usar nanmean en medias y ly_*; objetivos de entrenamiento sin tocar. La regla del cero (V-023) debe seguir viendo la M original. Criterio por defecto; anotar control sin cerradas y la predicción media en log de las tiendas 18 y 25 en el test frente a base-v9. Ganancia -0.0005…-0.002.",
       "deps": [],
       "created": "2026-10-18T14:48:52+02:00",
-      "updated": "2026-10-18T15:39:58+02:00",
+      "updated": "2026-10-18T16:02:15+02:00",
       "started_at": "2026-10-18T15:36:58+02:00",
       "finished_at": "2026-10-18T15:39:58+02:00",
       "log": [
@@ -5766,6 +5766,26 @@
           "t": "2026-10-18T15:39:58+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-037 implementada (días de tienda cerrada como NaN en los rasgos), corre en quick (0.3878, semilla 42) y los tests pasan; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-18T15:40:00+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T16:01:00+02:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: ACEPTADA"
+        },
+        {
+          "t": "2026-10-18T16:02:07+02:00",
+          "by": "tester",
+          "msg": "CV práctica semilla 42: 0.3811 (base-v9 0.3814), semilla 7: 0.3813 (base 0.3815). Media 0.3812 vs 0.3815 (-0.0003): mejora 3/4 folds en s42 (f1 +0.0001 peor), 3/4 en s7 sin peores; control sin cerradas 0.3845 = 0.3845; tiempo 429 → 501 s. Predicción media log tiendas 18/25 no reportada por el script (pendiente). → ACEPTADA"
+        },
+        {
+          "t": "2026-10-18T16:02:15+02:00",
+          "by": "tester",
+          "msg": "DONE: V-037 ACEPTADA (media 0.3812 vs 0.3815 con dos semillas; tests en verde; tarjeta T-100 creada)."
         }
       ],
       "runs": [
@@ -5778,8 +5798,19 @@
           "tokens": 117751,
           "cost_usd": 0.1042728,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T16:02:15+02:00",
+          "min": 1.2,
+          "turns": 11,
+          "tokens": 132108,
+          "cost_usd": 0.00696305,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T15:40:00+02:00"
     },
     {
       "id": "T-096",
@@ -5853,6 +5884,11 @@
           "t": "2026-10-18T15:36:49+02:00",
           "by": "runner",
           "msg": "? permiso solicitado: git tag -n1* (T-099); la tarjeta espera la decisión"
+        },
+        {
+          "t": "2026-10-18T15:46:33+02:00",
+          "by": "tú",
+          "msg": "✓ permiso concedido: git tag -n1*"
         }
       ],
       "runs": [
@@ -5903,7 +5939,7 @@
       "id": "T-099",
       "title": "Solicitud de permiso: git tag -n1*",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "media",
       "estimate_min": 2,
       "actual_min": null,
@@ -5912,7 +5948,7 @@
       "desc": "El agente «desarrollador» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-097. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: (no lo explicó)\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: git tag -n1 -l \"base-v*\"\n- Patrón que se concedería: git tag -n1*\n- Tarjeta: T-097",
       "deps": [],
       "created": "2026-10-18T15:36:49+02:00",
-      "updated": "2026-10-18T15:36:49+02:00",
+      "updated": "2026-10-18T15:46:33+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
@@ -5920,6 +5956,11 @@
           "t": "2026-10-18T15:36:49+02:00",
           "by": "runner",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T15:46:33+02:00",
+          "by": "tú",
+          "msg": "✓ Concedido: git tag -n1*"
         }
       ],
       "kind": "permiso",
@@ -5930,6 +5971,30 @@
         "task": "T-097",
         "why": ""
       }
+    },
+    {
+      "id": "T-100",
+      "title": "Promover V-037 a base y preparar envío a Kaggle",
+      "owner": "consultor",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 10.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Con V-037 los días en que una tienda cierra dejan de contar como ventas de cero: se tratan como dato que falta. La mejora es pequeña (unas milésimas de error), pero se repite con las dos semillas y no empeora los días sin cierres.\n\nCómo sabremos si funciona: el error del modelo en las pruebas baja y la predicción de agosto de 2017 deja de hundirse en las dos tiendas que cerraron en 2016.\n\n## Técnico\nV-037 frente a base-v9: semilla 42 0.3811 (0.3814), semilla 7 0.3813 (0.3815); media 0.3812 vs 0.3815 (-0.0003). Folds peores: f1 en s42 (+0.0001). Control sin tiendas cerradas 0.3845 = 0.3845. Tiempo 429 → 501 s. Criterio por defecto cumplido. Pendiente: predicción media log de tiendas 18 y 25 (no reportada por verify_variant.py).",
+      "deps": [],
+      "created": "2026-10-18T16:02:11+02:00",
+      "updated": "2026-10-18T16:02:11+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T16:02:11+02:00",
+          "by": "tester",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
@@ -5949,12 +6014,12 @@
     "measure": {
       "state": "working",
       "current": "T-095",
-      "message": "desarrollador con T-095",
+      "message": "verificación mecánica de V-037: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 8496,
-      "heartbeat": "2026-10-18T15:36:58+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-18T15:36:58+02:00",
-      "live": "live-T-095-desarrollador-20261018-153658.jsonl",
+      "heartbeat": "2026-10-18T16:01:00+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T15:40:00+02:00",
+      "live": "live-T-095-tester-20261018-160100.jsonl",
       "enabled": true,
       "mechanical": false
     }

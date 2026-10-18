@@ -1,0 +1,132 @@
+{
+ "accepted": true,
+ "rows": [
+  {
+   "run": "V-037",
+   "base": 0.3814,
+   "variant": 0.3811,
+   "delta": -0.0003,
+   "worse_folds": [
+    "f1"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3877,
+     0.3878
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3726
+    ],
+    [
+     "f3",
+     0.3775,
+     0.3772
+    ],
+    [
+     "f4",
+     0.3874,
+     0.3868
+    ]
+   ],
+   "families_best": [
+    [
+     "BREAD/BAKERY",
+     -0.004
+    ],
+    [
+     "MEATS",
+     -0.003
+    ],
+    [
+     "GROCERY I",
+     -0.003
+    ]
+   ],
+   "families_worst": [
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     0.001
+    ],
+    [
+     "PRODUCE",
+     0.001
+    ],
+    [
+     "LINGERIE",
+     0.001
+    ]
+   ]
+  },
+  {
+   "run": "V-037-s7",
+   "base": 0.3815,
+   "variant": 0.3813,
+   "delta": -0.0002,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3878
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3727
+    ],
+    [
+     "f3",
+     0.3778,
+     0.3773
+    ],
+    [
+     "f4",
+     0.3876,
+     0.3875
+    ]
+   ],
+   "families_best": [
+    [
+     "CLEANING",
+     -0.003
+    ],
+    [
+     "MEATS",
+     -0.003
+    ],
+    [
+     "PERSONAL CARE",
+     -0.003
+    ]
+   ],
+   "families_worst": [
+    [
+     "PRODUCE",
+     0.009
+    ],
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     0.002
+    ],
+    [
+     "GROCERY II",
+     0.002
+    ]
+   ]
+  }
+ ],
+ "why": [],
+ "variant": "V-037",
+ "base": "base-v9",
+ "control_open": {
+  "base": 0.3845427275062961,
+  "variant": 0.3844908121110169
+ },
+ "secs": {
+  "base": 428.6,
+  "variant": 500.7
+ }
+}

@@ -207,3 +207,6 @@ Se mezcla un 20 % de un segundo modelo entrenado con otra pérdida (tweedie, sob
 
 ## V-031: tres historiales juntos sobre la base nueva (aceptada)
 Se promedian tres copias del modelo que miran 2 semanas, 2 meses y 1 año de historia, ahora sobre base-v8. Prácticas 0.3814/0.3815 frente a 0.3829: mejora en los 4 tramos y también sin tiendas cerradas. Las dos mejoras se suman porque cada ventana se equivoca en sitios distintos; tarda 7 min, pero el tiempo solo desempata.
+
+## V-037: días de tienda cerrada como dato que falta (aceptada)
+Un día en que la tienda entera vende 0 (cierre, 25-dic, días antes de abrir) se trataba como un cero más. Ahora esos días son «NaN» (dato ausente) en las medias y perfiles, y las medias ignoran los huecos. Con dos semillas baja un poco el error (0.3811 / 0.3813 frente a 0.3814 / 0.3815) y el control sin cerradas no cambia; la ganancia es pequeña, pero se repite. Por qué: el cero falso restaba nivel a las tiendas cerradas; quitarlo ayuda sin tocar el objetivo de entrenamiento.
