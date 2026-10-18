@@ -10,9 +10,9 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 🏁 **Nota en Kaggle** | **0.39720** (v0.7, la mejor) · empezó en 0.45751 (v0.1) |
-| 📈 **Error en las prácticas** | **0.3838** (base-v7) · empezó en 0.4745 (base-v0) |
-| 🧪 **Ideas probadas** | 21: 9 forman el modelo actual, 12 no entraron → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 🏁 **Nota en Kaggle** | **0.39212** (v0.8, la mejor) · empezó en 0.45751 (v0.1) |
+| 📈 **Error en las prácticas** | **0.3829** (base-v8) · empezó en 0.4745 (base-v0) |
+| 🧪 **Ideas probadas** | 26: 10 forman el modelo actual, 16 no entraron → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
 | 🌳 **Árbol de experimentos** | [`docs/experimentos.html`](docs/experimentos.html): cada idea explicada sin tecnicismos (descárgalo y ábrelo en el navegador) |
 
 ![Progreso de los envíos a Kaggle](docs/img/progreso.png)
@@ -146,6 +146,12 @@ flowchart TB
     Dev -- "a revisión" --> Test
 ```
 
+![Panel del proyecto: los dos carriles del runner, qué hace cada agente y las columnas kanban](docs/img/panel.png)
+
+| Una tarjeta, escrita para una persona | Lo que hace el agente, en directo |
+|---|---|
+| ![Ficha de la tarjeta V-031: explicación en llano, «Cómo sabremos si funciona» y detalles técnicos plegados](docs/img/panel-tarjeta.png) | ![Vista en directo del desarrollador: cada herramienta que usa y lo que recibe; un comando denegado en rojo](docs/img/panel-directo.png) |
+
 Quien implementa una variante nunca la evalúa. Un *runner* ([`board/runner.py`](board/runner.py)) recoge tarjetas del panel
 (cada 3 horas o con el botón **▶ Iniciar** del panel) y lanza al agente que toca, con permisos acotados: puede ejecutar Python y
 leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo que aprendí montándolo:
@@ -157,8 +163,13 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 - **Comandos denegados a la vista:** si a un agente le bloquean un comando, queda anotado en su tarjeta; si lo bloqueado era crear
   tarjetas, la suya no puede cerrarse como hecha.
 - **Tarjetas para humanos:** la descripción empieza en lenguaje llano y lo técnico va plegado debajo.
-- **Los envíos los preparo yo (consultor) y los sube Alba**, revisando antes el examen final. El MCP de Kaggle solo lo usa el
-  consultor, con permiso en cada envío; el runner lo tiene bloqueado.
+- **Promoción automática** (`scripts/promote.py`): cuando el evaluador acepta una variante, el runner la comprueba como lo haría
+  el consultor (prácticas con dos semillas, examen final, control sin tiendas cerradas y que ninguna tienda o familia del test
+  cambie de golpe) y, si pasa, la convierte en la nueva base, genera el CSV y los tags. Así se preparó la v0.8 sin intervención.
+- **Subida con un clic:** la tarjeta de subida tiene un botón «Subir a Kaggle»; el script sube el CSV, espera la nota, la apunta
+  en el registro y el gráfico, y si empeora vuelve a la base anterior y abre un diagnóstico. Los agentes no pueden subir nada.
+- **Protocolo de permisos** (`board/permissions.py`): si a un agente le deniegan un comando, lo seguro se concede solo, lo
+  prohibido se le explica y lo dudoso abre una solicitud con botones Conceder / Denegar.
 
 ---
 
@@ -176,7 +187,8 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 | V-006 | recordar lo vendido hace un año | 0.3904 | 0.4378 | 0.41341 |
 | V-009 | media de dos maneras de predecir: los 16 días de golpe y día a día | 0.3858 | 0.4187 | 0.40327 |
 | V-014 | afinar los ajustes del LightGBM (aceptada tras el envío experimental) | 0.3852 | 0.4179 | 0.39940 |
-| **V-025 + V-023** | **aprender del año anterior sin sus cierres, y predecir cero solo en series de verdad muertas** | **0.3838** | **0.4139** | **0.39720** |
+| V-025 + V-023 | aprender del año anterior sin sus cierres, y predecir cero solo en series de verdad muertas | 0.3838 | 0.4139 | 0.39720 |
+| **V-027** | **avisar al modelo de las promociones de los días de alrededor** (promovida automáticamente) | **0.3829** | **0.4073** | **0.39212** |
 
 ### Las ramas: lo que se probó y se descartó
 

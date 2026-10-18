@@ -5,6 +5,12 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.8 · primera base preparada y subida sin intervención — 🏁 LB 0.39212 (mejor nota)
+Qué: V-027 (promociones de los días de alrededor) la aceptó el evaluador, la promovió el script automático tras comprobar prácticas,
+examen final (0.4139 → 0.4073), control y que ninguna tienda del test cambiara de golpe, y se subió con el botón del panel.
+· Pasó: Kaggle 0.39720 → 0.39212 (−0.0051), la mayor mejora desde v0.4. · Por qué: la gente adelanta o retrasa compras alrededor de
+una promoción, y esas promociones se conocen de antemano; además el examen final ya avisaba de una mejora grande.
+
 ### v0.7 · el año anterior, ahora limpio, sí funciona en Kaggle — 🏁 LB 0.39720 (mejor nota)
 Qué: subir base-v7 (V-026: año anterior sin los cierres de 2016 + cero en series muertas salvo temporada). · Pasó: Kaggle 0.39940 → 0.39720
 (−0.0022), la mejor nota hasta ahora; v0.6, con la misma idea sin limpiar, había dado 0.40871. · Por qué: la información del año anterior

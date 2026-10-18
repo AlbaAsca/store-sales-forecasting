@@ -340,7 +340,13 @@ Cuenta como uno de tus envíos de hoy.`)) return;
   $("#dlg").returnValue = ""; $("#dlg").showModal();
 }
 $("#new").onclick = () => openTask(null);
-load(); setInterval(load, 4000); setInterval(() => B && !editing && !dragId && render(), 30000);
+// enlaces directos (también para capturas): ?open=T-012 abre una tarjeta · ?live=think|measure|all despliega el log en directo
+load(true).then(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.get("live")) { $("#liveLane").value = q.get("live"); $("#live").open = true; loadLive(); }
+  if (q.get("open") && B?.tasks.some((t) => t.id === q.get("open"))) openTask(q.get("open"));
+});
+setInterval(load, 4000); setInterval(() => B && !editing && !dragId && render(), 30000);
 </script>
 </body>
 </html>
