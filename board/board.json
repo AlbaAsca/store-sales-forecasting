@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:55:08+02:00",
+  "updated": "2026-10-18T09:56:14+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-069",
-    "heartbeat": "2026-10-18T09:52:48+02:00",
-    "message": "investigador con T-069",
+    "current": "T-071",
+    "heartbeat": "2026-10-18T09:55:11+02:00",
+    "message": "desarrollador con T-071",
     "pid": 6204,
-    "agent": "investigador",
-    "started": "2026-10-18T09:52:48+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-18T09:55:11+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
-    "live": "live-T-069-investigador-20261018-095248.jsonl"
+    "live": "live-T-071-desarrollador-20261018-095511.jsonl"
   },
   "agents": [
     {
@@ -4312,23 +4312,45 @@
       "id": "T-071",
       "title": "V-029: un modelo por tipo de producto en vez de uno para todos",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 40.0,
-      "actual_min": null,
+      "actual_min": 1.1,
       "auto": true,
       "manual": null,
       "desc": "Hoy un solo modelo aprende a la vez de pan, ropa de colegio y licores. El notebook que fue primero en la clasificación en 2022 entrenaba un modelo aparte por cada familia de producto, así cada uno se especializa en su patrón. Probamos lo mismo sobre la base actual.\nCómo sabremos si funciona: si el error medio de los 4 tramos baja con al menos 2 semillas y no empeora en más de un tramo, la aceptamos.\n## Técnico\nFuente: ferdinandberr/darts-forecasting-deep-learning-global-models (33 LightGBM, LB 0.38558) y chongzhenjie (réplica). Cambio: en variants/V-029 entrenar 33 modelos (directo y recursivo) filtrando por family; mismos rasgos que base-v7; num_leaves/min_data reducidos si hace falta. Criterio: RMSLE medio CV < 0.3838, 2 semillas, máximo 1 fold peor; control vuelta al cole y sin tiendas cerradas no deben empeorar. Riesgo: gersonlramos vio mejora solo en el recursivo. Tiempo esperado x1-2.",
       "deps": [],
       "created": "2026-10-18T09:54:58+02:00",
-      "updated": "2026-10-18T09:54:58+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T09:56:14+02:00",
+      "started_at": "2026-10-18T09:55:10+02:00",
+      "finished_at": "2026-10-18T09:56:14+02:00",
       "log": [
         {
           "t": "2026-10-18T09:54:58+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T09:55:10+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T09:56:14+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-029 (un modelo por familia) implementada y corre; el quick fold 1 da 0.3946; falta la medición completa con 2 semillas."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T09:56:14+02:00",
+          "min": 1.1,
+          "turns": 10,
+          "tokens": 111480,
+          "cost_usd": 0.1048062,
+          "verdict": "review"
         }
       ]
     },
