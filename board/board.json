@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T13:29:35+02:00",
+  "updated": "2026-10-18T13:30:55+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5149,23 +5149,33 @@
       "id": "T-082",
       "title": "Estudiar spec-kit para la plantilla agent-board",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "next",
       "priority": "baja",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 0.9,
       "auto": true,
       "manual": null,
       "desc": "spec-kit es la herramienta de GitHub para «desarrollo guiado por especificaciones»: antes de programar cada funcionalidad genera una constitución, una especificación, un plan y una lista de tareas. En este proyecto no ahorra tokens (añade documentos que cada agente relee), pero puede encajar en la plantilla agent-board para proyectos de producto, donde los requisitos cambian.\n\nCómo sabremos que ha servido: una nota con qué aporta frente a nuestras tarjetas, cuánto contexto añade por tarea y una recomendación clara (usarlo, usar solo una parte o no usarlo) para agent-board.\n\n## Técnico\n- Fuente: github.com/github/spec-kit (comprobar versión actual, comandos /specify /plan /tasks y el fichero de constitución).\n- Comparar con: tarjetas con «## Técnico» y criterio, docs/CONSULTOR.md, agentes de .claude/agents.\n- Medir: tamaño en KB de los documentos que genera para una funcionalidad de ejemplo frente a una tarjeta nuestra.\n- Entregable: sección fechada en docs/NOTAS-investigador.md; como mucho 1 tarjeta para agent-board si recomienda usarlo.",
       "deps": [],
       "created": "2026-10-18T12:32:52+02:00",
-      "updated": "2026-10-18T12:32:52+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T13:30:55+02:00",
+      "started_at": "2026-10-18T13:30:02+02:00",
+      "finished_at": "2026-10-18T13:30:55+02:00",
       "log": [
         {
           "t": "2026-10-18T12:32:52+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T13:30:02+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-18T13:30:55+02:00",
+          "by": "investigador",
+          "msg": "límite de uso, reintenta tras el reset"
         }
       ]
     },
@@ -5311,28 +5321,52 @@
         "task": "T-075",
         "why": ""
       }
+    },
+    {
+      "id": "T-087",
+      "title": "AB-01: plantilla de tarjeta «especificación» para agent-board (inspirada en spec-kit)",
+      "owner": "arquitecto",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "En proyectos de producto los requisitos cambian y una tarjeta normal no distingue bien «qué queremos» de «cómo lo hacemos». Probamos una plantilla opcional de tarjeta con historias de usuario, criterios de aceptación y marcas de duda, más una constitución de una página, sin añadir ficheros nuevos por tarea.\nCómo sabremos si funciona: la plantilla cabe en menos de 2 KB por tarjeta y un agente nuevo entiende qué construir leyéndola sola.\n## Técnico\nFuente: docs/NOTAS-investigador.md (T-082). Tomar de spec-kit solo: spec.md simplificado, [NEEDS CLARIFICATION], constitution.md ≤1 página. Descartar plan/research/data-model/contracts separados. Tareas viven en el tablero, no en tasks.md. Criterio: +≤2 KB de contexto por tarea.",
+      "deps": [],
+      "created": "2026-10-18T13:30:52+02:00",
+      "updated": "2026-10-18T13:30:52+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T13:30:52+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-18T11:42:04+02:00",
+      "state": "working",
+      "current": "T-082",
+      "message": "investigador con T-082",
+      "pid": 15856,
+      "heartbeat": "2026-10-18T13:30:02+02:00",
       "agent": "investigador",
-      "started": "2026-10-18T10:30:02+02:00",
-      "live": "live-T-073-investigador-20261018-103002.jsonl",
+      "started": "2026-10-18T13:30:02+02:00",
+      "live": "live-T-082-investigador-20261018-133002.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
     },
     "measure": {
-      "state": "working",
-      "current": "T-081",
-      "message": "verificación mecánica de V-034: backtest con 2 semillas, sin agente (0 tokens)",
-      "pid": 18932,
-      "heartbeat": "2026-10-18T13:28:42+02:00",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
+      "pid": 21900,
+      "heartbeat": "2026-10-18T13:30:02+02:00",
       "agent": "tester",
       "started": "2026-10-18T13:10:56+02:00",
       "live": "live-T-081-tester-20261018-132842.jsonl",
