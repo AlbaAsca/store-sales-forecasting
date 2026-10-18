@@ -217,9 +217,36 @@ def auto_promote(o):
     return True
 
 
-def build_prompt(t, mode, agent):
+VARIANT_RE = re.compile(r"^(V-\d{3}[A-Za-z0-9-]*)\b")
+
+
+def precheck(t):
+    """Verificación mecánica de una variante (scripts/verify_variant.py, 0 tokens) antes de llamar al evaluador.
+    Devuelve el texto con los números y el veredicto, o None si la tarjeta no es una variante."""
+    m = VARIANT_RE.match(t.get("title", ""))
+    if not m or not (ROOT / "variants" / m.group(1) / "model.py").exists() or not (ROOT / "scripts" / "verify_variant.py").exists():
+        return None
+    print(f"  verificación mecánica de {m.group(1)} (sin agente)…")
+    try:
+        r = subprocess.run([sys.executable, str(ROOT / "scripts" / "verify_variant.py"), m.group(1)], cwd=ROOT, capture_output=True,
+                           text=True, encoding="utf-8", errors="replace", timeout=45 * 60, env={**os.environ, "PYTHONUTF8": "1"})
+    except subprocess.TimeoutExpired:
+        return None
+    return r.stdout.strip() if r.returncode in (0, 1) else None
+
+
+def build_prompt(t, mode, agent, pre=None):
     hist = "\n".join(f"- {l['t'][:16]} {l['by']}: {l['msg']}" for l in t.get("log", [])[-8:])
-    if mode == "verify":
+    if mode == "verify" and pre:
+        head = (f"Eres el TESTER. Verifica la variante de la tarea {t['id']} «{t['title']}».\n"
+                "La medición ya está hecha por scripts/verify_variant.py (abajo): NO vuelvas a lanzar el backtest.\n"
+                "Tu trabajo: 1) revisa el cambio de la variante frente a models/base (un solo cambio, sin fugas de futuro);\n"
+                "2) pasa `python -m pytest tests -q`; 3) escribe 2-3 líneas en docs/APRENDIZAJES.md y la fila del README;\n"
+                "4) anota con `board.py note` el resumen de números; 5) si el veredicto es ACEPTADA, crea la tarjeta de promoción\n"
+                "para el consultor (ver tu definición). Respeta el veredicto salvo que encuentres una fuga o un bug: entonces RESULT: fail.\n\n"
+                f"=== Resultado de la verificación mecánica ===\n{pre}\n=== fin ===")
+        states = STATES_QA
+    elif mode == "verify":
         head = (f"Eres el TESTER. Verifica la tarea {t['id']} «{t['title']}» que el {t['owner']} ha dejado en Revisión.\n"
                 "Revisa el cambio (git log/diff), ejecuta los tests del proyecto y añade un test que cubra la tarea si no existe.")
         states = STATES_QA
@@ -266,14 +293,18 @@ def commit_own(before, msg):
     return files
 
 
-def run_claude(claude, prompt, agent, timeout_s, tag="run"):
+# Tope de turnos por rol: los agentes opus (modelador, analista) gastaban 4 veces más por ejecución
+MAX_TURNS = {"modelador": 40, "experto": 40, "investigador": 50, "tester": 40}
+
+
+def run_claude(claude, prompt, agent, timeout_s, tag="run", max_turns=80):
     """Lanza al agente con salida en streaming: cada evento (texto, herramienta, resultado) se guarda al momento en
     board/runs/live-<tag>-<agente>-<fecha>.jsonl para verlo en directo desde el panel. No cuesta tokens extra:
     es la misma ejecución, solo que la CLI va contando lo que hace en vez de esperar al final."""
     # --strict-mcp-config sin --mcp-config: el agente no carga ningún MCP del proyecto (p. ej. kaggle, que puede enviar)
     cmd = [claude, "-p", "--agent", agent, "--output-format", "stream-json", "--verbose", "--strict-mcp-config",
            "--permission-mode", "acceptEdits", "--permission-prompts", "none",
-           "--max-turns", "80", "--allowedTools", *ALLOWED, *pm.rules()[0], "--disallowedTools", *DENIED, *pm.rules()[1]]
+           "--max-turns", str(max_turns), "--allowedTools", *ALLOWED, *pm.rules()[0], "--disallowedTools", *DENIED, *pm.rules()[1]]
     live = LOGDIR / f"live-{tag}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.jsonl"
     set_runner(live=live.name)
     errf = live.with_suffix(".err")
@@ -466,7 +497,7 @@ def contribute(o):
     tid = bd.update(card)
     before = snapshot()
     set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent}: ronda de aportación ({tid})")
-    r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60, tag=tid)
+    r = run_claude(o.claude, prompt, agent, timeout_s=20 * 60, tag=tid, max_turns=min(25, MAX_TURNS.get(agent, 80)))
     (LOGDIR / f"contrib-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
         f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
     m = next((RESULT_RE.search(l) or re.search(r"RESULT:\s*(none)\b\s*[—:-]?\s*(.*)", l, re.I)
@@ -585,7 +616,11 @@ def main():
             set_runner(state="working", current=tid, agent=agent, started=now(), message=f"{agent} con {tid}")
 
             est = t.get("estimate_min") or 15
-            r = run_claude(o.claude, build_prompt(t, mode, agent), agent, timeout_s=int(min(120, max(15, est * 4)) * 60), tag=tid)
+            pre = precheck(t) if mode == "verify" else None
+            if pre:
+                bd.update(lambda b: bd.log(bd.task(b, tid), "runner", "verificación mecánica: " + pre.splitlines()[-1][:300]))
+            r = run_claude(o.claude, build_prompt(t, mode, agent, pre), agent, timeout_s=int(min(120, max(15, est * 4)) * 60), tag=tid,
+                           max_turns=MAX_TURNS.get(agent, 80))
             (LOGDIR / f"{tid}-{agent}-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(
                 f"{r['text']}\n\n--- stderr ---\n{r['err']}", encoding="utf-8")
             new, verdict, summary = finish(tid, mode, agent, r)

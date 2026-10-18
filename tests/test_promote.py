@@ -58,3 +58,18 @@ def test_runner_reconoce_las_tarjetas_de_promocion():
     cards = runner.promotion_cards(b)
     assert [t["id"] for t in cards] == ["T-1"]
     assert runner.PROMOTE_RE.match(cards[0]["title"]).group(1) == "V-027"
+
+
+def test_verificador_mecanico():
+    import verify_variant as vv
+    runs = {"V-1": res([0.388, 0.379, 0.379, 0.389]), "V-1-s7": res([0.389, 0.379, 0.38, 0.389])}
+    assert vv.verdict(BASE, None, runs)["accepted"]
+    peor = {"V-1": res([0.385, 0.381, 0.381, 0.385]), "V-1-s7": res([0.385, 0.381, 0.381, 0.385])}
+    assert not vv.verdict(BASE, None, peor)["accepted"]
+    assert not vv.verdict(BASE, None, {"V-1": runs["V-1"]})["accepted"]          # con una sola semilla no basta
+
+
+def test_runner_reconoce_variantes_para_verificar():
+    assert runner.VARIANT_RE.match("V-031: juntar los tres historiales").group(1) == "V-031"
+    assert runner.VARIANT_RE.match("Runner: no bloquear la tarjeta") is None
+    assert runner.MAX_TURNS["modelador"] <= 40 and runner.MAX_TURNS["experto"] <= 40

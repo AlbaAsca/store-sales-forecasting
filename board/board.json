@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T12:08:26+02:00",
+  "updated": "2026-10-18T12:32:52+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-077"
     },
     {
       "id": "investigador",
@@ -4737,6 +4737,21 @@
           "t": "2026-10-18T12:08:26+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-032 implementada (tweedie mezclada con w=0,2); fold rápido 0,3878 y tests en verde; falta medir con el tester."
+        },
+        {
+          "t": "2026-10-18T12:08:28+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T12:28:16+02:00",
+          "by": "tester",
+          "msg": "V-032 (w=0.2, semilla 7): CV 0.3824 vs base-v9 0.3815 (+0.0009); peor en 3/4 folds (f1 +0.0002, f3 +0.0016, f4 +0.0025), mejor f2 -0.0005; tiempo 432→940 s; fold rápido semilla 42 0.3878 vs 0.3877. Empeoran HOME AND KITCHEN I, LADIESWEAR. La base vigente es v9 (la variante está hecha sobre ella). → RECHAZADA"
+        },
+        {
+          "t": "2026-10-18T12:28:18+02:00",
+          "by": "tester",
+          "msg": "Nota: la medición de la semilla 42 completa sigue en curso en segundo plano; el veredicto no cambia (el fold rápido ya empata con la base)."
         }
       ],
       "runs": [
@@ -4750,7 +4765,8 @@
           "cost_usd": 0.130508,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T12:08:28+02:00"
     },
     {
       "id": "T-078",
@@ -4879,6 +4895,30 @@
           "msg": "creada"
         }
       ]
+    },
+    {
+      "id": "T-082",
+      "title": "Estudiar spec-kit para la plantilla agent-board",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "spec-kit es la herramienta de GitHub para «desarrollo guiado por especificaciones»: antes de programar cada funcionalidad genera una constitución, una especificación, un plan y una lista de tareas. En este proyecto no ahorra tokens (añade documentos que cada agente relee), pero puede encajar en la plantilla agent-board para proyectos de producto, donde los requisitos cambian.\n\nCómo sabremos que ha servido: una nota con qué aporta frente a nuestras tarjetas, cuánto contexto añade por tarea y una recomendación clara (usarlo, usar solo una parte o no usarlo) para agent-board.\n\n## Técnico\n- Fuente: github.com/github/spec-kit (comprobar versión actual, comandos /specify /plan /tasks y el fichero de constitución).\n- Comparar con: tarjetas con «## Técnico» y criterio, docs/CONSULTOR.md, agentes de .claude/agents.\n- Medir: tamaño en KB de los documentos que genera para una funcionalidad de ejemplo frente a una tarjeta nuestra.\n- Entregable: sección fechada en docs/NOTAS-investigador.md; como mucho 1 tarjeta para agent-board si recomienda usarlo.",
+      "deps": [],
+      "created": "2026-10-18T12:32:52+02:00",
+      "updated": "2026-10-18T12:32:52+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T12:32:52+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
@@ -4898,12 +4938,12 @@
     "measure": {
       "state": "working",
       "current": "T-077",
-      "message": "desarrollador con T-077",
+      "message": "tester con T-077",
       "pid": 18768,
-      "heartbeat": "2026-10-18T12:05:14+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-18T12:05:14+02:00",
-      "live": "live-T-077-desarrollador-20261018-120514.jsonl",
+      "heartbeat": "2026-10-18T12:08:28+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T12:08:28+02:00",
+      "live": "live-T-077-tester-20261018-120828.jsonl",
       "enabled": true
     }
   }
