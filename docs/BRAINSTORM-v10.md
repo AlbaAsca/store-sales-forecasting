@@ -72,3 +72,40 @@ entre folds), pero sí importa en el test de Kaggle por las tiendas 18/25; mante
 E1 no gana → **E2** (temporada; más valor en Kaggle que en prácticas) → 1 y 4 del modelador → **E3** (pequeña).
 Expectativa honesta: cada idea 0.0005-0.0015; lo que queda es sobre todo ruido. Criterio: el de CLAUDE.md (< 0.3814 / 0.3815 con
 semillas 42 y 7, como mucho 1 de 4 folds peor) más, para E1 y E2, no empeorar el control c1 sin cerradas en más de 0.002.
+
+## 3/3 · Investigador: técnicas de la literatura que no hemos probado (2026-10-18, T-091)
+
+Base: base-v9 (0.3814 / 0.3815). Leído: `model.py` (rasgos y `PARAMS`), `APRENDIZAJES.md` y las secciones 1/3 y 2/3. No repito EWM,
+distancia a promo, dos vueltas al cole, objetivo relativo a m14, año anterior como forma, ventana ±14 ni recorte de picos (ya están
+arriba), ni nada de la lista de rechazadas. **No hice búsqueda web nueva** en este turno: las fuentes son `docs/LECTURAS.md` (M5, M4,
+Favorita) y la documentación de LightGBM (`linear_tree`, `huber`), citadas de memoria y sin reverificar.
+
+**Huecos que nadie ha tocado:** (i) `stores.csv` (tipo, cluster, ciudad) no entra: el modelo solo conoce `store_nbr`; (ii) la pérdida
+es L2 pura, sensible a picos sueltos en el *objetivo* (el 84 % del error es baile diario de series pequeñas); (iii) las hojas del
+árbol son constantes y no extrapolan (GROCERY II por encima de lo visto, hallazgo c del experto); (iv) el modelo no sabe «cuánto lleva
+viva» una serie (familias que empezaron en 2016, tiendas nuevas).
+
+| # | Idea | Hipótesis | Cambio concreto (uno solo) | Ganancia esperada | Coste (min) | Riesgo |
+|---|---|---|---|---|---|---|
+| N1 | **Hojas lineales (`linear_tree`)** | Con una recta en cada hoja el modelo puede seguir una subida fuera de lo visto (GROCERY II, 2017 > 2016) sin cambiar rasgos. Ataca lo mismo que la 5 del modelador y E1, por otro camino | `linear_tree=True` (+ `linear_lambda=1.0`) en `PARAMS` del directo (no del recursivo) | −0.0005…−0.002 (incierta) | 10 + 60 (≈×2-3 más lento) | Medio: los `ly_*` son NaN a menudo y la regresión de la hoja los trata mal; si pasa de 15 min por medición, bajar rondas. Sin fuga |
+| N2 | **Pérdida robusta (Huber) sobre log1p** | El objetivo tiene picos sueltos (p. ej. 2962 en una serie de ~400) y L2 los persigue. Huber los trata como L1 pasado un umbral. A diferencia de tweedie (V-007/V-032) sigue en escala log, alineada con RMSLE | `objective="huber"`, `alpha=1.0` (probar 0.7 si no cambia nada) en directo y recursivo | −0.0003…−0.001 | 8 + 35 | Bajo de fuga. Huber estima algo entre media y mediana → posible sesgo a la baja en series irregulares: mirar sesgo en log y c1 |
+| N3 | **Metadatos de tienda** | 54 identificadores comparten poco; tipo (A-E), cluster (17) y ciudad agrupan tiendas parecidas y ayudan a las de poca historia | Añadir `store_type`, `store_cluster`, `store_city` (códigos categóricos, de `stores.csv`) al directo y al recursivo | −0.0003…−0.001 | 15 + 35 | Bajo de fuga (estáticos). Puede ser redundante con `store_nbr` (como V-028) o sobreajustar por ciudad. Mirar tiendas 18/25 en el test |
+| N4 | **Edad de la serie** | Series recién nacidas (familias de 2016, tiendas nuevas) tienen la media de 56 d sesgada por el arranque; «días desde la primera venta» (tope 365) se lo dice | Rasgo `age` = días desde la primera venta > 0 hasta el corte, tope 365, en los dos submodelos | −0.0002…−0.0008 | 12 + 35 | Bajo. Se solapa con la 1 del modelador (cierres como dato que falta): medir encima de ella. Usar solo días < corte |
+
+**Orden recomendado:** **N2** (un parámetro; enseña cómo la pérdida cambia qué error se persigue) → **N1** (pega con el hallazgo del
+experto; más tope) → **N3** → **N4**.
+
+| Idea | Ganancia | CPU | Dificultad | Qué se aprende |
+|---|---|---|---|---|
+| N2 Huber | baja | ×1 | muy baja | la pérdida decide qué error se persigue |
+| N1 linear_tree | media (incierta) | ×2-3 | baja | por qué los árboles no extrapolan |
+| N3 metadatos | baja | ×1 | baja | cuándo un dato estático ayuda o repite un identificador |
+| N4 edad | baja | ×1 | baja | series que nacen: el arranque contamina las medias |
+
+**Descartado tras pensarlo:** petróleo y transacciones (macro/agregado, sin señal a 16 días, misma lógica que V-028); redes
+neuronales u otras librerías de árboles (no se pueden instalar, y V-010/V-032 muestran que sin diversidad real no hay ganancia);
+Fourier del día del año (solo hay dos años: se memorizaría, como V-016).
+
+**Expectativa honesta:** cada idea ≤ 0.002, cerca del ruido (~0.001); N1 es la de tope mayor. Criterio para todas: el de CLAUDE.md
+(RMSLE medio < 0.3814 / 0.3815 con semillas 42 y 7, como mucho 1 de 4 folds peor; c1 sin cerradas no peor en más de 0.002;
+> 15 min por medición solo si la ganancia es clara).

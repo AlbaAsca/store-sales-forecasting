@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:46:03+02:00",
+  "updated": "2026-10-18T14:47:37+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5542,23 +5542,45 @@
       "id": "T-091",
       "title": "Brainstorm v10 (3/3): técnicas de forecasting que no hemos probado",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 1.5,
       "auto": true,
       "manual": null,
       "desc": "Primera ronda del brainstorming. El investigador busca técnicas (papers, M5, discusiones de Kaggle) que no hayamos probado y encajen con un LightGBM global.\n\nCómo sabremos si funciona: al final hay 3-5 variantes V-xxx priorizadas, cada una con hipótesis, ganancia esperada y criterio, y ninguna repite una ya rechazada.\n\n## Técnico\nEscribe SOLO tu sección en docs/BRAINSTORM-v10.md (crea el fichero si no existe, con cabecera '# Brainstorming para base-v10'). Base vigente: models/base (base-v9). Antes de proponer, lee docs/APRENDIZAJES.md y la tabla de experimentos del README para no repetir variantes rechazadas. Cada idea: título, hipótesis, cambio concreto (un solo cambio), ganancia esperada en RMSLE, coste en minutos y riesgo (fugas, holdout, tiendas cerradas). Máx. 5 ideas. No crees tarjetas V-xxx: eso lo hace la síntesis.\nApóyate en docs/LECTURAS.md.",
       "deps": [],
       "created": "2026-10-18T14:38:23+02:00",
-      "updated": "2026-10-18T14:38:23+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T14:47:37+02:00",
+      "started_at": "2026-10-18T14:46:06+02:00",
+      "finished_at": "2026-10-18T14:47:37+02:00",
       "log": [
         {
           "t": "2026-10-18T14:38:23+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:46:06+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-18T14:47:37+02:00",
+          "by": "investigador",
+          "msg": "DONE: sección 3/3 con 4 ideas nuevas (Huber, linear_tree, metadatos de tienda, edad de serie) añadida a docs/BRAINSTORM-v10.md; sin búsqueda web nueva ni tarjetas."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "work",
+          "at": "2026-10-18T14:47:37+02:00",
+          "min": 1.5,
+          "turns": 11,
+          "tokens": 262230,
+          "cost_usd": 0.3418409,
+          "verdict": "done"
         }
       ]
     },
@@ -5594,13 +5616,13 @@
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-090",
-      "message": "experto con T-090",
+      "current": "T-091",
+      "message": "investigador con T-091",
       "pid": 17880,
-      "heartbeat": "2026-10-18T14:40:49+02:00",
-      "agent": "experto",
-      "started": "2026-10-18T14:40:49+02:00",
-      "live": "live-T-090-experto-20261018-144049.jsonl",
+      "heartbeat": "2026-10-18T14:46:06+02:00",
+      "agent": "investigador",
+      "started": "2026-10-18T14:46:06+02:00",
+      "live": "live-T-091-investigador-20261018-144606.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
