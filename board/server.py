@@ -212,7 +212,10 @@ def live_events(lines):
                     body = c.get("content")
                     if isinstance(body, list):
                         body = " ".join(x.get("text", "") for x in body if isinstance(x, dict))
-                    out.append({"kind": "error" if c.get("is_error") else "resultado", "text": _short(body or "(vacío)")})
+                    kind = "resultado"
+                    if c.get("is_error"):  # distinguir «me lo han prohibido» de un fallo normal que el agente corrige solo
+                        kind = "denegado" if "Permission for this tool use was denied" in (body or "") else "error"
+                    out.append({"kind": kind, "text": _short(body or "(vacío)")})
         elif typ == "result":
             out.append({"kind": "fin", "text": _short(e.get("result") or e.get("subtype") or "", 400)})
     return out

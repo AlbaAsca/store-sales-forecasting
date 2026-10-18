@@ -33,7 +33,7 @@ header h1{font-size:16px;margin:0}
 #liveLog div{padding:2px 0;border-bottom:1px dashed var(--line);white-space:pre-wrap;word-break:break-word}
 #liveLog .k{display:inline-block;min-width:92px;color:var(--muted)}
 #liveLog .herramienta .k{color:var(--acc)}#liveLog .piensa{color:var(--muted);font-style:italic}
-#liveLog .error .k{color:var(--bad)}#liveLog .fin{font-weight:600}
+#liveLog .error .k{color:var(--warn)}#liveLog .denegado .k{color:var(--bad);font-weight:700}#liveLog .fin{font-weight:600}
 .desc-view{display:grid;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;line-height:1.5}
 .desc-view p{margin:0}.desc-view .muted{color:var(--muted)}
 .desc-view details summary,.desc-edit summary{cursor:pointer;color:var(--muted);font-size:13px}
@@ -198,7 +198,7 @@ async function loadLive() {
   try {
     const r = await (await fetch("/api/runner/live?lane=" + $("#liveLane").value, { cache: "no-store" })).json();
     const box = $("#liveLog"), atEnd = box.scrollTop + box.clientHeight >= box.scrollHeight - 20;
-    const icon = { inicio: "▶ inicio", texto: "💬 dice", piensa: "🤔 piensa", herramienta: "🔧 usa", resultado: "↩ recibe", error: "⚠ error", fin: "✅ fin" };
+    const icon = { inicio: "▶ inicio", texto: "💬 dice", piensa: "🤔 piensa", herramienta: "🔧 usa", resultado: "↩ recibe", error: "⚠ fallo (lo corrige)", denegado: "⛔ denegado", fin: "✅ fin" };
     $("#liveFile").textContent = r.file ? "· " + r.file : "· aún no hay ejecuciones";
     box.innerHTML = r.events.map((e) => `<div class="${e.kind}"><span class="k">${icon[e.kind] || e.kind}</span>${esc(e.text)}</div>`).join("");
     if (atEnd) box.scrollTop = box.scrollHeight;
