@@ -109,3 +109,43 @@ Fourier del día del año (solo hay dos años: se memorizaría, como V-016).
 **Expectativa honesta:** cada idea ≤ 0.002, cerca del ruido (~0.001); N1 es la de tope mayor. Criterio para todas: el de CLAUDE.md
 (RMSLE medio < 0.3814 / 0.3815 con semillas 42 y 7, como mucho 1 de 4 folds peor; c1 sin cerradas no peor en más de 0.002;
 > 15 min por medición solo si la ganancia es clara).
+
+## Síntesis (2026-10-18, T-092)
+
+**Coincidencias entre roles (pesan más).**
+- *GROCERY II por encima de lo visto / el árbol no extrapola*: modelador 5, experto E1 e investigador N1 atacan el mismo síntoma por
+  tres caminos (objetivo relativo, quitar nivel del año anterior, hojas lineales). Es lo único con evidencia en los datos (4/4 folds).
+- *Temporada desplazada (vuelta al cole)*: modelador 4 (dos vueltas) y experto E2 (ventana ±14 d). Misma causa, dos remedios.
+- *Cierres de tienda y series que nacen*: modelador 1 y N4 (edad) ven el mismo contagio de ceros falsos en las medias.
+- *Picos sueltos*: experto E3 (recortar en los rasgos) y N2 (Huber en el objetivo): mismo problema, un lado u otro.
+- *Descartes comunes*: transacciones/petróleo/agregados, festivos, paga, ceros, sesgo reciente. Los tres roles coinciden.
+
+**Contradicciones y cómo se resuelven.**
+- E1 (quitar `ly_day`/`ly_win`) vs E2 (añadir más año anterior) y vs v0.7/v0.8 (el año anterior ganó en Kaggle): no chocan si E1 deja
+  `ly_diff` (forma) y E2 añade la forma ancha. Se miden por separado y luego juntas.
+- E1 vs 5 vs N1: alternativas para el mismo síntoma. Orden: E1 (la más barata); si gana, 5 y N1 valen menos y se aparcan.
+- Experto dice que la 1 no se ve en los folds; modelador, que importa en el test (tiendas 18/25). Se mantiene, juzgada por el control
+  sin cerradas y la predicción de 18/25, no solo por los folds.
+- N1 cuesta ×2-3 (>15 min por medición): no entra en la primera tanda; solo si E1 deja GROCERY II sin arreglar.
+
+**Descartes con motivo.** EWM (2): redundante con 3 ventanas, V-015 sugiere ruido; se repesca si sobra tiempo. Distancia a promo (3):
+V-027 ya cubrió los vecinos, ganancia ≤0.001. Dos vueltas al cole (4): arrastra anomalías de 2015 (lección v0.6), va después de E2.
+Metadatos (N3) y edad (N4): redundantes con `store_nbr` / con la 1. E3: pequeña; Huber cubre lo mismo. 5 y N1: ver arriba.
+
+| Prio | Idea | Quién | Ganancia | Coste (min) | Riesgo | Tarjeta |
+|---|---|---|---|---|---|---|
+| 1 | Año anterior solo como forma (E1) | experto (apoya modelador 5, N1) | −0.0005…−0.0015 | 10+35 | medio (Kaggle) | V-035 |
+| 2 | Ventana ±14 d del año anterior (E2) | experto (≈ modelador 4) | −0.0003 folds, más en agosto | 15+35 | medio | V-036 |
+| 3 | Cierres de tienda como dato que falta (1) | modelador (+N4) | −0.0005…−0.002 | 25+35 | bajo | V-037 |
+| 4 | Pérdida Huber (N2) | investigador (≈ E3) | −0.0003…−0.001 | 8+35 | bajo | V-038 |
+| 5 | Recorte de picos en rasgos (E3) | experto | −0.0002…−0.0008 | 15+35 | bajo | (no abierta: Huber cubre lo mismo) |
+| 6 | Dos vueltas al cole (4) | modelador | −0.0005 | 15+35 | medio | pendiente tras V-036 |
+| 7 | linear_tree (N1) | investigador | incierta, tope mayor | 10+60 | medio | pendiente tras V-035 |
+| 8 | Objetivo relativo a m14 (5) | modelador | ±0.003 | 20+35 | medio | pendiente tras V-035 |
+| 9 | EWM / distancia promo / metadatos / edad | varios | ≤0.001 | 12-25+35 | bajo | aparcadas |
+
+Tarjetas abiertas: V-035 a V-038 (cuatro, las de mejor ganancia/coste; E3 queda fuera por solaparse con Huber).
+
+**Pruebas conjuntas** (solo tras medir por separado, si cada una pasa o queda neutra): V-035+V-036 (forma del año anterior, estrecha
+y ancha: compatibles, tocan los mismos rasgos) y V-037+V-038 (dato que falta + pérdida robusta: independientes). Se abrirán como
+tarjeta nueva cuando haya resultados.

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:47:37+02:00",
+  "updated": "2026-10-18T14:49:03+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5588,10 +5588,10 @@
       "id": "T-092",
       "title": "Brainstorm v10: síntesis y tarjetas V-xxx",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 1.4,
       "auto": true,
       "manual": null,
       "desc": "Segunda ronda: juntar las tres propuestas (modelador, analista e investigador), cruzarlas y quedarse con las mejores para la próxima versión.\n\nCómo sabremos si funciona: hay 3-5 tarjetas V-xxx nuevas para el desarrollador, ordenadas por ganancia esperada / coste, y una tabla de decisión en docs/BRAINSTORM-v10.md.\n\n## Técnico\nLee docs/BRAINSTORM-v10.md entero. Añade la sección '## Síntesis': ideas que coinciden entre roles (pesan más), contradicciones y cómo se resuelven, descartes con motivo, y una tabla priorizada (idea, quién la propuso, ganancia esperada, coste, riesgo). Crea con board.py add las 3-5 primeras como 'V-0xx: <frase>' (siguiente número libre; mira variants/ y el panel), owner desarrollador, con hipótesis, cambio y criterio por defecto. Si dos ideas son compatibles y pequeñas, propón también probarlas juntas tras medirlas por separado.",
@@ -5601,13 +5601,131 @@
         "T-091"
       ],
       "created": "2026-10-18T14:38:31+02:00",
-      "updated": "2026-10-18T14:38:31+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T14:49:03+02:00",
+      "started_at": "2026-10-18T14:47:39+02:00",
+      "finished_at": "2026-10-18T14:49:03+02:00",
       "log": [
         {
           "t": "2026-10-18T14:38:31+02:00",
           "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:47:39+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-18T14:49:03+02:00",
+          "by": "investigador",
+          "msg": "DONE: Síntesis añadida en docs/BRAINSTORM-v10.md y 4 tarjetas creadas (V-035 a V-038, T-093 a T-096) ordenadas por ganancia/coste."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "work",
+          "at": "2026-10-18T14:49:03+02:00",
+          "min": 1.4,
+          "turns": 11,
+          "tokens": 175817,
+          "cost_usd": 0.288323,
+          "verdict": "done"
+        }
+      ]
+    },
+    {
+      "id": "T-093",
+      "title": "V-035: el año anterior solo como forma, no como nivel",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Una de las familias de producto (GROCERY II) se predice siempre por debajo de lo real: este año vende más que nunca y el modelo se fija en cuánto vendía hace un año, que era menos. Probamos a quitarle ese dato de nivel y dejarle solo el de cuánto subió o bajó el año pasado en esas fechas.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la familia deja de quedarse corta y la quincena de control de la vuelta al cole no empeora.\n\n## Técnico\nFuente: docs/BRAINSTORM-v10.md (E1, apoyada por modelador 5 y N1). Cambio único: quitar ly_day y ly_win de los rasgos del directo y del recursivo en variants/V-035/model.py (l. 82-83 y 116-123 de la base); mantener ly_diff. Ganancia esperada -0.0005…-0.0015. Criterio por defecto (RMSLE medio < 0.3814/0.3815 con semillas 42 y 7, máx. 1 de 4 folds peor) y además c1 sin cerradas (0.3845) y SCHOOL en c1 (0.52) no peor en más de 0.002. Mirar sesgo de GROCERY II. Si gana, aparcar el objetivo relativo y linear_tree.",
+      "deps": [],
+      "created": "2026-10-18T14:48:46+02:00",
+      "updated": "2026-10-18T14:48:46+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:48:46+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-094",
+      "title": "V-036: mirar el año anterior con una ventana más ancha",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 50.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
+      "deps": [],
+      "created": "2026-10-18T14:48:49+02:00",
+      "updated": "2026-10-18T14:48:49+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:48:49+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-095",
+      "title": "V-037: los días de tienda cerrada son datos que faltan, no ceros",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 60.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Cuando una tienda está cerrada (25 de diciembre, cierres de 2016 de dos tiendas, días antes de abrir) el modelo lo cuenta como si se hubiera vendido cero, y eso rebaja los promedios y arrastra el cierre de 2016 a las predicciones de agosto de 2017. Probamos a tratar esos días como datos que faltan.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la quincena de control sin tiendas cerradas no empeora y las predicciones de esas dos tiendas dejan de hundirse.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (modelador 1; N4 se solapa). Cambio único: antes de calcular rasgos, en M poner NaN en los días en que la tienda entera vende 0 (incluye 25-dic y días anteriores a su primera venta) y usar nanmean en medias y ly_*; objetivos de entrenamiento sin tocar. La regla del cero (V-023) debe seguir viendo la M original. Criterio por defecto; anotar control sin cerradas y la predicción media en log de las tiendas 18 y 25 en el test frente a base-v9. Ganancia -0.0005…-0.002.",
+      "deps": [],
+      "created": "2026-10-18T14:48:52+02:00",
+      "updated": "2026-10-18T14:48:52+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:48:52+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-096",
+      "title": "V-038: que los días con ventas disparatadas confundan menos al modelo",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Algunas series tienen días raros con ventas altísimas (2962 en una serie que suele rondar 400) y el modelo, al aprender, se esfuerza demasiado por acertarlos. Probamos una forma de medir el error que perdona más los picos aislados y se parece más a lo que puntúa la competición.\nCómo sabremos si funciona: si el error medio baja con las dos semillas y el modelo no se queda sistemáticamente corto en las series irregulares.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (N2; E3 cubre el mismo problema desde los rasgos). Cambio único: objective=\"huber\", alpha=1.0 (si no cambia nada, 0.7) en PARAMS del directo y del recursivo, sobre log1p. A diferencia de tweedie (V-007/V-032) sigue en escala log. Criterio por defecto; mirar sesgo medio en log y c1. Ganancia -0.0003…-0.001. Si pasa, probar junto con V-037.",
+      "deps": [],
+      "created": "2026-10-18T14:48:55+02:00",
+      "updated": "2026-10-18T14:48:55+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:48:55+02:00",
+          "by": "investigador",
           "msg": "creada"
         }
       ]
@@ -5616,13 +5734,13 @@
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-091",
-      "message": "investigador con T-091",
+      "current": "T-092",
+      "message": "investigador con T-092",
       "pid": 17880,
-      "heartbeat": "2026-10-18T14:46:06+02:00",
+      "heartbeat": "2026-10-18T14:47:39+02:00",
       "agent": "investigador",
-      "started": "2026-10-18T14:46:06+02:00",
-      "live": "live-T-091-investigador-20261018-144606.jsonl",
+      "started": "2026-10-18T14:47:39+02:00",
+      "live": "live-T-092-investigador-20261018-144739.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
