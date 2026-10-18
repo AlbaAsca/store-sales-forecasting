@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:16:50+02:00",
+  "updated": "2026-10-18T10:30:32+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,11 +33,11 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "working",
-    "current": "T-072",
-    "heartbeat": "2026-10-18T10:04:31+02:00",
-    "message": "tester con T-072",
-    "pid": 6204,
+    "state": "stopped",
+    "current": null,
+    "heartbeat": "2026-10-18T10:16:53+02:00",
+    "message": "Runner parado (pid muerto)",
+    "pid": null,
     "agent": "tester",
     "started": "2026-10-18T10:04:31+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
@@ -4451,27 +4451,74 @@
         }
       ],
       "verify_started": "2026-10-18T10:04:31+02:00"
+    },
+    {
+      "id": "T-073",
+      "title": "Ronda de aportación: investigador",
+      "owner": "investigador",
+      "status": "blocked",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 0.5,
+      "auto": true,
+      "manual": null,
+      "desc": "Busca en la discusión y notebooks públicos de la competición, en papers o blogs de forecasting una idea concreta con ganancia esperada que no esté ya en el panel.",
+      "deps": [],
+      "created": "2026-10-18T10:30:02+02:00",
+      "updated": "2026-10-18T10:30:32+02:00",
+      "started_at": "2026-10-18T10:30:02+02:00",
+      "finished_at": "2026-10-18T10:30:32+02:00",
+      "log": [
+        {
+          "t": "2026-10-18T10:30:02+02:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T10:30:02+02:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-18T10:30:32+02:00",
+          "by": "investigador",
+          "msg": "BLOCKED: sin RESULT"
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "contrib",
+          "at": "2026-10-18T10:30:32+02:00",
+          "min": 0.5,
+          "turns": 6,
+          "tokens": 112982,
+          "cost_usd": 0.1004726,
+          "verdict": "blocked"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
+      "state": "idle",
       "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-17T22:31:35+02:00",
-      "agent": "modelador",
-      "started": "2026-10-17T22:30:03+02:00",
-      "live": "live-T-065-modelador-20261017-223003.jsonl",
-      "contrib_at": "2026-10-17T22:31:32+02:00",
-      "contrib_agent": "modelador"
+      "message": "aportación investigador (T-073): sin RESULT",
+      "pid": 18680,
+      "heartbeat": "2026-10-18T10:30:32+02:00",
+      "agent": "investigador",
+      "started": "2026-10-18T10:30:02+02:00",
+      "live": "live-T-073-investigador-20261018-103002.jsonl",
+      "contrib_at": "2026-10-18T10:30:32+02:00",
+      "contrib_agent": "investigador"
     },
     "measure": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-17T22:30:02+02:00",
+      "message": "Runner parado",
+      "pid": 24828,
+      "heartbeat": "2026-10-18T10:30:02+02:00",
       "agent": "tester",
       "started": "2026-10-17T16:30:02+02:00",
       "live": "live-T-024-tester-20261017-163002.jsonl"
