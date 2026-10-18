@@ -19,10 +19,11 @@ import pandas as pd  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 IMG = ROOT / "docs" / "img"
 DATA = ROOT / "data"
-INK, MUTED, ACCENT, WARN, OK = "#1f2937", "#9ca3af", "#2563eb", "#dc2626", "#16a34a"
-plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.right": False,
-                     "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": INK, "ytick.color": INK,
-                     "figure.dpi": 110, "savefig.bbox": "tight"})
+sys.path.insert(0, str(ROOT / "scripts"))
+import figstyle  # noqa: E402
+from figstyle import ACCENT, GRID, INK, MUTED, OK, WARN, YELLOW  # noqa: E402,F401
+
+figstyle.apply()
 
 
 def save(fig, name):
@@ -37,13 +38,13 @@ def backtest():
     folds = json.loads((ROOT / "eval" / "folds.json").read_text(encoding="utf-8"))["folds"]
     hold = json.loads((ROOT / "eval" / "holdout.json").read_text(encoding="utf-8"))["folds"][0]
     rows = [(f["id"], f["start"], f["end"], ACCENT) for f in reversed(folds)]
-    rows += [("holdout", hold["start"], hold["end"], WARN), ("test Kaggle", "2017-08-16", "2017-08-31", INK)]
+    rows += [("holdout", hold["start"], hold["end"], WARN), ("test Kaggle", "2017-08-16", "2017-08-31", YELLOW)]
     fig, ax = plt.subplots(figsize=(10, 3.6))
     t0 = pd.Timestamp("2017-04-20")
     for i, (name, s, e, col) in enumerate(rows):
         s, e = pd.Timestamp(s), pd.Timestamp(e)
         if col == ACCENT:
-            ax.barh(i, (s - t0).days, left=t0, color="#dbeafe", height=0.55)
+            ax.barh(i, (s - t0).days, left=t0, color=GRID, height=0.55)
             ax.text(t0 + (s - t0) / 2, i, "entrena con el pasado", ha="center", va="center", fontsize=9, color=ACCENT)
         ax.barh(i, (e - s).days + 1, left=s, color=col, height=0.55)
         ax.text(e + pd.Timedelta(days=2), i, name, va="center", fontsize=10, color=col)
@@ -85,6 +86,7 @@ def ventas(train):
                            ("2014-01-01", "1 de enero:\ntiendas cerradas", (-95, 10))]:
         ax.annotate(txt, (pd.Timestamp(date), d.get(pd.Timestamp(date), 0) / 1e3), xytext=off,
                     textcoords="offset points", fontsize=9, color=WARN, arrowprops=dict(arrowstyle="->", color=WARN))
+    figstyle.glow(ax)
     ax.set_ylabel("miles de unidades")
     ax.set_title("Ventas totales por día (2013–2017): tendencia, picos de diciembre y huecos", loc="left")
     ax.legend(frameon=False)
@@ -128,16 +130,16 @@ def progreso():
     x = [f"{s['tag']}\n{s['base']}" for s in subs]
     fig, ax = plt.subplots(figsize=(10, 4))
     for key, label, col, mk in (("holdout", "examen final (holdout)", WARN, "s"),
-                                ("lb", "Kaggle (nota oficial)", INK, "o"),
+                                ("lb", "Kaggle (nota oficial)", YELLOW, "o"),
                                 ("cv", "prácticas (media de 4 folds)", ACCENT, "D")):
         ys = [s[key] if s[key] is not None else np.nan for s in subs]  # nota de Kaggle aún pendiente = hueco
         ax.plot(x, ys, marker=mk, color=col, lw=2, label=label)
         last = max(i for i, v in enumerate(ys) if not np.isnan(v))
         ax.annotate(f"{ys[last]:.4f}", (last, ys[last]), xytext=(8, 0), textcoords="offset points",
                     va="center", fontsize=9, color=col)
+    figstyle.glow(ax)
     ax.set_ylabel("RMSLE (↓ mejor)")
-    ax.set_title("Cada envío a Kaggle: las tres medidas bajan juntas desde v0.4", loc="left")
-    ax.grid(axis="y", color=MUTED, alpha=0.25)
+    ax.set_title("Cada envío a Kaggle: prácticas, examen final local y nota oficial", loc="left")
     ax.legend(frameon=False, loc="upper right")
     save(fig, "progreso")
 

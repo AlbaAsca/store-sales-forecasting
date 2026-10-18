@@ -82,21 +82,24 @@ def draw(n, row, df, train, fold, out):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    from figstyle import ACCENT, GRID, INK, MUTED
+    figstyle.apply()
     s, f = row["store"], row["family"]
     h = train[(train["store_nbr"] == s) & (train["family"].astype(str) == f)]
     start = pd.Timestamp(fold["start"])
     h = h[(h["date"] >= start - pd.Timedelta(weeks=5)) & (h["date"] < start)]
     g = df[(df["store_nbr"] == s) & (df["family"] == f)].sort_values("date")
     fig, ax = plt.subplots(figsize=(9, 4))
-    ax.plot(h["date"], h["sales"], color="black", lw=1.4)
-    ax.plot(g["date"], g["sales"], color="black", lw=2, label="ventas reales")
-    ax.plot(g["date"], g["before"], color="#9ca3af", ls="--", lw=2, label=f"antes (base-v{n-1}): error {row['rmsle_before']:.2f}")
-    ax.plot(g["date"], g["after"], color="#2563eb", lw=2.2, label=f"después (base-v{n}): error {row['rmsle_after']:.2f}")
-    ax.axvline(start - pd.Timedelta(hours=12), color="#d1d5db", lw=1)
+    ax.plot(h["date"], h["sales"], color=INK, lw=1.4, alpha=0.8)
+    ax.plot(g["date"], g["sales"], color=INK, lw=2, label="ventas reales")
+    ax.plot(g["date"], g["before"], color=MUTED, ls="--", lw=2, label=f"antes (base-v{n-1}): error {row['rmsle_before']:.2f}")
+    after, = ax.plot(g["date"], g["after"], color=ACCENT, lw=2.2, label=f"después (base-v{n}): error {row['rmsle_after']:.2f}")
+    figstyle.glow(ax, lines=[after])  # solo brilla la predicción nueva: es la que debe mirar el ojo
+    ax.axvline(start - pd.Timedelta(hours=12), color=GRID, lw=1.5)
     ax.set_title(f"{TITLES[n]}\ntienda {s} · {f.lower()}", fontsize=11)
     ax.set_ylabel("unidades vendidas al día")
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(frameon=False, fontsize=9, loc="best")
+    ax.legend(fontsize=9, loc="best")
     fig.autofmt_xdate()
     IMG.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=110, bbox_inches="tight")

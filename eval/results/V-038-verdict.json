@@ -1,0 +1,132 @@
+{
+ "accepted": true,
+ "rows": [
+  {
+   "run": "V-038",
+   "base": 0.3811,
+   "variant": 0.3806,
+   "delta": -0.0005,
+   "worse_folds": [
+    "f1"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3879
+    ],
+    [
+     "f2",
+     0.3726,
+     0.3718
+    ],
+    [
+     "f3",
+     0.3772,
+     0.3767
+    ],
+    [
+     "f4",
+     0.3868,
+     0.386
+    ]
+   ],
+   "families_best": [
+    [
+     "LIQUOR,WINE,BEER",
+     -0.007
+    ],
+    [
+     "CLEANING",
+     -0.003
+    ],
+    [
+     "HOME AND KITCHEN I",
+     -0.002
+    ]
+   ],
+   "families_worst": [
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     0.003
+    ],
+    [
+     "SEAFOOD",
+     0.001
+    ],
+    [
+     "PLAYERS AND ELECTRONICS",
+     0.001
+    ]
+   ]
+  },
+  {
+   "run": "V-038-s7",
+   "base": 0.3813,
+   "variant": 0.3804,
+   "delta": -0.0009,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3876
+    ],
+    [
+     "f2",
+     0.3727,
+     0.3716
+    ],
+    [
+     "f3",
+     0.3773,
+     0.3768
+    ],
+    [
+     "f4",
+     0.3875,
+     0.3858
+    ]
+   ],
+   "families_best": [
+    [
+     "PRODUCE",
+     -0.01
+    ],
+    [
+     "LIQUOR,WINE,BEER",
+     -0.008
+    ],
+    [
+     "GROCERY II",
+     -0.003
+    ]
+   ],
+   "families_worst": [
+    [
+     "BREAD/BAKERY",
+     0.002
+    ],
+    [
+     "SEAFOOD",
+     0.001
+    ],
+    [
+     "CELEBRATION",
+     0.001
+    ]
+   ]
+  }
+ ],
+ "why": [],
+ "variant": "V-038",
+ "base": "base-v10",
+ "control_open": {
+  "base": 0.3844908121110169,
+  "variant": 0.3837768222531546
+ },
+ "secs": {
+  "base": 500.7,
+  "variant": 395.0
+ }
+}

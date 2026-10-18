@@ -17,13 +17,13 @@
   "fold": "f1",
   "seed": 42,
   "rmsle_fold_before": 0.4737861997023569,
-  "rmsle_fold_after": 0.4368250097616872
+  "rmsle_fold_after": 0.43682500976168726
  },
  "base-v2": {
   "store": 16,
   "family": "LIQUOR,WINE,BEER",
   "rmsle_before": 1.1688196725102065,
-  "rmsle_after": 0.5561873670781425,
+  "rmsle_after": 0.5561873670781424,
   "fold": "f1",
   "seed": 42,
   "rmsle_fold_before": 0.43682500976168726,
@@ -33,7 +33,7 @@
   "store": 49,
   "family": "SCHOOL AND OFFICE SUPPLIES",
   "rmsle_before": 2.2782286836023675,
-  "rmsle_after": 1.745029955455777,
+  "rmsle_after": 1.7450299554557769,
   "fold": "f1",
   "seed": 42,
   "rmsle_fold_before": 0.4200565749902174,

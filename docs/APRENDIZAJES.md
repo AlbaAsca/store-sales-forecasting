@@ -210,3 +210,6 @@ Se promedian tres copias del modelo que miran 2 semanas, 2 meses y 1 año de his
 
 ## V-037: días de tienda cerrada como dato que falta (aceptada)
 Un día en que la tienda entera vende 0 (cierre, 25-dic, días antes de abrir) se trataba como un cero más. Ahora esos días son «NaN» (dato ausente) en las medias y perfiles, y las medias ignoran los huecos. Con dos semillas baja un poco el error (0.3811 / 0.3813 frente a 0.3814 / 0.3815) y el control sin cerradas no cambia; la ganancia es pequeña, pero se repite. Por qué: el cero falso restaba nivel a las tiendas cerradas; quitarlo ayuda sin tocar el objetivo de entrenamiento.
+
+## V-038: pérdida Huber, para que los picos raros pesen menos (aceptada)
+La pérdida Huber penaliza igual que el error cuadrático los errores pequeños, pero solo linealmente los grandes (concepto: «función de pérdida» = lo que el modelo intenta minimizar). Así, los días con ventas disparatadas tiran menos del modelo. Con dos semillas baja el error (0.3806 / 0.3804 frente a 0.3811 / 0.3813), mejora 3/4 folds con semilla 42 y 4/4 con semilla 7, y el control sin cerradas baja de 0.3845 a 0.3838. Por qué: el error cuadrático obligaba al modelo a perseguir picos aislados; la ganancia es pequeña (≈ −0.0005/−0.0009) pero se repite.
