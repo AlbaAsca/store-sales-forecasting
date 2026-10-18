@@ -11,6 +11,24 @@
       "why": "seguro: lo pidió el tester en T-058",
       "by": "consultor",
       "at": "2026-10-18T11:11:49+02:00"
+    },
+    {
+      "pattern": "Grep *",
+      "why": "concedido por Alba desde el panel",
+      "by": "Alba",
+      "at": "2026-10-18T13:07:08+02:00"
+    },
+    {
+      "pattern": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py *",
+      "why": "concedido por Alba desde el panel",
+      "by": "Alba",
+      "at": "2026-10-18T13:07:18+02:00"
+    },
+    {
+      "pattern": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py *",
+      "why": "concedido por Alba desde el panel",
+      "by": "Alba",
+      "at": "2026-10-18T13:07:25+02:00"
     }
   ],
   "denied": [
