@@ -40,3 +40,35 @@ absoluto en log; no puede extrapolar fuera de lo visto.
 
 Criterio para todas (CLAUDE.md): RMSLE medio < 0.3814 / 0.3815 con semillas 42 y 7, como mucho 1 de 4 folds peor; anotar control
 sin cerradas (no empeorar) y, para 1 y 4, la predicción media en log de las tiendas 18 y 25 en el test frente a base-v9.
+
+## 2/3 · Experto: dónde falla base-v9 y qué atacar primero (2026-10-18, T-090)
+
+Detalle y casos en `docs/ANALISIS-ERRORES.md` (sección T-090). Predicciones de V-031 (= base-v9), semillas 42 y 7, solo folds.
+
+**Lo que dicen los datos, en cuatro frases.** (a) El 84 % del error es el baile diario de series pequeñas: aunque acertásemos el nivel
+exacto de cada serie en los 16 días, solo bajaríamos de 0.3814 a 0.3497. (b) Ese nivel no se puede adivinar con lo que hay en el corte:
+el sesgo de cada serie no se repite entre folds (correlación ≤ 0.12) ni sigue a la tendencia o al año anterior, y restar el sesgo
+reciente del modelo no mejora (0.3794 → 0.3794/0.3798 por familia; empeora por serie). (c) Lo único sistemático: **GROCERY II predice
+de menos en 4/4 folds** (−0.06…−0.22; 6.6 % del error) porque su venta de 2017 está por encima de todo lo visto y el año anterior
+(julio 2016, con bache) la arrastra hacia abajo; y **temporadas desplazadas** (material escolar tienda 45: la vuelta al cole de 2017
+arranca 3 semanas antes que la de 2016; serie con más error). (d) Ceros, horizonte, paga y festivos ya no son un problema: el techo de
+los ceros con información perfecta es −0.002.
+
+**Descartado por los datos** (no proponer): corregir el sesgo con el error reciente del modelo (contrafactual sin fuga: no gana),
+más reglas de ceros/intermitencia (techo −0.002, ya rechazadas V-015/V-022), festivos y paga (sin error que atacar en los folds).
+
+| # | Idea | Hipótesis | Cambio concreto (uno solo) | Ganancia esperada | Coste (min) | Riesgo |
+|---|---|---|---|---|---|---|
+| E1 | **El año anterior solo como «forma», no como nivel** | `ly_day`/`ly_win` dan el nivel absoluto de hace un año; cuando una serie ha crecido (GROCERY II) o tuvo un bache en 2016 (tienda 19: 11 días a 0), anclan la predicción abajo. `ly_diff` ya dice «cuánto subió o bajó el año pasado en estas fechas», que es lo que generaliza | Quitar `ly_day` y `ly_win` de los rasgos del directo y del recursivo (`model.py` l. 82-83 y 116-123); dejar `ly_diff` | −0.0005…−0.0015 (GROCERY II, series con huecos en 2016) | 10 + 35 | Medio: v0.7/v0.8 ganaron en Kaggle con el año anterior; si la mejora viene de la forma, se conserva. Vigilar control c1 sin cerradas (0.3845) y SCHOOL en c1 (0.52): si empeoran > 0.002, rechazar aunque mejoren los folds |
+| E2 | **Año anterior con ventana ancha** | Las temporadas no caen el mismo día cada año (vuelta al cole 2017 −3 semanas frente a 2016). Con ±3 días el modelo no ve que «algo grande viene»; con ±14 días sí | Añadir un rasgo `ly_win14` = media de log1p en t−364 ± 14 d (y su versión relativa `ly_diff14` = `ly_win14` − media 14 d previos a t−378), en directo y recursivo | −0.0003 en prácticas (f1, material escolar); probablemente más en Kaggle (agosto) | 15 + 35 | Medio (lección v0.6: lo de agosto puede ir al revés en Kaggle). Sin fuga: todo ≥ 350 d antes del objetivo. Mirar c1 y la predicción de SCHOOL del test frente a base-v9 |
+| E3 | **Historia sin picos sueltos** | Un día raro (CLEANING tienda 32: 2962 en una serie de ~400) entra en medias y máximos y deforma los rasgos de las semanas siguientes | Antes de calcular rasgos (no objetivos): recortar log1p de cada día a mediana 56 d de la serie + 1.5 (≈ ×4.5) | −0.0002…−0.0008 | 15 + 35 | Bajo de fuga. Puede recortar arranques reales de temporada (material escolar): aplicar el tope con la mediana de los 56 d anteriores a *ese* día, no al corte |
+
+**Apoyo con datos a ideas del modelador:** la 5 (predecir la diferencia con el nivel reciente) y la 2 (medias exponenciales) atacan el
+mismo síntoma que E1 —GROCERY II por encima de lo visto—. E1 y la 5 son alternativas: si E1 gana, la 5 vale menos, y al revés.
+La 1 (tiendas cerradas como dato que falta) no la veo en los folds de prácticas (las tiendas con más sesgo, 53 y 25, oscilan de signo
+entre folds), pero sí importa en el test de Kaggle por las tiendas 18/25; mantenerla.
+
+**Mi orden por valor** (el error más grande y sistemático primero): **E1** (barata, ataca la 2.ª familia en error) → 5 del modelador si
+E1 no gana → **E2** (temporada; más valor en Kaggle que en prácticas) → 1 y 4 del modelador → **E3** (pequeña).
+Expectativa honesta: cada idea 0.0005-0.0015; lo que queda es sobre todo ruido. Criterio: el de CLAUDE.md (< 0.3814 / 0.3815 con
+semillas 42 y 7, como mucho 1 de 4 folds peor) más, para E1 y E2, no empeorar el control c1 sin cerradas en más de 0.002.

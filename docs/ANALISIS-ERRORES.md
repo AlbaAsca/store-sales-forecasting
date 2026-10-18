@@ -7,6 +7,30 @@ Solo folds de `eval/folds.json`; el holdout no se ha mirado.
 
 Scripts (reproducibles): `python scripts/analysis/errors_base.py base-v0` (desglose y casos),
 `python scripts/analysis/errors_cf.py` (contrafactuales), `python scripts/analysis/errors_promo.py` (promociones). T-027: `diag_lb_gap.py`, `diag_lb_gap_extra.py`, `diag_window.py`.
+T-090: `errors_base.py V-031`, `errors_v10.py V-031`, `errors_v10_trend.py V-031`, `errors_v10_shift.py V-031`.
+
+## 2026-10-18 · T-090 · Dónde falla base-v9 (RMSLE 0.3814; predicciones de V-031, que es la misma base)
+
+**Cómo leer esta sección:** casi todo el error que queda es «ruido de día a día» en series pequeñas, que nadie puede
+adivinar. Lo que buscamos es la parte *sistemática*: un grupo donde el modelo se equivoca siempre hacia el mismo lado.
+Las semillas 42 y 7 dan tablas casi idénticas (0.3814 / 0.3816), así que lo que sigue no es azar del entrenamiento.
+
+| # | Hallazgo | Evidencia |
+|---|---|---|
+| 1 | El error está en las series pequeñas; las grandes están casi clavadas | Por volumen medio de la serie (5 grupos iguales): los 3 de abajo = 89 % del error (RMSLE 0.41-0.55); el de arriba = 4.6 % (0.18). Caso tienda 44 × GROCERY I (f1): error diario ≤ 0.2 en log |
+| 2 | Aunque supiéramos el nivel exacto de cada serie en los 16 días, solo bajaríamos a 0.350: el 84 % del error es el baile diario | Quitar el sesgo medio por serie×fold: 0.3814 → 0.3497. Por familia: → 0.3769. Por tienda: → 0.3793. Por fold: → 0.3811 |
+| 3 | Y ese nivel **no se puede adivinar** con lo que sabemos en el corte | El sesgo de una serie casi no se repite de un fold al siguiente (correlación 0.05-0.12); no sigue a la tendencia (m14−m56, −0.03) ni al hueco con el año anterior (−0.06). Contrafactual sin fuga «restar el sesgo del fold anterior» (los folds son contiguos): por familia 0.3794 → 0.3794 (×0.25) y 0.3798 (×0.5); por tienda 0.3793; por serie empeora (0.3847) |
+| 4 | Una familia sí falla siempre hacia el mismo lado: **GROCERY II predice de menos en 4/4 folds** (−0.22, −0.08, −0.10, −0.06) y es la 2.ª familia en error (6.6 %) | Su venta nacional de 2017 está por encima de todo lo visto (jul-2017 1869/día; jul-2016 787 por un bache; resto ~1000-1200, salvo diciembre). Un árbol no predice por encima de lo que vio y el año anterior le tira hacia abajo. Caso tienda 19 × GROCERY II (f1): últimos 28 d ~20/día, el mismo tramo de 2016 con 11 días a 0; predice 10-26 y vende 20-165 (sesgo −1.26; −0.74 en f2, −0.37 en f3) |
+| 5 | Las ventas a 0 con predicción > 0 son el 20.6 % del error, pero hay poco que rascar | Predicción mediana en esas filas: 0.30 unidades. Techo con la constante perfecta en log para las series intermitentes (usando el futuro): 0.3814 → 0.3792. Ya se intentó (V-015, V-022, V-023) |
+| 6 | Temporadas que llegan antes o después que el año anterior | Caso tienda 45 × material escolar (f1; la serie con más error, 0.8 %): en 2017 la vuelta al cole arranca ~3 semanas antes que en 2016 (primera semana > 800 uds: 23-jul-2017 frente a ~14-ago-2016). El año anterior se mira con ±3 días y no ve que «algo grande viene». Predice 2-15, vende 50-749 |
+| 7 | Picos sueltos, en la historia y en el futuro | Caso tienda 32 × CLEANING (f2): vende ~400/día y de pronto 7435, 6606, 6619 (imprevisibles). En los 28 d previos hubo un 2962 que sí entra en medias y máximos |
+| 8 | Promo que engaña en series muy ruidosas | Tienda 35 × LIQUOR (f2): con 3-4 artículos en promo predice 60-70 y vende 0-49; sesgo positivo en 4/4 folds (+0.09…+0.55). Poco generalizable |
+| 9 | Lo que **no** es problema ahora | Horizonte: 0.358 (día 1) → 0.396 (día 16), subida suave. Días de paga 0.367 (mejor que el resto, 0.383). Festivos locales 0.9 % del error; sin nacionales en los folds. Sesgo global −0.004. Días sin promo = 75 % del error, pero porque son las series pequeñas. Control c1 sin cerradas 0.3845 |
+
+**Conclusión:** ya no hay un «gran error» barato. Lo sistemático y atacable es pequeño: GROCERY II (nivel por encima de lo
+visto), temporadas desplazadas (material escolar) y picos en la historia. Hay que esperar 0.0005-0.0015 por idea.
+Descartado por los datos: corregir el sesgo con el error reciente del modelo (fila 3) e insistir en los ceros (fila 5).
+Propuestas en `docs/BRAINSTORM-v10.md` (sección 2/3).
 
 ## 2026-10-17 · T-027 · ¿Por qué base-v3 gana −0.025 en CV y solo −0.001 en Kaggle?
 

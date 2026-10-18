@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:40:46+02:00",
+  "updated": "2026-10-18T14:46:03+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5496,23 +5496,45 @@
       "id": "T-090",
       "title": "Brainstorm v10 (2/3): dónde falla más la base-v9",
       "owner": "experto",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 5.2,
       "auto": true,
       "manual": null,
       "desc": "Primera ronda del brainstorming. El analista de errores mira dónde se equivoca la base-v9 (tiendas, familias, días, festivos) y propone qué atacar primero.\n\nCómo sabremos si funciona: al final hay 3-5 variantes V-xxx priorizadas, cada una con hipótesis, ganancia esperada y criterio, y ninguna repite una ya rechazada.\n\n## Técnico\nEscribe SOLO tu sección en docs/BRAINSTORM-v10.md (crea el fichero si no existe, con cabecera '# Brainstorming para base-v10'). Base vigente: models/base (base-v9). Antes de proponer, lee docs/APRENDIZAJES.md y la tabla de experimentos del README para no repetir variantes rechazadas. Cada idea: título, hipótesis, cambio concreto (un solo cambio), ganancia esperada en RMSLE, coste en minutos y riesgo (fugas, holdout, tiendas cerradas). Máx. 5 ideas. No crees tarjetas V-xxx: eso lo hace la síntesis.\nUsa eval/results/base-v9*.json (by_family, por fold) y, si existen, las predicciones del backtest.",
       "deps": [],
       "created": "2026-10-18T14:38:23+02:00",
-      "updated": "2026-10-18T14:38:23+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T14:46:03+02:00",
+      "started_at": "2026-10-18T14:40:49+02:00",
+      "finished_at": "2026-10-18T14:46:03+02:00",
       "log": [
         {
           "t": "2026-10-18T14:38:23+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:40:49+02:00",
+          "by": "runner",
+          "msg": "empieza experto"
+        },
+        {
+          "t": "2026-10-18T14:46:03+02:00",
+          "by": "experto",
+          "msg": "DONE: base-v9 falla sobre todo por ruido diario imprevisible; propongo 3 ideas (año anterior solo como forma, ventana del año anterior más ancha, historia sin picos) además de las del modelador."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "experto",
+          "mode": "work",
+          "at": "2026-10-18T14:46:03+02:00",
+          "min": 5.2,
+          "turns": 27,
+          "tokens": 872267,
+          "cost_usd": 1.4375156000000002,
+          "verdict": "done"
         }
       ]
     },
@@ -5572,13 +5594,13 @@
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-089",
-      "message": "modelador con T-089",
+      "current": "T-090",
+      "message": "experto con T-090",
       "pid": 17880,
-      "heartbeat": "2026-10-18T14:39:03+02:00",
-      "agent": "modelador",
-      "started": "2026-10-18T14:39:03+02:00",
-      "live": "live-T-089-modelador-20261018-143903.jsonl",
+      "heartbeat": "2026-10-18T14:40:49+02:00",
+      "agent": "experto",
+      "started": "2026-10-18T14:40:49+02:00",
+      "live": "live-T-090-experto-20261018-144049.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
