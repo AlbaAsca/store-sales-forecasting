@@ -1,0 +1,139 @@
+{
+ "accepted": false,
+ "rows": [
+  {
+   "run": "V-041",
+   "base": 0.3811,
+   "variant": 0.3812,
+   "delta": 0.0001,
+   "worse_folds": [
+    "f1",
+    "f4"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3889
+    ],
+    [
+     "f2",
+     0.3726,
+     0.3707
+    ],
+    [
+     "f3",
+     0.3772,
+     0.3764
+    ],
+    [
+     "f4",
+     0.3868,
+     0.3887
+    ]
+   ],
+   "families_best": [
+    [
+     "PERSONAL CARE",
+     -0.011
+    ],
+    [
+     "DELI",
+     -0.007
+    ],
+    [
+     "GROCERY I",
+     -0.006
+    ]
+   ],
+   "families_worst": [
+    [
+     "PRODUCE",
+     0.022
+    ],
+    [
+     "LIQUOR,WINE,BEER",
+     0.022
+    ],
+    [
+     "GROCERY II",
+     0.003
+    ]
+   ]
+  },
+  {
+   "run": "V-041-s7",
+   "base": 0.3813,
+   "variant": 0.3813,
+   "delta": 0.0,
+   "worse_folds": [
+    "f1",
+    "f4"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3883
+    ],
+    [
+     "f2",
+     0.3727,
+     0.3707
+    ],
+    [
+     "f3",
+     0.3773,
+     0.3764
+    ],
+    [
+     "f4",
+     0.3875,
+     0.3899
+    ]
+   ],
+   "families_best": [
+    [
+     "PERSONAL CARE",
+     -0.012
+    ],
+    [
+     "DELI",
+     -0.007
+    ],
+    [
+     "GROCERY I",
+     -0.006
+    ]
+   ],
+   "families_worst": [
+    [
+     "PRODUCE",
+     0.026
+    ],
+    [
+     "LIQUOR,WINE,BEER",
+     0.022
+    ],
+    [
+     "GROCERY II",
+     0.001
+    ]
+   ]
+  }
+ ],
+ "why": [
+  "V-041: media 0.3811 → 0.3812, empeora 2 fold(s)",
+  "V-041-s7: media 0.3813 → 0.3813, empeora 2 fold(s)"
+ ],
+ "variant": "V-041",
+ "base": "base-v10",
+ "control_open": {
+  "base": 0.3844908121110169,
+  "variant": 0.3855216631524889
+ },
+ "secs": {
+  "base": 500.7,
+  "variant": 742.6
+ }
+}
