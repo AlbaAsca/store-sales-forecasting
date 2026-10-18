@@ -1,6 +1,6 @@
-# V-031: tres historiales de distinta longitud sobre la base-v8
+# V-037 — días de tienda cerrada = dato que falta
 
-Se entrenan tres copias del modelo de la base-v8 (con promociones de días vecinos): una mira ~2 semanas de historial,
-otra ~2 meses y otra ~1 año. Se promedian sus predicciones en escala log. Es la idea de V-030 (que mejoró pero se rechazó por tiempo)
-aplicada a la base nueva, para ver si las mejoras se suman.
-Prueba rápida (fold 1, semilla 42): 0.3877, 91 s. Medición completa pendiente del tester.
+Antes, un día en que una tienda entera vendía 0 (cierre, 25-dic, días antes de abrir) entraba como un cero más en los promedios
+y arrastraba el cierre de 2016 a las predicciones. Ahora esos días son NaN en los rasgos (medias, perfil semanal, ly_*) y las
+medias usan nanmean. Los objetivos de entrenamiento y la regla del cero (V-023) siguen viendo la serie original.
+Pendiente del tester: medir con semillas 42 y 7, control sin cerradas y predicción media de tiendas 18 y 25.
