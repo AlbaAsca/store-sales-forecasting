@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:52:45+02:00",
+  "updated": "2026-10-18T09:55:08+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-068",
-    "heartbeat": "2026-10-18T09:47:19+02:00",
-    "message": "tester con T-068",
+    "current": "T-069",
+    "heartbeat": "2026-10-18T09:52:48+02:00",
+    "message": "investigador con T-069",
     "pid": 6204,
-    "agent": "tester",
-    "started": "2026-10-18T09:47:19+02:00",
+    "agent": "investigador",
+    "started": "2026-10-18T09:52:48+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
-    "live": "live-T-068-tester-20261018-094719.jsonl"
+    "live": "live-T-069-investigador-20261018-095248.jsonl"
   },
   "agents": [
     {
@@ -4237,23 +4237,50 @@
       "id": "T-069",
       "title": "Leer los notebooks públicos mejor valorados de Store Sales",
       "owner": "investigador",
-      "status": "backlog",
+      "status": "blocked",
       "priority": "media",
       "estimate_min": 40,
-      "actual_min": null,
+      "actual_min": 2.3,
       "auto": true,
       "manual": null,
       "desc": "En la búsqueda anterior el investigador no pudo leer los notebooks de la competición porque usó un comando de Kaggle que el sistema no permite. Lo que sabemos de ellos viene de resúmenes y memoria, no del código.\n\nLa idea es descargar y leer de verdad los 5-8 notebooks más votados y anotar qué hacen que nosotros no hacemos.\n\nCómo sabremos si ha servido: queda una sección nueva en las notas con lo que hace cada notebook, su nota y las ideas que nos faltan, y como mucho dos tarjetas nuevas.\n\n## Técnico\n- Usa SOLO estos comandos (el «kaggle» sin ruta está bloqueado):\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels list --competition store-sales-time-series-forecasting --sort-by voteCount --page-size 20\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull <usuario/slug> -p data/kaggle-code/<slug>\n- Contrastar con docs/DISENO-MODELOS.md, docs/NOTAS-investigador.md y el panel para no duplicar (V-017, V-027, V-028).\n- Base vigente: base-v7 (CV 0.3838, LB 0.39720).",
       "deps": [],
       "created": "2026-10-18T09:36:09+02:00",
-      "updated": "2026-10-18T09:36:09+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T09:55:08+02:00",
+      "started_at": "2026-10-18T09:52:48+02:00",
+      "finished_at": "2026-10-18T09:55:08+02:00",
       "log": [
         {
           "t": "2026-10-18T09:36:09+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T09:52:48+02:00",
+          "by": "runner",
+          "msg": "empieza investigador"
+        },
+        {
+          "t": "2026-10-18T09:55:08+02:00",
+          "by": "investigador",
+          "msg": "BLOCKED: Notebooks competitivos leídos y documentados en las notas; creadas las tarjetas V-029 (modelo por familia) y V-030 (ensemble con historiales de distinta longitud)."
+        },
+        {
+          "t": "2026-10-18T09:55:08+02:00",
+          "by": "investigador",
+          "msg": "⚠ 3 comandos denegados: K=../KaggleFarm/.venv/Scripts/kaggle.exe; for r in ekrembayar/store-sales-ts-for | python board/board.py add \"V-029: un modelo por tipo de producto en vez de uno p | python board/board.py add \"V-030: juntar modelos que miran historiales de distin"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "investigador",
+          "mode": "work",
+          "at": "2026-10-18T09:55:08+02:00",
+          "min": 2.3,
+          "turns": 34,
+          "tokens": 604261,
+          "cost_usd": 0.4281328999999999,
+          "verdict": "blocked"
         }
       ]
     },
@@ -4277,6 +4304,54 @@
         {
           "t": "2026-10-18T09:45:42+02:00",
           "by": "tester",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-071",
+      "title": "V-029: un modelo por tipo de producto en vez de uno para todos",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 40.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hoy un solo modelo aprende a la vez de pan, ropa de colegio y licores. El notebook que fue primero en la clasificación en 2022 entrenaba un modelo aparte por cada familia de producto, así cada uno se especializa en su patrón. Probamos lo mismo sobre la base actual.\nCómo sabremos si funciona: si el error medio de los 4 tramos baja con al menos 2 semillas y no empeora en más de un tramo, la aceptamos.\n## Técnico\nFuente: ferdinandberr/darts-forecasting-deep-learning-global-models (33 LightGBM, LB 0.38558) y chongzhenjie (réplica). Cambio: en variants/V-029 entrenar 33 modelos (directo y recursivo) filtrando por family; mismos rasgos que base-v7; num_leaves/min_data reducidos si hace falta. Criterio: RMSLE medio CV < 0.3838, 2 semillas, máximo 1 fold peor; control vuelta al cole y sin tiendas cerradas no deben empeorar. Riesgo: gersonlramos vio mejora solo en el recursivo. Tiempo esperado x1-2.",
+      "deps": [],
+      "created": "2026-10-18T09:54:58+02:00",
+      "updated": "2026-10-18T09:54:58+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T09:54:58+02:00",
+          "by": "investigador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-072",
+      "title": "V-030: juntar modelos que miran historiales de distinta longitud",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 35.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Nuestro intento de promediar varios modelos casi iguales apenas ayudó. Los notebooks buenos promedian modelos que miran el pasado de formas muy distintas: uno solo la última semana, otro el último año. Probamos esa variedad real.\nCómo sabremos si funciona: si el promedio baja el error medio de los 4 tramos con 2 semillas y no empeora más de un tramo, la aceptamos; si queda dentro del ruido, la rechazamos.\n## Técnico\nFuente: chongzhenjie (ensemble con lags 7/63/365/730; promedio de entrenar con todo vs desde 2015). Cambio: 3 versiones de base-v7 con ventanas de rasgos cortas (7/14), medias (28/56) y largas (112/365), promedio en log. Criterio: CV < 0.3838, 2 semillas, máximo 1 fold peor. V-010 dio -0.0002 con tiempo x3: aceptar solo si supera claramente eso y el tiempo es como mucho x2. Mejor tras V-029 (misma infraestructura).",
+      "deps": [],
+      "created": "2026-10-18T09:55:00+02:00",
+      "updated": "2026-10-18T09:55:00+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T09:55:00+02:00",
+          "by": "investigador",
           "msg": "creada"
         }
       ]

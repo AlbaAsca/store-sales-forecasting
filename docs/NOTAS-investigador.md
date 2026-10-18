@@ -38,3 +38,29 @@ Nuevo y con evidencia: (a) **regla de series dormidas → 0** (post-proceso, ≈
 
 ### Tarjetas creadas
 - V-019 serie dormida → 0 (alta). V-020 peso directo/recursivo por familia (media). Ver panel.
+
+## 2026-10-18 · T-069 notebooks públicos leídos de verdad (código en `data/kaggle-code/`, fuera de git)
+`kernels list --sort-by voteCount`: el top 6 por votos son los ejercicios/tutorial de Ryan Holbrook (23k–66k votos; regresión lineal con
+tendencia + Fourier + híbrido lineal+XGBoost). Son didácticos, no competitivos: no se leen más (ya cubierto: V-001/V-002 y el híbrido ≈ LightGBM sobre log).
+Leídos (código o markdown con resultados): los 3 competitivos de verdad. Scripts auxiliares: `scripts/analysis/ipynb_code.py`, `ipynb_grep.py`.
+Solo se descargaron 5 (los 3 de abajo + el ejercicio híbrido y el curso de Ivan Lydkin, estos dos sin leer a fondo); no hay 5–8 competitivos con código útil.
+
+| Notebook (votos) | Qué hace | Nota | Qué nos falta |
+|---|---|---|---|
+| [ferdinandberr · Darts global models](https://www.kaggle.com/code/ferdinandberr/darts-forecasting-deep-learning-global-models) (691) | Suavizado exponencial local por serie (base); **33 LightGBM globales, uno por familia**, log1p+escalado, covariables estáticas; también N-HiTS/LSTM/TFT (GPU, Optuna); **ceros forzados** si la serie está a 0 | Suavizado exp. 0.40578 LB; LightGBM por familia **0.38558 LB (n.º 1 en sept-2022)**; val 16 d: suavizado 0.37411 | **Un modelo por familia** (no probado nunca como LightGBM directo; V-008 fue por horizonte, otra cosa). Entrenar solo con las últimas N muestras por serie según modelo |
+| [chongzhenjie · Global LightGBM](https://www.kaggle.com/code/chongzhenjie/ecuador-store-sales-global-forecasting-lightgbm) (426) | Reimplementa lo anterior: CV con origen móvil, ensemble de LightGBM con lags distintos (7, 63, 365, 730), medias móviles 7/28 de petróleo y promoción como covariables, cero si 21 días a cero, festivos agrupados por nombre y sin los trasladados, relleno del 25-dic y transacciones | Promedio de dos ensembles (todo vs desde 2015) mejor que cada uno; cifra exacta no visible en el código | **Ensemble con historiales de distinta longitud** (V-010 repetía el mismo tipo → −0.0002); medias móviles de promoción pasadas (V-027 cubre las vecinas) |
+| [ekrembayar · Comprehensive Guide](https://www.kaggle.com/code/ekrembayar/store-sales-ts-forecasting-a-comprehensive-guide) (2943) | Solo EDA: transacciones (correlación alta con ventas), petróleo interpolado, festivos | Sin modelo ni nota | Nada accionable: transacciones no existen en el futuro; petróleo ya rechazado (gersonlramos) |
+
+Ya cubierto por nosotros: ceros (V-019/V-023/V-024), festivos por tienda (V-017), promos vecinas (V-027), estado de tienda/familia (V-028),
+directo+recursivo (base-v4), cortes múltiples (V-012).
+Observación: nuestro LB 0.3972 es peor que el 0.38558 de 2022 (ese LB era de otra fecha y otro reparto público/privado: no comparable al 100 %), así que puede haber margen.
+
+### Comparación
+| Técnica | Ganancia esperada | CPU | Dificultad | Aprendizaje |
+|---|---|---|---|---|
+| Un LightGBM por familia (33) | media-baja (0.002–0.008; gersonlramos vio que ayudó solo al recursivo) | ×1–2 | baja-media | pooling total vs parcial |
+| Ensemble con ventanas de historial muy distintas | baja (0.001–0.003) | ×2 | baja | diversidad real vs semillas |
+| Redes (N-HiTS/TFT) | desconocida | GPU | alta | fuera de alcance CPU |
+
+### Tarjetas creadas
+- V-029 (un modelo por familia) y V-030 (ensemble con ventanas de historial distintas). Ver panel.
