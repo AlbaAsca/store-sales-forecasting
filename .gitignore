@@ -10,3 +10,4 @@ board/runs/
 data/
 eval/results/*/
 dist/
+eval/tmp/

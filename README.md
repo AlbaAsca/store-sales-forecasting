@@ -181,6 +181,9 @@ Cada versión de la base (`base-v1` … `base-v9`) es una idea que bajó el erro
 pasó de verdad, en otro color lo que predecía el modelo antes y después. La tabla completa con todos los experimentos, también los
 descartados, está en [Resultados](#6-resultados).
 
+> ⚠️ Cada gráfica es el **mejor caso**, no el típico: el script elige, entre unas 1.500 series, la que más baja el error con la
+> idea. En la mayoría de las series la mejora es mucho menor (la cifra de «Error» es la que vale).
+
 ### base-v1 · tener en cuenta el día de la semana (V-001)
 Un supermercado no vende igual un lunes que un sábado, pero la primera versión repetía una media plana de las dos últimas semanas.
 La idea: calcular cuánto pesa cada día de la semana y repartir la media con esa forma. Funciona porque el patrón semanal es el más

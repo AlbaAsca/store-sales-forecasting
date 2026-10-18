@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T17:20:54+02:00",
+  "updated": "2026-10-18T17:21:08+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6275,23 +6275,45 @@
       "id": "T-101",
       "title": "Enlazar las gráficas antes/después en el README y dejar fuera del repo la caché de predicciones",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 0.2,
       "auto": true,
       "manual": null,
       "desc": "Las gráficas de cada teoría ya existen, pero el README todavía no las muestra y la caché de predicciones (eval/tmp, unos 3,5 MB binarios) está en git. Idea: enlazar cada imagen en su sección del README y dejar la caché fuera de git.\n\nCómo sabremos si funciona: el README muestra las nueve gráficas y eval/tmp no aparece en git status tras regenerarlas.\n\n## Técnico\nAñadir docs/img/teorias/base-vN.png al README (tabla o sección por base). Añadir eval/tmp/ a .gitignore y git rm --cached de eval/tmp (lo hace el runner). Nota: scripts/make_theory_figures.py elige la serie con mayor bajada de error (~1.500 series), así que la gráfica es la mejor caso, no la típica; añadir un pie que lo diga.",
       "deps": [],
       "created": "2026-10-18T16:07:07+02:00",
-      "updated": "2026-10-18T16:07:07+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T17:21:08+02:00",
+      "started_at": "2026-10-18T17:20:56+02:00",
+      "finished_at": "2026-10-18T17:21:08+02:00",
       "log": [
         {
           "t": "2026-10-18T16:07:07+02:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T17:20:56+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T17:21:08+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: README con las nueve gráficas y un pie de «mejor caso»; `eval/tmp/` en `.gitignore`; falta que el runner ejecute `git rm --cached -r eval/tmp`."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T17:21:08+02:00",
+          "min": 0.2,
+          "turns": 7,
+          "tokens": 58995,
+          "cost_usd": 0.0599519,
+          "verdict": "review"
         }
       ]
     },
@@ -6460,13 +6482,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-094",
-      "message": "verificación mecánica de V-036: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-101",
+      "message": "desarrollador con T-101",
       "pid": 22808,
-      "heartbeat": "2026-10-18T17:20:08+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T17:03:06+02:00",
-      "live": "live-T-094-tester-20261018-172008.jsonl",
+      "heartbeat": "2026-10-18T17:20:56+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T17:20:56+02:00",
+      "live": "live-T-101-desarrollador-20261018-172056.jsonl",
       "enabled": true,
       "mechanical": false
     }
