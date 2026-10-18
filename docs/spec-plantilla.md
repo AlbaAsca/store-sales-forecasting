@@ -29,17 +29,9 @@ Dudas: [NEEDS CLARIFICATION: <pregunta concreta>]
 Reglas: 1–3 historias; 3–6 criterios; si no caben en 2 KB, la tarjeta es demasiado grande → trocear.
 Un agente nuevo debe poder saber qué construir y cuándo parar leyendo solo la tarjeta + la constitución.
 
-## Constitución (plantilla para CLAUDE.md, ≤1 página)
-```
-## Constitución
-1. Propósito: <una frase: para quién y qué problema>.
-2. Pila y límites: <lenguajes, dependencias permitidas/prohibidas>.
-3. Calidad: todo cambio con test; tests en verde antes de cerrar.
-4. Simplicidad: lo mínimo que cumpla los criterios; nada «por si acaso».
-5. Quien implementa no evalúa; el tester verifica contra los criterios de aceptación.
-6. Dudas: se marcan [NEEDS CLARIFICATION], no se adivinan.
-7. Cambios de requisitos: se edita la tarjeta (`board.py desc`) y se anota el porqué con `note`.
-```
+## Constitución: no hay una propia
+Las reglas permanentes (propósito, pila, calidad, quien implementa no evalúa) ya están en el CLAUDE.md del proyecto; no se duplican.
+Solo se añaden a CLAUDE.md dos líneas: «dudas se marcan [NEEDS CLARIFICATION], no se adivinan» y «cambio de requisitos = `board.py desc` + `note` con el porqué».
 
 ## Cuándo reconsiderar spec-kit completo
 Más de 5 funcionalidades con requisitos cambiantes y varios agentes escribiendo código.

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:35:56+02:00",
+  "updated": "2026-10-18T14:36:17+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5404,23 +5404,45 @@
       "id": "T-088",
       "title": "A-xxx: plantilla de especificación corta para agent-board",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 0.3,
       "auto": true,
       "manual": null,
       "desc": "En proyectos de producto los requisitos cambian y una tarjeta sola se queda corta. La herramienta spec-kit resuelve eso con muchos documentos, pero pesan unas 20 veces más que una tarjeta. Proponemos copiar solo lo útil: una especificación corta (menos de 3 KB) que la tarjeta enlaza, con criterios de aceptación y marcas de duda.\nCómo sabremos si funciona: una persona rellena la plantilla para una funcionalidad de ejemplo en menos de 10 minutos y el agente que la implementa no necesita leer nada más que tarjeta y plantilla.\n\n## Técnico\nFuente: docs/NOTAS-investigador.md sección T-082. Entregable: docs/spec-plantilla.md en la plantilla agent-board con secciones: historias, criterios de aceptación, [NEEDS CLARIFICATION], fuera de alcance. Criterio: ≤3 KB rellena, sin constitución propia (usa CLAUDE.md).",
       "deps": [],
       "created": "2026-10-18T14:35:00+02:00",
-      "updated": "2026-10-18T14:35:00+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T14:36:17+02:00",
+      "started_at": "2026-10-18T14:35:58+02:00",
+      "finished_at": "2026-10-18T14:36:17+02:00",
       "log": [
         {
           "t": "2026-10-18T14:35:00+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:35:58+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-18T14:36:17+02:00",
+          "by": "arquitecto",
+          "msg": "DONE: plantilla de especificación corta (≈2 KB) lista en docs/spec-plantilla.md, sin constitución propia (usa CLAUDE.md)."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-18T14:36:17+02:00",
+          "min": 0.3,
+          "turns": 7,
+          "tokens": 75114,
+          "cost_usd": 0.0665035,
+          "verdict": "done"
         }
       ]
     }
@@ -5428,13 +5450,13 @@
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-087",
-      "message": "arquitecto con T-087",
+      "current": "T-088",
+      "message": "arquitecto con T-088",
       "pid": 4564,
-      "heartbeat": "2026-10-18T14:35:35+02:00",
+      "heartbeat": "2026-10-18T14:35:58+02:00",
       "agent": "arquitecto",
-      "started": "2026-10-18T14:35:35+02:00",
-      "live": "live-T-087-arquitecto-20261018-143535.jsonl",
+      "started": "2026-10-18T14:35:58+02:00",
+      "live": "live-T-088-arquitecto-20261018-143558.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
