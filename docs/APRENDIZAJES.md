@@ -192,3 +192,6 @@ Qué: … · Pasó: … · Por qué: …
 - **Línea base (baseline)**: el modelo más simple razonable. Sirve de vara de medir: lo que no le gana, no aporta.
 - **Estacionalidad**: patrón que se repite (semana, mes, año).
 - **Función de pérdida**: la regla con la que el modelo puntúa sus errores mientras aprende (L2 = error² ; tweedie = pensada para datos con muchos ceros y colas largas). Conviene que case con la métrica final: L2 sobre log1p(ventas) es exactamente RMSLE, así que optimiza lo que se evalúa; tweedie sobre ventas crudas optimiza otra cosa (V-007 lo pone a prueba).
+
+## V-031: tres historiales juntos sobre la base nueva (aceptada)
+Se promedian tres copias del modelo que miran 2 semanas, 2 meses y 1 año de historia, ahora sobre base-v8. Prácticas 0.3814/0.3815 frente a 0.3829: mejora en los 4 tramos y también sin tiendas cerradas. Las dos mejoras se suman porque cada ventana se equivoca en sitios distintos; tarda 7 min, pero el tiempo solo desempata.
