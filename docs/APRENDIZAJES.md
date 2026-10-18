@@ -11,6 +11,11 @@ Qué: subir base-v7 (V-026: año anterior sin los cierres de 2016 + cero en seri
 era buena; lo que estropeaba v0.6 eran los cierres de las tiendas 18 y 25 que viajaban al test. Limpiar los datos antes de usarlos
 convirtió un retroceso de +0.0093 en una mejora de −0.0022.
 
+### V-027 · promociones de los días de alrededor — ✅ ACEPTADA (0.3838 / 0.3836 → 0.3829 / 0.3829)
+Qué: además de saber si hay promoción el día que predice, el modelo ve la del día anterior, la del siguiente y cuántas promociones
+habrá en las 16 días futuros (se conocen de antemano, no es trampa). · Pasó: mejora 4/4 prácticas, con las dos semillas, aunque poco
+(−0.0009); beauty −0.007, pan y bollería +0.006; sin tiendas cerradas el control empeora algo (+0.0018). Tarda más (78 → 130 s).
+
 ### V-026 · año anterior sin cierres + cero en series muertas — ✅ ACEPTADA, nueva base-v7 (0.3852 → 0.3838 / 0.3836)
 Qué: juntar V-025 (aprender del mismo periodo del año anterior quitando las tiendas cerradas entonces) y V-023 (predecir cero en las
 series que llevan dos meses sin vender, salvo las de temporada). · Pasó: prácticas 0.3838/0.3836 con dos semillas (V-025 sola:
