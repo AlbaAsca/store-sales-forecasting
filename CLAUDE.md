@@ -28,6 +28,7 @@ arriba, 2-4 frases en lenguaje llano: qué problema hay, qué idea probamos y po
 criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.
 Título en lenguaje llano. Tarjeta: `V-xxx: <variante en una frase>` · `--desc`: hipótesis · cambio · **criterio fijado antes de medir**
 (por defecto: RMSLE medio del backtest < base vigente **con al menos 2 semillas** y empeora como mucho 1 de los 4 folds; si empata, menos tiempo).
+El tiempo solo desempata: no se rechaza una mejora por tardar más, salvo que una medición completa pase de 15 min (lección de V-030).
 No rechazar solo porque la mejora sea menor que la variación de semilla: si se repite en la misma dirección con 2 semillas, se acepta
 (lección de V-014: −0.0005 en local fue −0.0039 en Kaggle).
 Resultado con `note`: RMSLE por fold, media, tiempo. Rechazada = `done` con «RECHAZADA». Aceptada = nueva base (tag `base-vX`).

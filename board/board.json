@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:53:17+02:00",
+  "updated": "2026-10-18T10:53:37+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4562,6 +4562,30 @@
       "log": [
         {
           "t": "2026-10-18T10:53:17+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-076",
+      "title": "V-031: juntar los tres historiales de distinta longitud (V-030) con la base nueva",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Promediar tres copias del modelo que miran historiales de distinta longitud (dos semanas, dos meses, un año) mejoraba claramente las prácticas, más que la idea que acaba de entrar en la base. Se rechazó solo porque tardaba cuatro veces más, pero cinco minutos por medición no es un problema para nosotros: el tiempo solo sirve para desempatar.\n\nLa idea es aplicar esos tres historiales sobre la base actual (que ya incluye las promociones de los días de alrededor) y ver si las dos mejoras se suman.\n\nCómo sabremos si funciona: baja el error de la base actual con dos semillas, sin empeorar más de una práctica. Si se acepta, la promoción automática comprobará el examen final y el test.\n\n## Técnico\n- V-031 = base-v8 (V-027) + el promedio de 3 ventanas de V-030 (copiar su lógica de variants/V-030/model.py).\n- Referencias: base-v8 0.3829/0.3829 (s42/s7), holdout 0.4073. V-030 sobre base-v7: 0.3822/0.3821, c1 sin cerradas 0.3837, 308 s.\n- Criterio: RMSLE medio < base-v8 con semillas 42 y 7, ≤ 1 fold peor. El tiempo NO es motivo de rechazo salvo que una medición completa pase de 15 min.",
+      "deps": [],
+      "created": "2026-10-18T10:53:37+02:00",
+      "updated": "2026-10-18T10:53:37+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T10:53:37+02:00",
           "by": "consultor",
           "msg": "creada"
         }
