@@ -19,7 +19,9 @@ Contrato (lo llama scripts/backtest.py y scripts/make_submission.py):
     fit_predict(history, future, ctx) -> array de predicciones (>= 0), una por fila de `future`, en el mismo orden.
 """
 import os
+import warnings
 import numpy as np
+warnings.filterwarnings("ignore", message="Mean of empty slice")
 import pandas as pd
 import lightgbm as lgb
 
@@ -47,12 +49,12 @@ def _features(M, P, origin, dow0, n_series):
     past = M[:, origin - PROFILE_DAYS:origin]
     feats = {}
     for w in WINDOWS:
-        feats[f"m{w}"] = np.repeat(past[:, -w:].mean(1, keepdims=True), HORIZON, 1)
-    base = past.mean(1)
+        feats[f"m{w}"] = np.repeat(np.nanmean(past[:, -w:], 1, keepdims=True), HORIZON, 1)
+    base = np.nanmean(past, 1)
     off = np.zeros((n_series, 7))
     for d in range(7):
         idx = [j for j in range(PROFILE_DAYS) if (dow0 - PROFILE_DAYS + j) % 7 == d]
-        off[:, d] = past[:, idx].mean(1) - base
+        off[:, d] = np.nanmean(past[:, idx], 1) - base
     dows = (dow0 + np.arange(HORIZON)) % 7
     feats["prof"] = off[:, dows]
     feats["h"] = np.tile(np.arange(1, HORIZON + 1), (n_series, 1)).astype(float)
@@ -103,10 +105,10 @@ def _step_feats(Mx, P, dow_all, c, store, fam):
     for k in range(1, REC_LAGS + 1):
         f[f"lag{k}"] = Mx[:, c - k]
     for w in REC_WINDOWS:
-        f[f"m{w}"] = Mx[:, c - w:c].mean(1)
-    m56 = Mx[:, c - PROFILE_DAYS:c].mean(1)
+        f[f"m{w}"] = np.nanmean(Mx[:, c - w:c], 1)
+    m56 = np.nanmean(Mx[:, c - PROFILE_DAYS:c], 1)
     f["m56"] = m56
-    f["prof"] = Mx[:, [c - 7 * k for k in range(1, PROFILE_DAYS // 7 + 1)]].mean(1) - m56
+    f["prof"] = np.nanmean(Mx[:, [c - 7 * k for k in range(1, PROFILE_DAYS // 7 + 1)]], 1) - m56
     f["dow"] = np.full(n, float(dow_all[c]))
     pd_ = P[:, c]
     psum = P[:, c - 14:c].sum(1)
@@ -138,9 +140,9 @@ def _step_feats(Mx, P, dow_all, c, store, fam):
     return pd.DataFrame(f)
 
 
-def _recursive(M, P, dow_all, store, fam, seed):
+def _recursive(M, P, dow_all, store, fam, seed, Mf=None):
     n, T = M.shape
-    Mx = np.concatenate([M, np.full((n, HORIZON), np.nan)], axis=1)
+    Mx = np.concatenate([M if Mf is None else Mf, np.full((n, HORIZON), np.nan)], axis=1)
     Xs, ys = [], []
     for c in range(max(PROFILE_DAYS, T - REC_DAYS), T):
         Xs.append(_step_feats(Mx, P, dow_all, c, store, fam))
@@ -168,6 +170,12 @@ def _predict_log(history, future, ctx):
     M = piv.to_numpy()
     n = len(series)
     T = M.shape[1]
+    # V-037: dias con la tienda entera a 0 (cierres, 25-dic, antes de abrir) = dato que falta en los rasgos
+    closed = np.zeros(M.shape, bool)
+    for s_ in np.unique(series["store_nbr"].to_numpy()):
+        idx = (series["store_nbr"].to_numpy() == s_)
+        closed[idx] = (M[idx].sum(0) == 0)[None, :]
+    Mf = np.where(closed, np.nan, M)
 
     # onpromotion: historia + futuro (la promo planificada de los dias a predecir es conocida)
     fdates = pd.date_range(start, periods=HORIZON)
@@ -182,7 +190,7 @@ def _predict_log(history, future, ctx):
     fam = np.repeat(pd.Categorical(series["family"].astype(str)).codes[:, None], HORIZON, 1)
 
     def build(origin, dow0, with_y):
-        f = _features(M, P, origin, dow0, n)
+        f = _features(Mf, P, origin, dow0, n)
         f["store_nbr"] = store
         f["family"] = fam
         X = pd.DataFrame({k: v.ravel() for k, v in f.items()})
@@ -227,7 +235,7 @@ def _predict_log(history, future, ctx):
         pred = model.predict(Xp).reshape(n, HORIZON)
     if mode in ("rec", "avg"):
         dow_all = np.asarray(days.append(fdates).dayofweek)
-        rec = _recursive(M, P, dow_all, store[:, 0], fam[:, 0], int(ctx.get("seed", 0) or 0))
+        rec = _recursive(M, P, dow_all, store[:, 0], fam[:, 0], int(ctx.get("seed", 0) or 0), Mf)
         pred = rec if pred is None else 0.5 * (pred + rec)
     # V-023: series con >= ZERO_N dias a 0 antes del corte -> 0, salvo si vendieron en el mismo
     # tramo del año anterior (+-7 dias): productos de temporada. Solo datos previos al corte.

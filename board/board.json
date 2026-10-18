@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T17:00:20+02:00",
+  "updated": "2026-10-18T17:03:04+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5715,18 +5715,18 @@
       "id": "T-094",
       "title": "V-036: mirar el año anterior con una ventana más ancha",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 50.0,
-      "actual_min": 3.0,
+      "actual_min": 5.7,
       "auto": true,
       "manual": null,
       "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
       "deps": [],
       "created": "2026-10-18T14:48:49+02:00",
-      "updated": "2026-10-18T16:14:15+02:00",
-      "started_at": "2026-10-18T16:07:13+02:00",
-      "finished_at": "2026-10-18T16:10:13+02:00",
+      "updated": "2026-10-18T17:03:04+02:00",
+      "started_at": "2026-10-18T17:00:22+02:00",
+      "finished_at": "2026-10-18T17:03:04+02:00",
       "log": [
         {
           "t": "2026-10-18T14:48:49+02:00",
@@ -5762,6 +5762,16 @@
           "t": "2026-10-18T16:14:15+02:00",
           "by": "consultor",
           "msg": "Desbloqueada: la paré yo. Rehacer V-036 sobre base-v10 (models/base actual) y volver a review."
+        },
+        {
+          "t": "2026-10-18T17:00:22+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T17:03:04+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-036 rehecha sobre base-v10 (solo se añaden ly_win14 y ly_diff14), backtest rápido 0,3874 y tests en verde; falta la medición del tester."
         }
       ],
       "runs": [
@@ -5784,6 +5794,16 @@
           "tokens": null,
           "cost_usd": null,
           "verdict": "blocked"
+        },
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T17:03:04+02:00",
+          "min": 2.7,
+          "turns": 21,
+          "tokens": 171796,
+          "cost_usd": 0.14397950000000004,
+          "verdict": "review"
         }
       ],
       "verify_started": "2026-10-18T16:10:19+02:00"
@@ -6410,13 +6430,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-103",
-      "message": "verificación mecánica de V-039: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-094",
+      "message": "desarrollador con T-094",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:59:39+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T16:41:57+02:00",
-      "live": "live-T-103-tester-20261018-165939.jsonl",
+      "heartbeat": "2026-10-18T17:00:22+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T17:00:22+02:00",
+      "live": "live-T-094-desarrollador-20261018-170022.jsonl",
       "enabled": true,
       "mechanical": false
     }
