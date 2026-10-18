@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:02:15+02:00",
+  "updated": "2026-10-18T16:06:32+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5976,23 +5976,33 @@
       "id": "T-100",
       "title": "Promover V-037 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "blocked",
       "priority": "alta",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 4.2,
       "auto": true,
       "manual": null,
       "desc": "Con V-037 los días en que una tienda cierra dejan de contar como ventas de cero: se tratan como dato que falta. La mejora es pequeña (unas milésimas de error), pero se repite con las dos semillas y no empeora los días sin cierres.\n\nCómo sabremos si funciona: el error del modelo en las pruebas baja y la predicción de agosto de 2017 deja de hundirse en las dos tiendas que cerraron en 2016.\n\n## Técnico\nV-037 frente a base-v9: semilla 42 0.3811 (0.3814), semilla 7 0.3813 (0.3815); media 0.3812 vs 0.3815 (-0.0003). Folds peores: f1 en s42 (+0.0001). Control sin tiendas cerradas 0.3845 = 0.3845. Tiempo 429 → 501 s. Criterio por defecto cumplido. Pendiente: predicción media log de tiendas 18 y 25 (no reportada por verify_variant.py).",
       "deps": [],
       "created": "2026-10-18T16:02:11+02:00",
-      "updated": "2026-10-18T16:02:11+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T16:06:32+02:00",
+      "started_at": "2026-10-18T16:02:17+02:00",
+      "finished_at": "2026-10-18T16:06:32+02:00",
       "log": [
         {
           "t": "2026-10-18T16:02:11+02:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:02:17+02:00",
+          "by": "runner",
+          "msg": "promoción automática de V-037 (scripts/promote.py)"
+        },
+        {
+          "t": "2026-10-18T16:06:32+02:00",
+          "by": "consultor",
+          "msg": "NO se promueve V-037 (comprobación automática): prácticas (V-037): 0.3814 → 0.3811, empeora 1 fold(s); prácticas (V-037-s7): 0.3815 → 0.3813, empeora 0 fold(s); examen final empeora: 0.4051 → 0.4085; control sin cerradas: 0.3845 → 0.3845; en el test cambian de golpe frente a la base: tienda 18 +0.081, tienda 25 +0.097, tienda 52 -0.052"
         }
       ]
     }
@@ -6013,12 +6023,12 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-095",
-      "message": "verificación mecánica de V-037: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-100",
+      "message": "promoción automática de V-037",
       "pid": 8496,
-      "heartbeat": "2026-10-18T16:01:00+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T15:40:00+02:00",
+      "heartbeat": "2026-10-18T16:02:17+02:00",
+      "agent": "consultor",
+      "started": "2026-10-18T16:02:17+02:00",
       "live": "live-T-095-tester-20261018-160100.jsonl",
       "enabled": true,
       "mechanical": false
