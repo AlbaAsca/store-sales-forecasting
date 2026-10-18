@@ -204,6 +204,8 @@ def auto_promote(o):
     if r.returncode not in (0, 2):  # 0 promovida, 2 no pasa las comprobaciones; otro código = error del script
         bd.update(lambda b: bd.set_status(b, bd.task(b, t["id"]), "blocked", "runner",
                                           f"La promoción automática falló (código {r.returncode}); ver board/runs/. {r.stderr[-300:]}"))
+    git("add", "board/board.json")
+    git("commit", "-q", "-m", f"chore(runner): {t['id']} automatic promotion of {v}")
     git("push", "-q", "--follow-tags")
     set_runner(state="idle", current=None, message=f"promoción automática de {v}: {'hecha' if r.returncode == 0 else 'no pasa'}")
     print("  → " + (r.stdout.strip().splitlines() or ["(sin salida)"])[-1])

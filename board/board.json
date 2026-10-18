@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:30:32+02:00",
+  "updated": "2026-10-18T10:52:26+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,11 +35,11 @@
     "enabled": true,
     "state": "stopped",
     "current": null,
-    "heartbeat": "2026-10-18T10:16:53+02:00",
-    "message": "Runner parado (pid muerto)",
-    "pid": null,
-    "agent": "tester",
-    "started": "2026-10-18T10:04:31+02:00",
+    "heartbeat": "2026-10-18T10:52:26+02:00",
+    "message": "Runner parado",
+    "pid": 8588,
+    "agent": "consultor",
+    "started": "2026-10-18T10:52:23+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
     "live": "live-T-072-tester-20261018-100431.jsonl"
@@ -4288,23 +4288,33 @@
       "id": "T-070",
       "title": "Promover V-027 (promociones de días vecinos) a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 0.0,
       "auto": true,
       "manual": null,
       "desc": "La variante que avisa al modelo de las promociones de los días de alrededor mejora el error de las prácticas en las cuatro ventanas con dos semillas (poco, pero siempre en la misma dirección).\nCómo sabremos si funciona: el examen final y el control sin tiendas cerradas no deben empeorar de forma clara.\n\n## Técnico\nV-027: CV 0.3829 (s42) / 0.3829 (s7) vs base-v7 0.3838 / 0.3836; 4/4 folds mejor. c1 sin cerradas 0.3876 vs 0.3857 (+0.0018, vigilar). BREAD/BAKERY +0.006. Tiempo 78→130 s.",
       "deps": [],
       "created": "2026-10-18T09:45:42+02:00",
-      "updated": "2026-10-18T09:45:42+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T10:52:24+02:00",
+      "started_at": "2026-10-18T10:52:23+02:00",
+      "finished_at": "2026-10-18T10:52:24+02:00",
       "log": [
         {
           "t": "2026-10-18T09:45:42+02:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T10:52:23+02:00",
+          "by": "runner",
+          "msg": "promoción automática de V-027 (scripts/promote.py)"
+        },
+        {
+          "t": "2026-10-18T10:52:24+02:00",
+          "by": "consultor",
+          "msg": "Promovida automáticamente: V-027 → base-v8: prácticas (V-027): 0.3838 → 0.3829, empeora 0 fold(s); prácticas (V-027-s7): 0.3836 → 0.3829, empeora 0 fold(s); examen final: 0.4139 → 0.4073; control sin cerradas: 0.3857 → 0.3876; test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.012, familia 0.021)"
         }
       ]
     },
@@ -4498,30 +4508,56 @@
           "verdict": "blocked"
         }
       ]
+    },
+    {
+      "id": "T-074",
+      "title": "Subir v0.8 (base-v8) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "alta",
+      "estimate_min": 3,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Kaggle > Store Sales > Submit Prediction > subir dist/submission-base-v8.csv con el mensaje: v0.8 · base-v8 (V-027) · backtest 0.3829 · holdout 0.4073. Pasar la puntuación al consultor.",
+      "desc": "La comprobación automática ha preparado una nueva base: mejora en las prácticas y no empeora el examen final, el control ni ninguna tienda del test. Toca subirla y ver qué dice Kaggle.\n\n## Técnico\n- prácticas (V-027): 0.3838 → 0.3829, empeora 0 fold(s)\n- prácticas (V-027-s7): 0.3836 → 0.3829, empeora 0 fold(s)\n- examen final: 0.4139 → 0.4073\n- control sin cerradas: 0.3857 → 0.3876\n- test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.012, familia 0.021)\n- CSV: dist/submission-base-v8.csv",
+      "deps": [],
+      "created": "2026-10-18T10:52:24+02:00",
+      "updated": "2026-10-18T10:52:24+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T10:52:24+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "idle",
+      "state": "stopped",
       "current": null,
-      "message": "aportación investigador (T-073): sin RESULT",
-      "pid": 18680,
-      "heartbeat": "2026-10-18T10:30:32+02:00",
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
+      "heartbeat": "2026-10-18T10:48:26+02:00",
       "agent": "investigador",
       "started": "2026-10-18T10:30:02+02:00",
       "live": "live-T-073-investigador-20261018-103002.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
-      "contrib_agent": "investigador"
+      "contrib_agent": "investigador",
+      "enabled": true
     },
     "measure": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado",
-      "pid": 24828,
-      "heartbeat": "2026-10-18T10:30:02+02:00",
+      "message": "Runner parado (pid muerto)",
+      "pid": null,
+      "heartbeat": "2026-10-18T10:48:26+02:00",
       "agent": "tester",
       "started": "2026-10-17T16:30:02+02:00",
-      "live": "live-T-024-tester-20261017-163002.jsonl"
+      "live": "live-T-024-tester-20261017-163002.jsonl",
+      "enabled": true
     }
   }
 }
