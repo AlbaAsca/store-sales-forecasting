@@ -324,6 +324,38 @@ def kaggle_submit(tid: str):
     return {"ok": True}
 
 
+@app.post("/api/permissions/{tid}")
+async def permission_decision(tid: str, request: Request):
+    """Botones Conceder / Denegar de una «Solicitud de permiso»: lo apunta en permissions.json y libera la tarjeta que esperaba."""
+    body, bd = await request.json(), _bd()
+    decision = body.get("decision")
+    if decision not in ("grant", "deny"):
+        raise HTTPException(400, "decision debe ser grant o deny")
+    spec = importlib.util.spec_from_file_location("permissions", HERE / "permissions.py")
+    pm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pm)
+
+    def f(b):
+        t = bd.task(b, tid)
+        perm = t.get("perm")
+        if not perm or t["status"] == "done":
+            raise HTTPException(409, "Esta tarjeta no es una solicitud de permiso pendiente")
+        why = body.get("why") or ("concedido" if decision == "grant" else "denegado") + " por Alba desde el panel"
+        pm.record("allowed" if decision == "grant" else "denied", perm["pattern"], why, "Alba")
+        bd.set_status(b, t, "done", "tú", ("✓ Concedido: " if decision == "grant" else "✗ Denegado: ") + perm["pattern"])
+        try:
+            orig = bd.task(b, perm["task"])
+            bd.log(orig, "tú", ("✓ permiso concedido: " if decision == "grant" else "✗ permiso denegado (no lo intentes otra vez): ")
+                   + perm["pattern"])
+        except StopIteration:
+            pass
+    try:
+        bd.update(f)
+    except StopIteration:
+        raise HTTPException(404, "tarjeta no encontrada")
+    return {"ok": True}
+
+
 if __name__ == "__main__":
     import uvicorn
     ap = argparse.ArgumentParser()

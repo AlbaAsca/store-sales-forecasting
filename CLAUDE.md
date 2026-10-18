@@ -66,6 +66,11 @@ Estimaciones en **minutos de agente**. Calibración: investigación y variantes 
 ## Runner y permisos (Windows)
 Permitido: python (del .venv), git status/diff/log, lectura, `python scripts/new_variant.py`, Kaggle CLI solo lectura.
 Prohibido: cp/mv/rm, pip, comandos encadenados, git push, `kaggle competitions submit`/`download`, `kernels push`.
+**Protocolo de permisos** (`board/permissions.py`, registro en `board/permissions.json`): si a un agente le deniegan un comando,
+el runner lo clasifica: *seguro* (solo lectura en el proyecto) → se concede solo y la tarjeta se reintenta; *prohibido* (publicar,
+borrar, instalar, red, commits) → nunca, con el motivo anotado; *encadenado* (`&&`, `|`, heredoc, `VAR=x`) → se le explica cómo
+hacerlo; *a revisar* → tarjeta «Solicitud de permiso» con botones Conceder / Denegar, y la tarjeta original espera la decisión.
+El agente explica para qué lo necesita con una línea `PERMISO: <comando> — <para qué>`. A mano: `python board/permissions.py list|grant|deny`.
 Todos los scripts que imprimen fuerzan UTF-8 (`sys.stdout.reconfigure(encoding="utf-8")`): la consola es cp1252.
 
 ## Envíos a Kaggle

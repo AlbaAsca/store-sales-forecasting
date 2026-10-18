@@ -1,0 +1,24 @@
+{
+  "allowed": [
+    {
+      "pattern": "git show*",
+      "why": "seguro: lo pidió el tester en T-044 (ver diffs al verificar)",
+      "by": "consultor",
+      "at": "2026-10-18T11:11:49+02:00"
+    },
+    {
+      "pattern": "git tag --list*",
+      "why": "seguro: lo pidió el tester en T-058",
+      "by": "consultor",
+      "at": "2026-10-18T11:11:49+02:00"
+    }
+  ],
+  "denied": [
+    {
+      "pattern": "kaggle kernels*",
+      "why": "usa ../KaggleFarm/.venv/Scripts/kaggle.exe (la CLI sin ruta no existe en este PC)",
+      "by": "consultor",
+      "at": "2026-10-18T11:11:49+02:00"
+    }
+  ]
+}

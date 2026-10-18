@@ -120,7 +120,7 @@ dialog h3{margin:0;grid-column:1/-1;font-size:15px}
     <label class="full">Añadir nota <input name="note" placeholder="Opcional: queda en el historial"></label>
     <div class="facts" id="fFacts"></div>
     <div class="log" id="fLog"></div>
-    <div class="actions"><button type="button" id="fKaggle" hidden title="Sube el CSV de esta tarjeta, espera la nota de Kaggle y la apunta">⬆ Subir a Kaggle</button><span class="sp"></span><button value="cancel" formnovalidate>Cancelar</button><button class="primary" value="ok">Guardar</button></div>
+    <div class="actions"><button type="button" id="fGrant" hidden>✓ Conceder permiso</button><button type="button" id="fDeny" hidden>✗ Denegar</button><button type="button" id="fKaggle" hidden title="Sube el CSV de esta tarjeta, espera la nota de Kaggle y la apunta">⬆ Subir a Kaggle</button><span class="sp"></span><button value="cancel" formnovalidate>Cancelar</button><button class="primary" value="ok">Guardar</button></div>
   </form>
 </dialog>
 
@@ -297,6 +297,16 @@ function openTask(id) {
   for (const k of ["title", "owner", "status", "priority", "estimate_min", "desc", "manual"]) f[k].value = t[k] ?? "";
   f.deps.value = (t.deps || []).join(", "); f.note.value = "";
   $("#fDesc").innerHTML = renderDesc(t.desc);
+  const isPerm = !!(t.perm && t.status === "human");
+  for (const [id, decision, verb] of [["#fGrant", "grant", "Conceder"], ["#fDeny", "deny", "Denegar"]]) {
+    const btn = $(id);
+    btn.hidden = !isPerm;
+    btn.onclick = async () => {
+      if (!confirm(`${verb} «${t.perm.pattern}» al runner?\n\nLo pidió: ${t.perm.agent} (${t.perm.task})\nPara: ${t.perm.why || "(no lo explicó)"}`)) return;
+      $("#dlg").close("cancel");
+      await api("POST", "/api/permissions/" + t.id, { decision });
+    };
+  }
   const kb = $("#fKaggle");
   kb.hidden = !(t.upload && t.status === "human");
   kb.onclick = async () => {
