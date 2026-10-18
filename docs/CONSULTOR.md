@@ -41,3 +41,5 @@ en board/runner.py) y este CLAUDE.md más corto. Volver a medir con `runs[].toke
 - V-037: el holdout empeoraba (0,4051 → 0,4085) y Kaggle mejoró (0,38981 → 0,38839). El holdout acertó el sentido en 6 de 9
   versiones. Si una variante pasa las prácticas y la frena solo el holdout, se envía como experimento (OK de Alba, 18-oct) y se
   promueve con `promote.py V-xxx --lb <nota>` si Kaggle mejora. Repesca de V-022 por lo mismo: V-039 (T-103).
+- V-038 (Huber): mismo caso, pero Kaggle empeoró (0,38839 → 0,39098) y el holdout acertó (0,4085 → 0,4134). Balance del holdout:
+  7 de 10 aciertos. Sigue valiendo como alarma; el envío experimental es lo que decide.
