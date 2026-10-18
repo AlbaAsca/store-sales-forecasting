@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T12:01:29+02:00",
+  "updated": "2026-10-18T12:05:11+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4734,25 +4734,66 @@
       "id": "T-078",
       "title": "Promover V-031 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 10.0,
-      "actual_min": null,
+      "actual_min": 3.7,
       "auto": true,
       "manual": null,
       "desc": "Juntar tres historiales de distinta longitud sobre la base actual baja el error en las cuatro prácticas con dos semillas. Toca promoverla a base y preparar el envío.\n\nCómo sabremos si funciona: el examen final y el control sin tiendas cerradas no empeoran.\n\n## Técnico\nV-031 CV 0.3814 (s42) / 0.3815 (s7) vs base-v8 0.3829/0.3829; 4/4 folds mejor; c1 sin cerradas 0.3845 vs 0.3876; 430 s vs 130 s.",
       "deps": [],
       "created": "2026-10-18T12:01:22+02:00",
-      "updated": "2026-10-18T12:01:22+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T12:05:11+02:00",
+      "started_at": "2026-10-18T12:01:31+02:00",
+      "finished_at": "2026-10-18T12:05:11+02:00",
       "log": [
         {
           "t": "2026-10-18T12:01:22+02:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T12:01:31+02:00",
+          "by": "runner",
+          "msg": "promoción automática de V-031 (scripts/promote.py)"
+        },
+        {
+          "t": "2026-10-18T12:05:11+02:00",
+          "by": "consultor",
+          "msg": "Promovida automáticamente: V-031 → base-v9: prácticas (V-031): 0.3829 → 0.3814, empeora 0 fold(s); prácticas (V-031-s7): 0.3829 → 0.3815, empeora 0 fold(s); examen final: 0.4073 → 0.4051; control sin cerradas: 0.3876 → 0.3845; test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.019, familia 0.027)"
         }
       ]
+    },
+    {
+      "id": "T-079",
+      "title": "Subir v0.9 (base-v9) a Kaggle y apuntar la puntuación",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "alta",
+      "estimate_min": 3,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Pulsa «Subir a Kaggle» en esta tarjeta: sube el CSV, espera la nota y la apunta sola.",
+      "desc": "La comprobación automática ha preparado una nueva base: mejora en las prácticas y no empeora el examen final, el control ni ninguna tienda del test. Toca subirla y ver qué dice Kaggle.\n\n## Técnico\n- prácticas (V-031): 0.3829 → 0.3814, empeora 0 fold(s)\n- prácticas (V-031-s7): 0.3829 → 0.3815, empeora 0 fold(s)\n- examen final: 0.4073 → 0.4051\n- control sin cerradas: 0.3876 → 0.3845\n- test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.019, familia 0.027)\n- CSV: dist/submission-base-v9.csv",
+      "deps": [],
+      "created": "2026-10-18T12:05:11+02:00",
+      "updated": "2026-10-18T12:05:11+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T12:05:11+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ],
+      "upload": {
+        "csv": "dist/submission-base-v9.csv",
+        "message": "v0.9 · base-v9 (V-031) · backtest 0.3814 · holdout 0.4051",
+        "tag": "v0.9",
+        "base": "base-v9",
+        "variant": "V-031"
+      }
     }
   ],
   "runners": {
@@ -4771,12 +4812,12 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-076",
-      "message": "tester con T-076",
+      "current": "T-078",
+      "message": "promoción automática de V-031",
       "pid": 18768,
-      "heartbeat": "2026-10-18T11:42:39+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T11:42:39+02:00",
+      "heartbeat": "2026-10-18T12:01:31+02:00",
+      "agent": "consultor",
+      "started": "2026-10-18T12:01:31+02:00",
       "live": "live-T-076-tester-20261018-114239.jsonl",
       "enabled": true
     }
