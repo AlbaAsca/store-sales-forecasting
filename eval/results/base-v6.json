@@ -237,5 +237,7 @@
     52
    ]
   }
- ]
+ ],
+ "active": false,
+ "note": "retirada: empeoró en Kaggle (v0.6 0.40871)"
 }

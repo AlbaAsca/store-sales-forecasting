@@ -70,6 +70,11 @@ Todos los scripts que imprimen fuerzan UTF-8 (`sys.stdout.reconfigure(encoding="
 ## Envíos a Kaggle
 `python scripts/make_submission.py --src models/base --name base-vX` → `dist/`. Tag `vX.Y` antes de subir; el mensaje incluye el tag
 y el RMSLE de backtest y holdout. Subir es tarea `--manual` para Alba. Los agentes nunca envían.
+**Automático** (petición de Alba, 18-oct): cuando el tester acepta una variante crea la tarjeta «Promover V-xxx…» para el
+consultor, y el runner ejecuta `scripts/promote.py V-xxx` sin agente: prácticas con todas las semillas, examen final, control sin
+cerradas y que ninguna tienda o familia del test cambie de golpe frente a la base. Si pasa, promueve a base-vN, genera el CSV, pone
+los tags y deja la tarjeta «Subir v0.N» para Alba; si no, la tarjeta queda bloqueada con los motivos. Una base retirada tras Kaggle
+se marca `"active": false` en eval/results/base-vN.json.
 **Quién lo decide: el consultor, por iniciativa propia** (petición de Alba, 17-oct). En cuanto haya una variante aceptada, el consultor
 sin esperar a que se lo pidan: la promueve a base, mide holdout y control sin tiendas cerradas, genera el CSV, pone los tags y crea la
 tarjeta `--manual` de subida con el mensaje exacto. También puede proponer un envío experimental de una variante rechazada por poco

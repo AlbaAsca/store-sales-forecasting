@@ -174,6 +174,42 @@ def pick(b, lane="all"):
     return None, None
 
 
+PROMOTE_RE = re.compile(r"^Promover (V-\d{3}[A-Za-z0-9-]*)\b")
+
+
+def promotion_cards(b):
+    """Tarjetas «Promover V-xxx…» del consultor que el tester deja al aceptar una variante."""
+    return [t for t in b["tasks"] if t["owner"] == "consultor" and t["status"] in ("backlog", "next")
+            and PROMOTE_RE.match(t["title"])]
+
+
+def auto_promote(o):
+    """Promoción automática (scripts/promote.py): sin agente ni tokens. Devuelve True si ha procesado alguna tarjeta."""
+    if LANE == "think" or not (ROOT / "scripts" / "promote.py").exists():
+        return False
+    cards = promotion_cards(bd.load())
+    if not cards:
+        return False
+    t = cards[0]
+    v = PROMOTE_RE.match(t["title"]).group(1)
+    print(f"\n[{now()[11:19]}] {t['id']} · promoción automática de {v}")
+    if o.dry_run:
+        return True
+    bd.update(lambda b: bd.set_status(b, bd.task(b, t["id"]), "doing", "runner", f"promoción automática de {v} (scripts/promote.py)"))
+    set_runner(state="working", current=t["id"], agent="consultor", started=now(), message=f"promoción automática de {v}")
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "promote.py"), v, "--card", t["id"]], cwd=ROOT,
+                       capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=1800,
+                       env={**os.environ, "PYTHONUTF8": "1"})
+    (LOGDIR / f"{t['id']}-promote-{datetime.now():%Y%m%d-%H%M%S}.txt").write_text(r.stdout + "\n--- stderr ---\n" + r.stderr, encoding="utf-8")
+    if r.returncode not in (0, 2):  # 0 promovida, 2 no pasa las comprobaciones; otro código = error del script
+        bd.update(lambda b: bd.set_status(b, bd.task(b, t["id"]), "blocked", "runner",
+                                          f"La promoción automática falló (código {r.returncode}); ver board/runs/. {r.stderr[-300:]}"))
+    git("push", "-q", "--follow-tags")
+    set_runner(state="idle", current=None, message=f"promoción automática de {v}: {'hecha' if r.returncode == 0 else 'no pasa'}")
+    print("  → " + (r.stdout.strip().splitlines() or ["(sin salida)"])[-1])
+    return True
+
+
 def build_prompt(t, mode, agent):
     hist = "\n".join(f"- {l['t'][:16]} {l['by']}: {l['msg']}" for l in t.get("log", [])[-8:])
     if mode == "verify":
@@ -403,7 +439,7 @@ def contribute(o):
     set_runner(contrib_at=now(), contrib_agent=agent, state="idle", current=None,
                message=f"aportación {agent} ({tid}): {summary}")
     commit_own(before, f"chore(runner): contribution round by {agent}")
-    git("push", "-q")
+    git("push", "-q", "--follow-tags")
     print(f"  → {summary}")
     return True
 
@@ -461,6 +497,10 @@ def main():
                     break
                 time.sleep(5)
                 continue
+            if auto_promote(o):  # antes que nada: preparar la base y el envío si el tester aceptó una variante
+                if o.once or o.dry_run:
+                    break
+                continue
             b = bd.load()
             t, mode = pick(b, LANE)
             if not t:
@@ -503,7 +543,7 @@ def main():
                             a.update(status="idle", current=None)
                 bd.update(free)
             commit_own(before, f"chore(runner): {tid} {verdict} by {agent}")
-            git("push", "-q")  # sincroniza con GitHub (lo hace el runner, nunca el agente)
+            git("push", "-q", "--follow-tags")  # sincroniza con GitHub (lo hace el runner, nunca el agente)
             print(f"  → {new} en {r['secs'] / 60:.1f} min · {summary}")
 
             if verdict == "limit":  # sin fallo contado; parar hasta el reset (la ejecución programada reintenta)
