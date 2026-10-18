@@ -193,6 +193,9 @@ Qué: … · Pasó: … · Por qué: …
 - **Estacionalidad**: patrón que se repite (semana, mes, año).
 - **Función de pérdida**: la regla con la que el modelo puntúa sus errores mientras aprende (L2 = error² ; tweedie = pensada para datos con muchos ceros y colas largas). Conviene que case con la métrica final: L2 sobre log1p(ventas) es exactamente RMSLE, así que optimiza lo que se evalúa; tweedie sobre ventas crudas optimiza otra cosa (V-007 lo pone a prueba).
 
+## V-034: reconciliación jerárquica (que tienda, familia y total cuadren) — ❌ RECHAZADA (0.3852 vs 0.3814, semilla 42; 0.3849 vs 0.3815, semilla 7)
+Se predicen todos los niveles (total, tienda, familia, tienda×familia) y se ajustan a la vez por mínimos cuadrados ponderados para que sumen lo mismo. Empeora las 4 prácticas en las dos semillas (+0.004 de media) y tarda un 5 % más. Por qué: la suma ajustada arrastra el error de los niveles grandes hacia familias como lácteos o productos frescos (+0.02 a +0.04), y las familias pequeñas no ganan lo suficiente para compensarlo. Reconciliar ayuda cuando los niveles predicen peor por separado; aquí el modelo ya usa esa información.
+
 ## V-033: banda de incertidumbre (cuantiles 10/50/90) — ❌ RECHAZADA como base (la banda sí cubre)
 Se añaden tres modelos que predicen el percentil 10, 50 y 90 de la venta, y con ellos una banda «entre X e Y». La previsión principal no cambia (RMSLE 0.3814, igual que base-v9). La banda acierta: cubre el 78-81 % de los días en los 4 folds y con dos semillas, dentro del objetivo 0.75-0.85. Pero la mediana sola empeora (0.391 de media frente a 0.383 de base-v8), así que no se promueve: sirve como información extra, no como envío. Tarda ×1.6 (429 → 688 s).
 

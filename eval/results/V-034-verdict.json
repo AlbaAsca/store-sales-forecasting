@@ -1,0 +1,143 @@
+{
+ "accepted": false,
+ "rows": [
+  {
+   "run": "V-034",
+   "base": 0.3814,
+   "variant": 0.3852,
+   "delta": 0.0038,
+   "worse_folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3877,
+     0.3903
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3753
+    ],
+    [
+     "f3",
+     0.3775,
+     0.3809
+    ],
+    [
+     "f4",
+     0.3874,
+     0.3941
+    ]
+   ],
+   "families_best": [
+    [
+     "BOOKS",
+     -0.003
+    ],
+    [
+     "HOME AND KITCHEN II",
+     -0.002
+    ],
+    [
+     "LINGERIE",
+     -0.0
+    ]
+   ],
+   "families_worst": [
+    [
+     "DAIRY",
+     0.027
+    ],
+    [
+     "PRODUCE",
+     0.024
+    ],
+    [
+     "HOME AND KITCHEN I",
+     0.019
+    ]
+   ]
+  },
+  {
+   "run": "V-034-s7",
+   "base": 0.3815,
+   "variant": 0.3849,
+   "delta": 0.0034,
+   "worse_folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3903
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3751
+    ],
+    [
+     "f3",
+     0.3778,
+     0.3808
+    ],
+    [
+     "f4",
+     0.3876,
+     0.3936
+    ]
+   ],
+   "families_best": [
+    [
+     "BOOKS",
+     -0.004
+    ],
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     -0.003
+    ],
+    [
+     "HOME AND KITCHEN II",
+     -0.003
+    ]
+   ],
+   "families_worst": [
+    [
+     "PRODUCE",
+     0.043
+    ],
+    [
+     "DAIRY",
+     0.022
+    ],
+    [
+     "HOME AND KITCHEN I",
+     0.017
+    ]
+   ]
+  }
+ ],
+ "why": [
+  "V-034: media 0.3814 → 0.3852, empeora 4 fold(s)",
+  "V-034-s7: media 0.3815 → 0.3849, empeora 4 fold(s)"
+ ],
+ "variant": "V-034",
+ "base": "base-v9",
+ "control_open": {
+  "base": 0.3845427275062961,
+  "variant": 0.38566631760371556
+ },
+ "secs": {
+  "base": 428.6,
+  "variant": 448.4
+ }
+}

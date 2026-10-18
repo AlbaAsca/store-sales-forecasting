@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T13:10:52+02:00",
+  "updated": "2026-10-18T13:29:35+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5062,7 +5062,7 @@
       "id": "T-081",
       "title": "V-034: que tiendas, familias y total cuadren (reconciliación jerárquica)",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 45.0,
       "actual_min": 5.2,
@@ -5071,7 +5071,7 @@
       "desc": "Predecimos cada tienda×familia por separado y nada obliga a que la suma coincida con lo que predeciríamos para la tienda entera o para todo el país. Reconciliar ajusta todos los niveles a la vez para que cuadren y, a veces, mejora las series pequeñas al tomar información de los niveles agregados.\n\nCómo sabremos si funciona: la RMSLE de las prácticas baja con dos semillas, sobre todo en las familias con pocas ventas, sin empeorar más de una práctica.\n\n## Técnico\n- Fuente: docs/LECTURAS.md (MinT, Wickramasuriya, Athanasopoulos y Hyndman 2019; hierarchicalforecast de Nixtla).\n- Jerarquía: total → tienda (54) → tienda×familia (1782); opcional familia (33).\n- Cambio: predecir cada nivel con el mismo LightGBM (agregando ventas) y reconciliar con MinT (shrink) implementado con numpy, sin instalar paquetes; reconciliar en escala original y volver a log para la métrica.\n- Criterio: RMSLE medio < base-v8 con semillas 42 y 7, ≤ 1 fold peor; anotar RMSLE de las 10 familias con menos ventas.",
       "deps": [],
       "created": "2026-10-18T12:07:18+02:00",
-      "updated": "2026-10-18T13:09:58+02:00",
+      "updated": "2026-10-18T13:29:35+02:00",
       "started_at": "2026-10-18T13:04:44+02:00",
       "finished_at": "2026-10-18T13:09:58+02:00",
       "log": [
@@ -5099,6 +5099,26 @@
           "t": "2026-10-18T13:09:58+02:00",
           "by": "runner",
           "msg": "✗ «python - <<'E' import re p='variants/V-034/model.py' s=open(p,encoding='utf-8').read() i=s»: varios comandos, tuberías, redirecciones o heredoc: lanza cada comando por separado y crea ficheros con Write/Edit"
+        },
+        {
+          "t": "2026-10-18T13:10:56+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T13:28:42+02:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: RECHAZADA (V-034: media 0.3814 → 0.3852, empeora 4 fold(s); V-034-s7: media 0.3815 → 0.3849, empeora 4 fold(s))"
+        },
+        {
+          "t": "2026-10-18T13:29:30+02:00",
+          "by": "tester",
+          "msg": "V-034 RECHAZADA: CV semilla 42 0.3852 (base-v9 0.3814), semilla 7 0.3849 (0.3815); empeora 4/4 folds en ambas; control sin cerradas 0.3857 (0.3845); tiempo 428 s -> 448 s. Peores familias: DAIRY +0.027, PRODUCE +0.024/+0.043. Mejoran BOOKS -0.003/-0.004. Revisión: un solo cambio, sin fuga (aumento y reconciliación solo con historial y predicciones). Tests 71 OK."
+        },
+        {
+          "t": "2026-10-18T13:29:35+02:00",
+          "by": "tester",
+          "msg": "DONE: V-034 rechazada: empeora 4/4 folds en ambas semillas (+0.004 de media), sin fugas ni bugs."
         }
       ],
       "runs": [
@@ -5111,8 +5131,19 @@
           "tokens": 162601,
           "cost_usd": 0.15159080000000003,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T13:29:35+02:00",
+          "min": 0.9,
+          "turns": 11,
+          "tokens": 130392,
+          "cost_usd": 0.00603551,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T13:10:56+02:00"
     },
     {
       "id": "T-082",
@@ -5298,14 +5329,15 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-075",
-      "message": "tester con T-075",
+      "current": "T-081",
+      "message": "verificación mecánica de V-034: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 18932,
-      "heartbeat": "2026-10-18T13:10:01+02:00",
+      "heartbeat": "2026-10-18T13:28:42+02:00",
       "agent": "tester",
-      "started": "2026-10-18T13:10:01+02:00",
-      "live": "live-T-075-tester-20261018-131001.jsonl",
-      "enabled": true
+      "started": "2026-10-18T13:10:56+02:00",
+      "live": "live-T-081-tester-20261018-132842.jsonl",
+      "enabled": true,
+      "mechanical": false
     }
   }
 }
