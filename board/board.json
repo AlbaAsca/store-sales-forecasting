@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T15:04:01+02:00",
+  "updated": "2026-10-18T15:24:57+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5638,7 +5638,7 @@
       "id": "T-093",
       "title": "V-035: el año anterior solo como forma, no como nivel",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 45.0,
       "actual_min": 2.5,
@@ -5647,7 +5647,7 @@
       "desc": "Una de las familias de producto (GROCERY II) se predice siempre por debajo de lo real: este año vende más que nunca y el modelo se fija en cuánto vendía hace un año, que era menos. Probamos a quitarle ese dato de nivel y dejarle solo el de cuánto subió o bajó el año pasado en esas fechas.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la familia deja de quedarse corta y la quincena de control de la vuelta al cole no empeora.\n\n## Técnico\nFuente: docs/BRAINSTORM-v10.md (E1, apoyada por modelador 5 y N1). Cambio único: quitar ly_day y ly_win de los rasgos del directo y del recursivo en variants/V-035/model.py (l. 82-83 y 116-123 de la base); mantener ly_diff. Ganancia esperada -0.0005…-0.0015. Criterio por defecto (RMSLE medio < 0.3814/0.3815 con semillas 42 y 7, máx. 1 de 4 folds peor) y además c1 sin cerradas (0.3845) y SCHOOL en c1 (0.52) no peor en más de 0.002. Mirar sesgo de GROCERY II. Si gana, aparcar el objetivo relativo y linear_tree.",
       "deps": [],
       "created": "2026-10-18T14:48:46+02:00",
-      "updated": "2026-10-18T15:04:01+02:00",
+      "updated": "2026-10-18T15:24:57+02:00",
       "started_at": "2026-10-18T15:01:29+02:00",
       "finished_at": "2026-10-18T15:04:01+02:00",
       "log": [
@@ -5665,6 +5665,26 @@
           "t": "2026-10-18T15:04:01+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-035 lista (se quitan ly_day y ly_win, se mantiene ly_diff); prueba rápida 0.3868, tests en verde, falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-18T15:04:03+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T15:24:11+02:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: RECHAZADA (V-035: media 0.3814 → 0.3820, empeora 2 fold(s); V-035-s7: media 0.3815 → 0.3819, empeora 2 fold(s))"
+        },
+        {
+          "t": "2026-10-18T15:24:54+02:00",
+          "by": "tester",
+          "msg": "V-035 RECHAZADA: media 0.3820 (base 0.3814) con semilla 42 y 0.3819 (base 0.3815) con semilla 7; peor en folds f3 y f4 en ambas; control agosto 0.3853 (base 0.3845). GROCERY II mejora -0.004 pero GROCERY I empeora +0.011, PERSONAL CARE +0.007, PRODUCE +0.007. Tiempo 429→478 s."
+        },
+        {
+          "t": "2026-10-18T15:24:57+02:00",
+          "by": "tester",
+          "msg": "DONE: V-035 RECHAZADA: media 0.3820 frente a base 0.3814 (semilla 42) y 0.3819 frente a 0.3815 (semilla 7), empeora 2 de 4 folds; el nivel del año anterior sí aporta."
         }
       ],
       "runs": [
@@ -5677,8 +5697,19 @@
           "tokens": 95198,
           "cost_usd": 0.08702019999999999,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T15:24:57+02:00",
+          "min": 0.8,
+          "turns": 11,
+          "tokens": 125618,
+          "cost_usd": 0.00680586,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T15:04:03+02:00"
     },
     {
       "id": "T-094",
@@ -5830,12 +5861,12 @@
     "measure": {
       "state": "working",
       "current": "T-093",
-      "message": "desarrollador con T-093",
+      "message": "verificación mecánica de V-035: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 8496,
-      "heartbeat": "2026-10-18T15:01:29+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-18T15:01:29+02:00",
-      "live": "live-T-093-desarrollador-20261018-150129.jsonl",
+      "heartbeat": "2026-10-18T15:24:11+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T15:04:03+02:00",
+      "live": "live-T-093-tester-20261018-152411.jsonl",
       "enabled": true,
       "mechanical": false
     }

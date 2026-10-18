@@ -193,6 +193,9 @@ Qué: … · Pasó: … · Por qué: …
 - **Estacionalidad**: patrón que se repite (semana, mes, año).
 - **Función de pérdida**: la regla con la que el modelo puntúa sus errores mientras aprende (L2 = error² ; tweedie = pensada para datos con muchos ceros y colas largas). Conviene que case con la métrica final: L2 sobre log1p(ventas) es exactamente RMSLE, así que optimiza lo que se evalúa; tweedie sobre ventas crudas optimiza otra cosa (V-007 lo pone a prueba).
 
+## V-035: el año anterior solo como forma, no como nivel — ❌ RECHAZADA (0.3820 vs 0.3814, semilla 42; 0.3819 vs 0.3815, semilla 7)
+Se quitan las dos variables que dicen «cuánto se vendía hace un año» (el nivel) y se deja solo «cuánto subió o bajó» (la forma, ly_diff). GROCERY II mejora (−0.004), pero GROCERY I empeora (+0.011) y empeoran también PERSONAL CARE y PRODUCE; empeora 2 de 4 folds en ambas semillas y la quincena de control (0.3853 vs 0.3845) también. Por qué: el nivel del año pasado sí informa del tamaño de la familia en cada tienda; quitarlo corrige a una familia a costa de otras que se parecen. Tarda un 11 % más (429 → 478 s).
+
 ## V-034: reconciliación jerárquica (que tienda, familia y total cuadren) — ❌ RECHAZADA (0.3852 vs 0.3814, semilla 42; 0.3849 vs 0.3815, semilla 7)
 Se predicen todos los niveles (total, tienda, familia, tienda×familia) y se ajustan a la vez por mínimos cuadrados ponderados para que sumen lo mismo. Empeora las 4 prácticas en las dos semillas (+0.004 de media) y tarda un 5 % más. Por qué: la suma ajustada arrastra el error de los niveles grandes hacia familias como lácteos o productos frescos (+0.02 a +0.04), y las familias pequeñas no ganan lo suficiente para compensarlo. Reconciliar ayuda cuando los niveles predicen peor por separado; aquí el modelo ya usa esa información.
 
