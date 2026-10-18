@@ -64,6 +64,11 @@ def _features(M, P, origin, dow0, n_series):
     feats["promo_day"] = pday
     feats["promo_sum14"] = np.repeat(psum, HORIZON, 1)
     feats["promo_ratio"] = pday / (pmean + 1.0)
+    feats["promo_fut16"] = np.repeat(pday.sum(1, keepdims=True), HORIZON, 1)
+    feats["promo_prev_day"] = P[:, origin - 1:origin + HORIZON - 1]
+    nxt = np.full((n_series, HORIZON), np.nan)
+    nxt[:, :HORIZON - 1] = P[:, origin + 1:origin + HORIZON]
+    feats["promo_next_day"] = nxt
     # estacionalidad anual (retardo 364): indices con relleno NaN a la izquierda
     Mp = np.concatenate([np.full((n_series, PAD), np.nan), M], axis=1)
     c = origin + PAD - LAG
@@ -102,6 +107,9 @@ def _step_feats(Mx, P, dow_all, c, store, fam):
     f["promo_day"] = pd_
     f["promo_sum14"] = psum
     f["promo_ratio"] = pd_ / (psum / 14.0 + 1.0)
+    f["promo_fut16"] = P[:, c:c + HORIZON].sum(1)
+    f["promo_prev_day"] = P[:, c - 1]
+    f["promo_next_day"] = P[:, c + 1] if c + 1 < P.shape[1] else np.full(n, np.nan)
     # estacionalidad anual (hace 364 d); NaN si no hay historia
     def col(j):
         return Mx[:, j] if j >= 0 else np.full(n, np.nan)
