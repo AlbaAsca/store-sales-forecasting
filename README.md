@@ -198,6 +198,7 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
 | V-018 · entrenar también con el mismo periodo del año anterior | mejora todo lo local (0.3839, examen final 0.4148) pero **empeora en Kaggle** (0.40871) | en agosto de 2016 las tiendas 18 y 25 cerraron; el modelo copió ese hundimiento al test de 2017. Limpia de cierres (V-025) sí entró |
 | V-025 · año anterior sin copiar sus cierres | prácticas 0.3841 / 0.3839 (base 0.3852), mejora 4/4 folds; tiendas 18 y 25 ya no se hunden en el test | quita los cierres de 2016 de los ejemplos del año anterior |
 | V-027 · promociones de los días vecinos y de las 2 semanas siguientes | prácticas 0.3829 / 0.3829 (base-v7 0.3838 / 0.3836), mejora 4/4 folds; tarda 78 s → 130 s | una promoción mueve las compras de los días de alrededor |
+| V-028 · nivel reciente de la tienda entera y de la familia en todo el país (rechazada) | prácticas 0.3845 / 0.3848 (base-v7 0.3838 / 0.3836), peor en 3/4 folds; tarda 78 s → 205 s | el nivel de la tienda y de la familia ayudaría a series ruidosas |
 | V-020 · repartir distinto las dos formas de predecir según el producto | igual o peor (0.3856) | el reparto a medias ya era el bueno |
 | V-021 · media de varias copias del modelo (repesca de V-010) | empata (0.3851) y tarda 4 veces más | más copias del mismo modelo no aportan información |
 | V-022 · decirle qué series se venden a ratos (repesca de V-015) | mejora un poco las prácticas (0.3850) pero empeora el examen final (0.4204) | no compensa |
