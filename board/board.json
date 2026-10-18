@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:36:17+02:00",
+  "updated": "2026-10-18T14:40:46+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5445,18 +5445,140 @@
           "verdict": "done"
         }
       ]
+    },
+    {
+      "id": "T-089",
+      "title": "Brainstorm v10 (1/3): qué hacen las soluciones top que nosotros no",
+      "owner": "modelador",
+      "status": "done",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": 1.7,
+      "auto": true,
+      "manual": null,
+      "desc": "Primera ronda del brainstorming para la próxima versión. El modelador compara nuestra base con el código de soluciones públicas de referencia y busca lo que nos falta.\n\nCómo sabremos si funciona: al final hay 3-5 variantes V-xxx priorizadas, cada una con hipótesis, ganancia esperada y criterio, y ninguna repite una ya rechazada.\n\n## Técnico\nEscribe SOLO tu sección en docs/BRAINSTORM-v10.md (crea el fichero si no existe, con cabecera '# Brainstorming para base-v10'). Base vigente: models/base (base-v9). Antes de proponer, lee docs/APRENDIZAJES.md y la tabla de experimentos del README para no repetir variantes rechazadas. Cada idea: título, hipótesis, cambio concreto (un solo cambio), ganancia esperada en RMSLE, coste en minutos y riesgo (fugas, holdout, tiendas cerradas). Máx. 5 ideas. No crees tarjetas V-xxx: eso lo hace la síntesis.",
+      "deps": [],
+      "created": "2026-10-18T14:38:23+02:00",
+      "updated": "2026-10-18T14:40:46+02:00",
+      "started_at": "2026-10-18T14:39:03+02:00",
+      "finished_at": "2026-10-18T14:40:46+02:00",
+      "log": [
+        {
+          "t": "2026-10-18T14:38:23+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:39:03+02:00",
+          "by": "runner",
+          "msg": "empieza modelador"
+        },
+        {
+          "t": "2026-10-18T14:40:46+02:00",
+          "by": "modelador",
+          "msg": "DONE: sección del modelador escrita en docs/BRAINSTORM-v10.md con 5 ideas priorizadas, sin repetir variantes rechazadas."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "modelador",
+          "mode": "work",
+          "at": "2026-10-18T14:40:46+02:00",
+          "min": 1.7,
+          "turns": 13,
+          "tokens": 306316,
+          "cost_usd": 0.6783094,
+          "verdict": "done"
+        }
+      ]
+    },
+    {
+      "id": "T-090",
+      "title": "Brainstorm v10 (2/3): dónde falla más la base-v9",
+      "owner": "experto",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Primera ronda del brainstorming. El analista de errores mira dónde se equivoca la base-v9 (tiendas, familias, días, festivos) y propone qué atacar primero.\n\nCómo sabremos si funciona: al final hay 3-5 variantes V-xxx priorizadas, cada una con hipótesis, ganancia esperada y criterio, y ninguna repite una ya rechazada.\n\n## Técnico\nEscribe SOLO tu sección en docs/BRAINSTORM-v10.md (crea el fichero si no existe, con cabecera '# Brainstorming para base-v10'). Base vigente: models/base (base-v9). Antes de proponer, lee docs/APRENDIZAJES.md y la tabla de experimentos del README para no repetir variantes rechazadas. Cada idea: título, hipótesis, cambio concreto (un solo cambio), ganancia esperada en RMSLE, coste en minutos y riesgo (fugas, holdout, tiendas cerradas). Máx. 5 ideas. No crees tarjetas V-xxx: eso lo hace la síntesis.\nUsa eval/results/base-v9*.json (by_family, por fold) y, si existen, las predicciones del backtest.",
+      "deps": [],
+      "created": "2026-10-18T14:38:23+02:00",
+      "updated": "2026-10-18T14:38:23+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:38:23+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-091",
+      "title": "Brainstorm v10 (3/3): técnicas de forecasting que no hemos probado",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Primera ronda del brainstorming. El investigador busca técnicas (papers, M5, discusiones de Kaggle) que no hayamos probado y encajen con un LightGBM global.\n\nCómo sabremos si funciona: al final hay 3-5 variantes V-xxx priorizadas, cada una con hipótesis, ganancia esperada y criterio, y ninguna repite una ya rechazada.\n\n## Técnico\nEscribe SOLO tu sección en docs/BRAINSTORM-v10.md (crea el fichero si no existe, con cabecera '# Brainstorming para base-v10'). Base vigente: models/base (base-v9). Antes de proponer, lee docs/APRENDIZAJES.md y la tabla de experimentos del README para no repetir variantes rechazadas. Cada idea: título, hipótesis, cambio concreto (un solo cambio), ganancia esperada en RMSLE, coste en minutos y riesgo (fugas, holdout, tiendas cerradas). Máx. 5 ideas. No crees tarjetas V-xxx: eso lo hace la síntesis.\nApóyate en docs/LECTURAS.md.",
+      "deps": [],
+      "created": "2026-10-18T14:38:23+02:00",
+      "updated": "2026-10-18T14:38:23+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:38:23+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-092",
+      "title": "Brainstorm v10: síntesis y tarjetas V-xxx",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Segunda ronda: juntar las tres propuestas (modelador, analista e investigador), cruzarlas y quedarse con las mejores para la próxima versión.\n\nCómo sabremos si funciona: hay 3-5 tarjetas V-xxx nuevas para el desarrollador, ordenadas por ganancia esperada / coste, y una tabla de decisión en docs/BRAINSTORM-v10.md.\n\n## Técnico\nLee docs/BRAINSTORM-v10.md entero. Añade la sección '## Síntesis': ideas que coinciden entre roles (pesan más), contradicciones y cómo se resuelven, descartes con motivo, y una tabla priorizada (idea, quién la propuso, ganancia esperada, coste, riesgo). Crea con board.py add las 3-5 primeras como 'V-0xx: <frase>' (siguiente número libre; mira variants/ y el panel), owner desarrollador, con hipótesis, cambio y criterio por defecto. Si dos ideas son compatibles y pequeñas, propón también probarlas juntas tras medirlas por separado.",
+      "deps": [
+        "T-089",
+        "T-090",
+        "T-091"
+      ],
+      "created": "2026-10-18T14:38:31+02:00",
+      "updated": "2026-10-18T14:38:31+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:38:31+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-088",
-      "message": "arquitecto con T-088",
-      "pid": 4564,
-      "heartbeat": "2026-10-18T14:35:58+02:00",
-      "agent": "arquitecto",
-      "started": "2026-10-18T14:35:58+02:00",
-      "live": "live-T-088-arquitecto-20261018-143558.jsonl",
+      "current": "T-089",
+      "message": "modelador con T-089",
+      "pid": 17880,
+      "heartbeat": "2026-10-18T14:39:03+02:00",
+      "agent": "modelador",
+      "started": "2026-10-18T14:39:03+02:00",
+      "live": "live-T-089-modelador-20261018-143903.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
@@ -5465,8 +5587,8 @@
       "state": "stopped",
       "current": null,
       "message": "Runner parado",
-      "pid": 22804,
-      "heartbeat": "2026-10-18T14:34:08+02:00",
+      "pid": 6920,
+      "heartbeat": "2026-10-18T14:39:02+02:00",
       "agent": "tester",
       "started": "2026-10-18T13:10:56+02:00",
       "live": "live-T-081-tester-20261018-132842.jsonl",
