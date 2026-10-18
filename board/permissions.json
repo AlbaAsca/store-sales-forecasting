@@ -29,6 +29,12 @@
       "why": "concedido por Alba desde el panel",
       "by": "Alba",
       "at": "2026-10-18T13:07:25+02:00"
+    },
+    {
+      "pattern": ".venv\\Scripts\\python.exe -m pytest*",
+      "why": "concedido automáticamente a tester (T-075): solo lectura dentro del proyecto",
+      "by": "runner",
+      "at": "2026-10-18T13:10:52+02:00"
     }
   ],
   "denied": [
