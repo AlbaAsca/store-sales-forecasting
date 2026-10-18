@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T17:21:08+02:00",
+  "updated": "2026-10-18T17:21:49+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6275,7 +6275,7 @@
       "id": "T-101",
       "title": "Enlazar las gráficas antes/después en el README y dejar fuera del repo la caché de predicciones",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 15.0,
       "actual_min": 0.2,
@@ -6284,7 +6284,7 @@
       "desc": "Las gráficas de cada teoría ya existen, pero el README todavía no las muestra y la caché de predicciones (eval/tmp, unos 3,5 MB binarios) está en git. Idea: enlazar cada imagen en su sección del README y dejar la caché fuera de git.\n\nCómo sabremos si funciona: el README muestra las nueve gráficas y eval/tmp no aparece en git status tras regenerarlas.\n\n## Técnico\nAñadir docs/img/teorias/base-vN.png al README (tabla o sección por base). Añadir eval/tmp/ a .gitignore y git rm --cached de eval/tmp (lo hace el runner). Nota: scripts/make_theory_figures.py elige la serie con mayor bajada de error (~1.500 series), así que la gráfica es la mejor caso, no la típica; añadir un pie que lo diga.",
       "deps": [],
       "created": "2026-10-18T16:07:07+02:00",
-      "updated": "2026-10-18T17:21:08+02:00",
+      "updated": "2026-10-18T17:21:49+02:00",
       "started_at": "2026-10-18T17:20:56+02:00",
       "finished_at": "2026-10-18T17:21:08+02:00",
       "log": [
@@ -6302,6 +6302,21 @@
           "t": "2026-10-18T17:21:08+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: README con las nueve gráficas y un pie de «mejor caso»; `eval/tmp/` en `.gitignore`; falta que el runner ejecute `git rm --cached -r eval/tmp`."
+        },
+        {
+          "t": "2026-10-18T17:21:11+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T17:21:46+02:00",
+          "by": "tester",
+          "msg": "Revisado: README enlaza las 9 gráficas con pie de «mejor caso»; eval/tmp/ en .gitignore. Tests nuevos en tests/test_figures.py; suite 76/76 verde. Pendiente: git rm --cached -r eval/tmp (runner) — hoy siguen 18 ficheros rastreados."
+        },
+        {
+          "t": "2026-10-18T17:21:49+02:00",
+          "by": "tester",
+          "msg": "DONE: README con las nueve gráficas y pie de mejor caso, `eval/tmp/` ignorado y tests verdes; falta solo el `git rm --cached` del runner."
         }
       ],
       "runs": [
@@ -6314,8 +6329,19 @@
           "tokens": 58995,
           "cost_usd": 0.0599519,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T17:21:49+02:00",
+          "min": 0.6,
+          "turns": 17,
+          "tokens": 146162,
+          "cost_usd": 0.00575041,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T17:21:11+02:00"
     },
     {
       "id": "T-102",
@@ -6483,12 +6509,12 @@
     "measure": {
       "state": "working",
       "current": "T-101",
-      "message": "desarrollador con T-101",
+      "message": "tester con T-101",
       "pid": 22808,
-      "heartbeat": "2026-10-18T17:20:56+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-18T17:20:56+02:00",
-      "live": "live-T-101-desarrollador-20261018-172056.jsonl",
+      "heartbeat": "2026-10-18T17:21:11+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T17:21:11+02:00",
+      "live": "live-T-101-tester-20261018-172111.jsonl",
       "enabled": true,
       "mechanical": false
     }
