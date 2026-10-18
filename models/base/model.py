@@ -100,7 +100,7 @@ def _step_feats(Mx, P, dow_all, c, store, fam):
         f[f"m{w}"] = Mx[:, c - w:c].mean(1)
     m56 = Mx[:, c - PROFILE_DAYS:c].mean(1)
     f["m56"] = m56
-    f["prof"] = Mx[:, [c - 7 * k for k in range(1, 9)]].mean(1) - m56
+    f["prof"] = Mx[:, [c - 7 * k for k in range(1, PROFILE_DAYS // 7 + 1)]].mean(1) - m56
     f["dow"] = np.full(n, float(dow_all[c]))
     pd_ = P[:, c]
     psum = P[:, c - 14:c].sum(1)
@@ -145,8 +145,8 @@ def _recursive(M, P, dow_all, store, fam, seed):
     return out
 
 
-def fit_predict(history, future, ctx):
-    mode = os.environ.get("V009_MODE", MODE)
+def _predict_log(history, future, ctx):
+    mode =os.environ.get("V009_MODE", MODE)
     keys = ["store_nbr", "family"]
     start = history["date"].max() + np.timedelta64(1, "D")
     days = pd.date_range(history["date"].min(), history["date"].max())
@@ -228,7 +228,24 @@ def fit_predict(history, future, ctx):
             b = min(T - 364 + HORIZON + 7, T)
             dead &= ~(M[:, a:b] > 0).any(axis=1)
         pred = np.where(dead[:, None], 0.0, pred)
-    lookup = pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
+    return pred, series, fdates, keys
+
+
+# V-031: tres modelos con ventanas de historial distintas (corta, media, larga); se promedian en log.
+CONFIGS = (((3, 7), 14, (3, 7)),
+           ((3, 7, 14, 28, 56), 56, (3, 7, 14, 28)),
+           ((28, 112, 364), 364, (28, 112)))
+
+
+def fit_predict(history, future, ctx):
+    global WINDOWS, PROFILE_DAYS, REC_WINDOWS
+    preds = []
+    for w, pdays, rw in CONFIGS:
+        WINDOWS, PROFILE_DAYS, REC_WINDOWS = w, pdays, rw
+        pred, series, fdates, keys = _predict_log(history, future, ctx)
+        preds.append(pred)
+    pred = np.mean(preds, axis=0)
+    lookup =pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
     lookup.index.names = keys + ["date"]
     fut = future[keys + ["date"]].copy()
     fut["family"] = fut["family"].astype(str)
