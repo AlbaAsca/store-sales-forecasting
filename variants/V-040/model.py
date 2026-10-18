@@ -1,0 +1,311 @@
+"""V-026 = V-025 (año anterior sin cierres) + V-023 (cero en series muertas salvo temporada).
+V-009: estrategia recursiva (1 paso, lags cortos, se realimenta 16 veces) y media con el directo (V-006).
+MODE (env V009_MODE): rec | avg (media en log de recursivo y directo) | direct.
+
+Base V-006:
+V-006: V-005 (LightGBM global + promos) + 3 rasgos de estacionalidad anual (retardo 364 d).
+
+Nuevo: ly_day (log1p del mismo dia objetivo hace 364 d), ly_win (media de esa ventana +-3 d), ly_diff (ly_win menos media log de los 14 d previos a t-364).
+NaN si no hay historia. Todo < corte (364 > 16).
+
+Base V-005:
+
+Se apilan 8 cortes t_k = inicio_prediccion - 16 - 7k. Para cada corte y cada serie, rasgos calculados solo con dias < t_k:
+media de log1p a 3/7/14/28/56 d y perfil semanal log (8 sem) del dia objetivo; mas h (1..16), dow, store_nbr, family.
+Nuevo: promo_day (onpromotion del dia objetivo, conocido de antemano), promo_sum14 (suma onpromotion los 14 d antes del corte),
+promo_ratio (promo_day / media diaria de 14 d). Objetivo log1p(ventas) en t_k+h-1, L2. Prediccion expm1 clip 0.
+
+Contrato (lo llama scripts/backtest.py y scripts/make_submission.py):
+    fit_predict(history, future, ctx) -> array de predicciones (>= 0), una por fila de `future`, en el mismo orden.
+"""
+import os
+import warnings
+import numpy as np
+warnings.filterwarnings("ignore", message="Mean of empty slice")
+import pandas as pd
+import lightgbm as lgb
+
+HORIZON = 16
+N_CUTS = 8
+WINDOWS = (3, 7, 14, 28, 56)
+PROFILE_DAYS = 56
+import os
+# V-014: rejilla num_leaves {15,31,63} x (lr,rondas) {0.05x400, 0.03x700} x min_data {20,50,100}.
+# Se elige por variables de entorno (HP_LEAVES, HP_LR, HP_ROUNDS, HP_MIN_DATA); por defecto, 1ª candidata.
+PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("HP_LR", 0.03)),
+              num_leaves=int(os.environ.get("HP_LEAVES", 63)),
+              min_data_in_leaf=int(os.environ.get("HP_MIN_DATA", 100)),
+              feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=0.1,
+              verbose=-1, num_threads=4)
+ROUNDS = int(os.environ.get("HP_ROUNDS", 700))
+
+
+LAG = 364
+PAD = LAG + 20
+
+
+def _features(M, P, origin, dow0, n_series):
+    """M: (series, dias) log1p; P: (series, dias+16) onpromotion; origin: columna del primer dia a predecir."""
+    past = M[:, origin - PROFILE_DAYS:origin]
+    feats = {}
+    for w in WINDOWS:
+        feats[f"m{w}"] = np.repeat(np.nanmean(past[:, -w:], 1, keepdims=True), HORIZON, 1)
+    base = np.nanmean(past, 1)
+    off = np.zeros((n_series, 7))
+    for d in range(7):
+        idx = [j for j in range(PROFILE_DAYS) if (dow0 - PROFILE_DAYS + j) % 7 == d]
+        off[:, d] = np.nanmean(past[:, idx], 1) - base
+    dows = (dow0 + np.arange(HORIZON)) % 7
+    feats["prof"] = off[:, dows]
+    feats["h"] = np.tile(np.arange(1, HORIZON + 1), (n_series, 1)).astype(float)
+    feats["dow"] = np.tile(dows, (n_series, 1)).astype(float)
+    # promociones
+    pday = P[:, origin:origin + HORIZON]
+    psum = P[:, origin - 14:origin].sum(1, keepdims=True)
+    pmean = psum / 14.0
+    feats["promo_day"] = pday
+    feats["promo_sum14"] = np.repeat(psum, HORIZON, 1)
+    feats["promo_ratio"] = pday / (pmean + 1.0)
+    feats["promo_fut16"] = np.repeat(pday.sum(1, keepdims=True), HORIZON, 1)
+    feats["promo_prev_day"] = P[:, origin - 1:origin + HORIZON - 1]
+    nxt = np.full((n_series, HORIZON), np.nan)
+    nxt[:, :HORIZON - 1] = P[:, origin + 1:origin + HORIZON]
+    feats["promo_next_day"] = nxt
+    # estacionalidad anual (retardo 364): indices con relleno NaN a la izquierda
+    Mp = np.concatenate([np.full((n_series, PAD), np.nan), M], axis=1)
+    c = origin + PAD - LAG
+    ly = Mp[:, c:c + HORIZON]
+    sl = np.stack([Mp[:, c + j - 3:c + j + 4] for j in range(HORIZON)], axis=1)  # (series, 16, 7)
+    cnt = (~np.isnan(sl)).sum(2)
+    win = np.where(cnt >= 4, np.nansum(sl, axis=2) / np.maximum(cnt, 1), np.nan)
+    pre = Mp[:, c - 14:c]
+    pcnt = (~np.isnan(pre)).sum(1)
+    pmean14 = np.where(pcnt >= 10, np.nansum(pre, axis=1) / np.maximum(pcnt, 1), np.nan)
+    feats["ly_day"] = ly
+    feats["ly_win"] = win
+    feats["ly_diff"] = win - pmean14[:, None]
+    return feats
+
+MODE = "avg"
+REC_DAYS = 150
+REC_LAGS = 7
+REC_WINDOWS = (3, 7, 14, 28)
+
+
+def _step_feats(Mx, P, dow_all, c, store, fam):
+    """Rasgos de 1 paso para la columna objetivo c (vector de series). Usa solo columnas < c de Mx (+ P conocido)."""
+    n = Mx.shape[0]
+    f = {}
+    for k in range(1, REC_LAGS + 1):
+        f[f"lag{k}"] = Mx[:, c - k]
+    for w in REC_WINDOWS:
+        f[f"m{w}"] = np.nanmean(Mx[:, c - w:c], 1)
+    m56 = np.nanmean(Mx[:, c - PROFILE_DAYS:c], 1)
+    f["m56"] = m56
+    f["prof"] = np.nanmean(Mx[:, [c - 7 * k for k in range(1, PROFILE_DAYS // 7 + 1)]], 1) - m56
+    f["dow"] = np.full(n, float(dow_all[c]))
+    pd_ = P[:, c]
+    psum = P[:, c - 14:c].sum(1)
+    f["promo_day"] = pd_
+    f["promo_sum14"] = psum
+    f["promo_ratio"] = pd_ / (psum / 14.0 + 1.0)
+    f["promo_fut16"] = P[:, c:c + HORIZON].sum(1)
+    f["promo_prev_day"] = P[:, c - 1]
+    f["promo_next_day"] = P[:, c + 1] if c + 1 < P.shape[1] else np.full(n, np.nan)
+    # estacionalidad anual (hace 364 d); NaN si no hay historia
+    def col(j):
+        return Mx[:, j] if j >= 0 else np.full(n, np.nan)
+    f["ly_day"] = col(c - LAG)
+    sl = np.stack([col(c - LAG + d) for d in range(-3, 4)], axis=1)
+    cnt = (~np.isnan(sl)).sum(1)
+    win = np.where(cnt >= 4, np.nansum(sl, axis=1) / np.maximum(cnt, 1), np.nan)
+    pre = np.stack([col(j) for j in range(c - LAG - 14, c - LAG)], axis=1)
+    pc = (~np.isnan(pre)).sum(1)
+    pm = np.where(pc >= 10, np.nansum(pre, axis=1) / np.maximum(pc, 1), np.nan)
+    f["ly_win"] = win
+    f["ly_diff"] = win - pm
+    f["store_nbr"] = store
+    f["family"] = fam
+    return pd.DataFrame(f)
+
+
+def _recursive(M, P, dow_all, store, fam, seed, Mf=None):
+    n, T = M.shape
+    Mx = np.concatenate([M if Mf is None else Mf, np.full((n, HORIZON), np.nan)], axis=1)
+    Xs, ys = [], []
+    for c in range(max(PROFILE_DAYS, T - REC_DAYS), T):
+        Xs.append(_step_feats(Mx, P, dow_all, c, store, fam))
+        ys.append(M[:, c])
+    ds = lgb.Dataset(pd.concat(Xs, ignore_index=True), np.concatenate(ys), categorical_feature=["store_nbr", "family"])
+    model = lgb.train({**PARAMS, "seed": seed}, ds, num_boost_round=ROUNDS)
+    out = np.zeros((n, HORIZON))
+    for s in range(HORIZON):
+        c = T + s
+        p = np.clip(model.predict(_step_feats(Mx, P, dow_all, c, store, fam)), 0, None)
+        Mx[:, c] = p
+        out[:, s] = p
+    return out
+
+
+def _predict_log(history, future, ctx):
+    mode =os.environ.get("V009_MODE", MODE)
+    keys = ["store_nbr", "family"]
+    start = history["date"].max() + np.timedelta64(1, "D")
+    days = pd.date_range(history["date"].min(), history["date"].max())
+    h = history.assign(ls=np.log1p(history["sales"]))
+    piv = h.pivot_table(index=keys, columns="date", values="ls", aggfunc="sum", observed=True)
+    piv = piv.reindex(columns=days).fillna(0.0)
+    series = piv.index.to_frame(index=False)
+    M = piv.to_numpy()
+    n = len(series)
+    T = M.shape[1]
+    # V-037: dias con la tienda entera a 0 (cierres, 25-dic, antes de abrir) = dato que falta en los rasgos
+    closed = np.zeros(M.shape, bool)
+    for s_ in np.unique(series["store_nbr"].to_numpy()):
+        idx = (series["store_nbr"].to_numpy() == s_)
+        closed[idx] = (M[idx].sum(0) == 0)[None, :]
+    Mf = np.where(closed, np.nan, M)
+
+    # onpromotion: historia + futuro (la promo planificada de los dias a predecir es conocida)
+    fdates = pd.date_range(start, periods=HORIZON)
+    allp = pd.concat([history[keys + ["date", "onpromotion"]], future[keys + ["date", "onpromotion"]]],
+                     ignore_index=True)
+    allp["onpromotion"] = allp["onpromotion"].astype(float)
+    ppiv = allp.pivot_table(index=keys, columns="date", values="onpromotion", aggfunc="sum", observed=True)
+    ppiv = ppiv.reindex(index=piv.index, columns=days.append(fdates)).fillna(0.0)
+    P = ppiv.to_numpy()
+
+    store = np.repeat(series["store_nbr"].to_numpy().astype(int)[:, None], HORIZON, 1)
+    fam = np.repeat(pd.Categorical(series["family"].astype(str)).codes[:, None], HORIZON, 1)
+
+    def build(origin, dow0, with_y):
+        f = _features(Mf, P, origin, dow0, n)
+        f["store_nbr"] = store
+        f["family"] = fam
+        X = pd.DataFrame({k: v.ravel() for k, v in f.items()})
+        y = M[:, origin:origin + HORIZON].ravel() if with_y else None
+        return X, y
+
+    Xs, ys = [], []
+    for k in range(N_CUTS):
+        o = T - HORIZON - 7 * k
+        if o - PROFILE_DAYS < 0:
+            break
+        dow0 = (start.dayofweek - HORIZON - 7 * k) % 7
+        X, y = build(o, dow0, True)
+        Xs.append(X)
+        ys.append(y)
+    # V-025: cortes del año anterior (como V-018) sin tiendas cerradas (>=50% dias con venta
+    # total 0 en la ventana objetivo) ni series a 0 toda la ventana que vendian las 8 semanas previas
+    st = series["store_nbr"].to_numpy()
+    for j in range(-1, 3):
+        o = T - HORIZON - 364 + 7 * j
+        if o - PROFILE_DAYS < 0 or o + HORIZON > T:
+            continue
+        dow0 = (start.dayofweek - HORIZON + 7 * j) % 7
+        X, y = build(o, dow0, True)
+        W = M[:, o:o + HORIZON]
+        keep = np.ones(n, bool)
+        for s_ in np.unique(st):
+            idx = st == s_
+            if (W[idx].sum(0) == 0).mean() >= 0.5:
+                keep[idx] = False
+        keep &= ~((W.max(1) == 0) & (M[:, max(0, o - 56):o].max(1) > 0))
+        km = np.repeat(keep, HORIZON)
+        Xs.append(X[km])
+        ys.append(y[km])
+    pred = None
+    if mode in ("direct", "avg"):
+        X = pd.concat(Xs, ignore_index=True)
+        y = np.concatenate(ys)
+        ds = lgb.Dataset(X, y, categorical_feature=["store_nbr", "family"])
+        model = lgb.train({**PARAMS, "seed": int(ctx.get("seed", 0) or 0)}, ds, num_boost_round=ROUNDS)
+        Xp, _ = build(T, start.dayofweek, False)
+        pred = model.predict(Xp).reshape(n, HORIZON)
+    if mode in ("rec", "avg"):
+        dow_all = np.asarray(days.append(fdates).dayofweek)
+        rec = _recursive(M, P, dow_all, store[:, 0], fam[:, 0], int(ctx.get("seed", 0) or 0), Mf)
+        pred = rec if pred is None else 0.5 * (pred + rec)
+    # V-023: series con >= ZERO_N dias a 0 antes del corte -> 0, salvo si vendieron en el mismo
+    # tramo del año anterior (+-7 dias): productos de temporada. Solo datos previos al corte.
+    zn = int(os.environ.get("ZERO_N", 56))
+    if zn > 0 and T >= zn:
+        dead = (M[:, -zn:] == 0).all(axis=1)
+        a = T - 364 - 7
+        if a >= 0:
+            b = min(T - 364 + HORIZON + 7, T)
+            dead &= ~(M[:, a:b] > 0).any(axis=1)
+        pred = np.where(dead[:, None], 0.0, pred)
+    return pred, series, fdates, keys
+
+
+# V-031: tres modelos con ventanas de historial distintas (corta, media, larga); se promedian en log.
+CONFIGS = (((3, 7), 14, (3, 7)),
+           ((3, 7, 14, 28, 56), 56, (3, 7, 14, 28)),
+           ((28, 112, 364), 364, (28, 112)))
+
+
+def _ensemble_log(history, future, ctx):
+    global WINDOWS, PROFILE_DAYS, REC_WINDOWS
+    preds = []
+    for w, pdays, rw in CONFIGS:
+        WINDOWS, PROFILE_DAYS, REC_WINDOWS = w, pdays, rw
+        pred, series, fdates, keys = _predict_log(history, future, ctx)
+        preds.append(pred)
+    return np.mean(preds, axis=0), series, fdates, keys
+
+
+def _bias(history, ctx, keys):
+    """V-040: sesgo medio en log por (familia, dia de la semana) en las ultimas V040_WIN ventanas de 16 dias
+    antes del corte (se predicen con el mismo modelo sin ver esa ventana). Encogido b*n/(n+K), recortado a +-CLIP."""
+    nwin = int(os.environ.get("V040_WIN", 2))
+    k = float(os.environ.get("V040_K", 200))
+    clip = float(os.environ.get("V040_CLIP", 0.25))
+    last = history["date"].max()
+    rows = []
+    for w in range(nwin):
+        end = last - pd.Timedelta(days=HORIZON * w)
+        beg = end - pd.Timedelta(days=HORIZON - 1)
+        hh = history[history["date"] < beg]
+        ff = history[(history["date"] >= beg) & (history["date"] <= end)]
+        if hh["date"].nunique() < 400 or len(ff) == 0:
+            continue
+        pred, series, fdates, _ = _ensemble_log(hh, ff.drop(columns=["sales"]), ctx)
+        lk = pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
+        lk.index.names = keys + ["date"]
+        lk = lk.rename("p").reset_index()
+        lk["family"] = lk["family"].astype(str)
+        a = ff[keys + ["date", "sales"]].copy()
+        a["family"] = a["family"].astype(str)
+        m = a.merge(lk, on=keys + ["date"], how="inner")
+        tot = m.groupby(["store_nbr", "date"])["sales"].transform("sum")
+        m = m[tot > 0].copy()  # tiendas cerradas fuera
+        m["r"] = np.log1p(m["sales"]) - m["p"]
+        m["dow"] = m["date"].dt.dayofweek
+        rows.append(m[["family", "dow", "r"]])
+    if not rows:
+        return None
+    r = pd.concat(rows)
+    g = r.groupby(["family", "dow"])["r"].agg(["mean", "count"])
+    g["b"] = (g["mean"] * g["count"] / (g["count"] + k)).clip(-clip, clip)
+    return g["b"]
+
+
+def fit_predict(history, future, ctx):
+    pred, series, fdates, keys = _ensemble_log(history, future, ctx)
+    if os.environ.get("V040_ON", "1") == "1":
+        b = _bias(history, ctx, keys)
+        if b is not None:
+            fam = series["family"].astype(str).to_numpy()
+            dows = np.asarray(fdates.dayofweek)
+            idx = pd.MultiIndex.from_arrays([np.repeat(fam, len(dows)), np.tile(dows, len(fam))])
+            add = b.reindex(idx).fillna(0.0).to_numpy().reshape(len(fam), len(dows))
+            pred = pred + add  # residuo medio (real - pred) sumado al log
+    lookup =pd.DataFrame(pred, index=pd.MultiIndex.from_frame(series), columns=fdates).stack()
+    lookup.index.names = keys + ["date"]
+    fut = future[keys + ["date"]].copy()
+    fut["family"] = fut["family"].astype(str)
+    lookup = lookup.rename("p").reset_index()
+    lookup["family"] = lookup["family"].astype(str)
+    merged = fut.merge(lookup, on=keys + ["date"], how="left")
+    return np.expm1(merged["p"].fillna(0.0).to_numpy()).clip(min=0)

@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T17:21:49+02:00",
+  "updated": "2026-10-18T18:24:23+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-105"
     },
     {
       "id": "tester",
@@ -6461,7 +6461,7 @@
       "id": "T-104",
       "title": "Promover V-038 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "blocked",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 10.0,
       "actual_min": 4.1,
@@ -6470,7 +6470,7 @@
       "desc": "Cambiamos la forma en que el modelo mide su error para que los días con ventas disparatadas (picos aislados) no le obliguen a perseguirlos. Con dos semillas el error baja un poco en las cuatro partes de validación y el control sin tiendas cerradas también mejora. Es una ganancia pequeña pero repetida.\n\nCómo sabremos si funciona: el error medio de la nueva base sigue por debajo de la anterior en el examen final de Kaggle, sin empeorar en las series irregulares.\n\n## Técnico\nV-038: objective=huber, alpha=1.0, sobre log1p (directo y recursivo). Prácticas: s42 0.3811→0.3806, s7 0.3813→0.3804 (base-v10). Folds peores: f1 +0.0001 con s42 (1/4, dentro del criterio). Control sin cerradas 0.3845→0.3838. Tiempo 501→395 s. Tests 74/74. Veredicto: ACEPTADA. Pendiente: sesgo medio en log no medido.",
       "deps": [],
       "created": "2026-10-18T16:35:05+02:00",
-      "updated": "2026-10-18T16:39:19+02:00",
+      "updated": "2026-10-18T17:54:03+02:00",
       "started_at": "2026-10-18T16:35:11+02:00",
       "finished_at": "2026-10-18T16:39:19+02:00",
       "log": [
@@ -6488,33 +6488,138 @@
           "t": "2026-10-18T16:39:19+02:00",
           "by": "consultor",
           "msg": "NO se promueve V-038 (comprobación automática): prácticas (V-038): 0.3811 → 0.3806, empeora 1 fold(s); prácticas (V-038-s7): 0.3813 → 0.3804, empeora 0 fold(s); examen final empeora: 0.4085 → 0.4134; control sin cerradas: 0.3845 → 0.3838; test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.018, familia 0.023)"
+        },
+        {
+          "t": "2026-10-18T17:54:03+02:00",
+          "by": "consultor",
+          "msg": "Envío experimental (OK de Alba): V-038 saca 0.39098 en Kaggle frente a 0.38839 de base-v10 (+0.0026). NO se promueve: esta vez el holdout (0.4085→0.4134) acertó. La base sigue siendo base-v10."
+        }
+      ]
+    },
+    {
+      "id": "T-105",
+      "title": "V-040: corregir el sesgo por familia y día de la semana",
+      "owner": "desarrollador",
+      "status": "doing",
+      "priority": "alta",
+      "estimate_min": 50.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "La base acierta la forma de las ventas pero en algunas familias se queda corta siempre: GROCERY II un 20 % por debajo y los licores los viernes y sábados un 15 % por debajo (gráfica de base-v9, tienda 17). Idea: medir cuánto se equivoca de media el modelo en cada familia y día de la semana en el pasado reciente y corregirlo, con prudencia para no perseguir ruido.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que el sesgo medio de GROCERY II y de LIQUOR en viernes y sábado se acerque a 0.\n\n## Técnico\nMedido por el consultor en base-v9, fold f1 sin tiendas 18/25/52 (eval/tmp/theory/base-v9-f1-s42.csv.gz): sesgo log global −0.009 (desplazar todo no sirve: ±0.0001); por familia GROCERY II −0.224, HOME AND KITCHEN II −0.101, BEAUTY −0.091, HOME APPLIANCES +0.154; LIQUOR por día vie −0.167, sáb −0.165. Variante sobre models/base (base-v10): dentro de model.py, sin mirar el periodo a predecir, reservar las últimas 2-4 ventanas de 16 días antes del corte, predecirlas con el mismo modelo (o usar los residuos fuera de muestra del entrenamiento directo) y calcular el residuo medio en log por (familia, día de la semana). Encoger hacia 0 (b × n/(n+k), k por defecto 200 filas) y recortar a ±0.25. Sumar −b al log de la predicción. Parámetros por env (V040_K, V040_CLIP) para probar sin cambiar código. Ojo al coste: si reentrenar para las ventanas pasa de 15 min por medición, usa la versión barata (residuos de la última ventana del entrenamiento). Una sola cosa cambiada; NOTAS.md con el porqué.",
+      "deps": [],
+      "created": "2026-10-18T17:50:05+02:00",
+      "updated": "2026-10-18T18:22:08+02:00",
+      "started_at": "2026-10-18T18:22:08+02:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T17:50:05+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T18:22:08+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        }
+      ]
+    },
+    {
+      "id": "T-106",
+      "title": "Ronda de aportación: experto",
+      "owner": "experto",
+      "status": "done",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 2.2,
+      "auto": true,
+      "manual": null,
+      "desc": "Si hay resultados en eval/results/*/ que nadie haya analizado, mira dónde se equivoca más el modelo (fold, tienda, familia, días festivos) y qué haría un data scientist senior.",
+      "deps": [],
+      "created": "2026-10-18T18:22:08+02:00",
+      "updated": "2026-10-18T18:24:23+02:00",
+      "started_at": "2026-10-18T18:22:08+02:00",
+      "finished_at": "2026-10-18T18:24:23+02:00",
+      "log": [
+        {
+          "t": "2026-10-18T18:22:08+02:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T18:22:08+02:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-18T18:24:23+02:00",
+          "by": "experto",
+          "msg": "DONE: hallado sesgo de cambio de mes/paga (techo −0.0013) que T-090 dio por descartado; tarjeta T-107 (V-041), script errors_daybias.py y nota en docs/NOTAS-experto.md"
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "experto",
+          "mode": "contrib",
+          "at": "2026-10-18T18:24:23+02:00",
+          "min": 2.2,
+          "turns": 24,
+          "tokens": 493258,
+          "cost_usd": 0.6081502000000002,
+          "verdict": "done"
+        }
+      ]
+    },
+    {
+      "id": "T-107",
+      "title": "V-041: enseñar al modelo cómo vende cada tienda al principio y al final del mes",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 35.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "El modelo se equivoca siempre igual alrededor de la paga: los últimos días del mes y los días antes del 15 predice de más, y los cuatro primeros días del mes predice de menos (la gente cobra y compra). Ya probamos darle el día del mes tal cual y lo memorizó sin aprender nada. La idea ahora es darle un resumen: cuánto suele vender esa tienda en cada tramo del mes comparado con su venta normal, calculado solo con su historia anterior, igual que hicimos con el perfil de los días de la semana, que sí funcionó.\nCómo sabremos si funciona: baja el error medio con las dos semillas sin empeorar más de un fold, y el sesgo de los días 1-4 y 27-31 se acerca a cero.\n\n## Técnico\nEvidencia en docs/NOTAS-experto.md (T-106), script scripts/analysis/errors_daybias.py V-038. Sesgo log por tramo (f1..f4): días 1-4 -0.088 (f2) / -0.071 (f4); 27-31 -0.016/+0.038/+0.052/+0.052; 12-15 +0.025/+0.006/+0.022/+0.045; 16-19 ~0. Techo con corrección por 5 tramos (fuga): 0.3807 -> 0.3794.\nCambio único: rasgo pay_prof = media de (log1p(ventas) - media log1p 28d móvil) por tienda (y opcionalmente tienda x familia con encogimiento hacia tienda) y tramo del día objetivo {1-4, 12-15, 16-19, 27-31, resto}, calculado con los ~180-365 días anteriores al corte. NO meter día del mes crudo (V-016 rechazada por sobreajuste).\nCriterio: RMSLE medio < base con semillas 42 y 7, como mucho 1 de 4 folds peor; mirar c1 sin cerradas. Aviso: el test de Kaggle (16-31 ago) solo cubre los tramos 16-19 y 27-31; esperar ganancia menor allí.",
+      "deps": [],
+      "created": "2026-10-18T18:24:09+02:00",
+      "updated": "2026-10-18T18:24:09+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T18:24:09+02:00",
+          "by": "experto",
+          "msg": "creada"
         }
       ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
+      "state": "idle",
       "current": null,
-      "message": "Runner parado",
-      "pid": 25328,
-      "heartbeat": "2026-10-18T16:30:02+02:00",
-      "agent": "arquitecto",
-      "started": "2026-10-18T16:07:52+02:00",
-      "live": "live-T-098-arquitecto-20261018-160752.jsonl",
-      "contrib_at": "2026-10-18T10:30:32+02:00",
-      "contrib_agent": "investigador",
+      "message": "aportación experto (T-106): hallado sesgo de cambio de mes/paga (techo −0.0013) que T-090 dio por descartado; tarjeta T-107 (V-041), script errors_daybias.py y nota en docs/NOTAS-experto.md",
+      "pid": 23064,
+      "heartbeat": "2026-10-18T18:24:23+02:00",
+      "agent": "experto",
+      "started": "2026-10-18T18:22:08+02:00",
+      "live": "live-T-106-experto-20261018-182208.jsonl",
+      "contrib_at": "2026-10-18T18:24:23+02:00",
+      "contrib_agent": "experto",
       "enabled": true
     },
     "measure": {
       "state": "working",
-      "current": "T-101",
-      "message": "tester con T-101",
-      "pid": 22808,
-      "heartbeat": "2026-10-18T17:21:11+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T17:21:11+02:00",
-      "live": "live-T-101-tester-20261018-172111.jsonl",
+      "current": "T-105",
+      "message": "desarrollador con T-105",
+      "pid": 3204,
+      "heartbeat": "2026-10-18T18:22:08+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T18:22:08+02:00",
+      "live": "live-T-105-desarrollador-20261018-182208.jsonl",
       "enabled": true,
       "mechanical": false
     }
