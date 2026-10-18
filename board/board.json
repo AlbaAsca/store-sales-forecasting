@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:10:16+02:00",
+  "updated": "2026-10-18T16:13:54+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5715,7 +5715,7 @@
       "id": "T-094",
       "title": "V-036: mirar el año anterior con una ventana más ancha",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "blocked",
       "priority": "media",
       "estimate_min": 50.0,
       "actual_min": 3.0,
@@ -5724,7 +5724,7 @@
       "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
       "deps": [],
       "created": "2026-10-18T14:48:49+02:00",
-      "updated": "2026-10-18T16:10:13+02:00",
+      "updated": "2026-10-18T16:13:54+02:00",
       "started_at": "2026-10-18T16:07:13+02:00",
       "finished_at": "2026-10-18T16:10:13+02:00",
       "log": [
@@ -5742,6 +5742,21 @@
           "t": "2026-10-18T16:10:13+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-036 implementada (ly_win14 y ly_diff14, en directo y recursivo), backtest rápido OK (0,3871) y tests en verde; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-18T16:10:19+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T16:13:16+02:00",
+          "by": "consultor",
+          "msg": "Rehacer sobre base-v10 (V-037 promovida): vuelve a aplicar el cambio de V-036 sobre models/base actual (copia models/base a variants/V-036 con new_variant.py o a mano) y vuelve a review. La medición anterior se paró porque comparaba código de base-v9 con base-v10."
+        },
+        {
+          "t": "2026-10-18T16:13:54+02:00",
+          "by": "tester",
+          "msg": "BLOCKED: }\n{\"type\":\"tool_progress\",\"tool_use_id\":\"toolu_0164hmutDaugQDEFZyQrefoc-heartbeat-0\",\"tool_name\":\"Bash\",\"parent_tool_use_id\":\"toolu_0164hmutDaugQDEFZyQrefoc\",\"elapsed_time_seconds\":30,\"heartbeat\":true,\"session_id\":\"d85f3747-f6d0-4a81-a6d0-45909e0a53b0\",\"uuid\":\"29728279-2431-4573-8324-68b35c82fe1c\"}"
         }
       ],
       "runs": [
@@ -5754,8 +5769,19 @@
           "tokens": 92851,
           "cost_usd": 0.0849106,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T16:13:54+02:00",
+          "min": 0.9,
+          "turns": null,
+          "tokens": null,
+          "cost_usd": null,
+          "verdict": "blocked"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T16:10:19+02:00"
     },
     {
       "id": "T-095",
@@ -5855,6 +5881,11 @@
           "t": "2026-10-18T14:48:55+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:13:17+02:00",
+          "by": "consultor",
+          "msg": "Ojo: la base es ahora base-v10 (V-037). Crea la variante desde models/base actual."
         }
       ]
     },
@@ -6072,7 +6103,7 @@
       "id": "T-100",
       "title": "Promover V-037 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "blocked",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 10.0,
       "actual_min": 4.2,
@@ -6081,7 +6112,7 @@
       "desc": "Con V-037 los días en que una tienda cierra dejan de contar como ventas de cero: se tratan como dato que falta. La mejora es pequeña (unas milésimas de error), pero se repite con las dos semillas y no empeora los días sin cierres.\n\nCómo sabremos si funciona: el error del modelo en las pruebas baja y la predicción de agosto de 2017 deja de hundirse en las dos tiendas que cerraron en 2016.\n\n## Técnico\nV-037 frente a base-v9: semilla 42 0.3811 (0.3814), semilla 7 0.3813 (0.3815); media 0.3812 vs 0.3815 (-0.0003). Folds peores: f1 en s42 (+0.0001). Control sin tiendas cerradas 0.3845 = 0.3845. Tiempo 429 → 501 s. Criterio por defecto cumplido. Pendiente: predicción media log de tiendas 18 y 25 (no reportada por verify_variant.py).",
       "deps": [],
       "created": "2026-10-18T16:02:11+02:00",
-      "updated": "2026-10-18T16:10:16+02:00",
+      "updated": "2026-10-18T16:12:34+02:00",
       "started_at": "2026-10-18T16:10:16+02:00",
       "finished_at": "2026-10-18T16:10:16+02:00",
       "log": [
@@ -6119,6 +6150,16 @@
           "t": "2026-10-18T16:10:16+02:00",
           "by": "consultor",
           "msg": "NO se promueve V-037 (comprobación automática): prácticas (V-037): 0.3814 → 0.3811, empeora 1 fold(s); prácticas (V-037-s7): 0.3815 → 0.3813, empeora 0 fold(s); examen final empeora: 0.4051 → 0.4085; control sin cerradas: 0.3845 → 0.3845; en el test cambian de golpe frente a la base: tienda 18 +0.081, tienda 25 +0.097, tienda 52 -0.052"
+        },
+        {
+          "t": "2026-10-18T16:10:48+02:00",
+          "by": "consultor",
+          "msg": "Envío experimental (OK de Alba): V-037 saca 0.38839 en Kaggle frente a 0.38981 de base-v9 (−0.0014). El holdout (0.4051→0.4085) daba falsa alarma."
+        },
+        {
+          "t": "2026-10-18T16:12:34+02:00",
+          "by": "consultor",
+          "msg": "Promovida automáticamente: V-037 → base-v10: prácticas (V-037): 0.3814 → 0.3811, empeora 1 fold(s); prácticas (V-037-s7): 0.3815 → 0.3813, empeora 0 fold(s); examen final empeora: 0.4051 → 0.4085; control sin cerradas: 0.3845 → 0.3845; en el test cambian de golpe frente a la base: tienda 18 +0.081, tienda 25 +0.097, tienda 52 -0.052"
         }
       ]
     },
@@ -6200,13 +6241,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-100",
-      "message": "promoción automática de V-037",
+      "current": "T-094",
+      "message": "verificación mecánica de V-036: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:10:16+02:00",
-      "agent": "consultor",
-      "started": "2026-10-18T16:10:16+02:00",
-      "live": "live-T-094-desarrollador-20261018-160713.jsonl",
+      "heartbeat": "2026-10-18T16:12:59+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T16:10:19+02:00",
+      "live": "live-T-094-tester-20261018-161259.jsonl",
       "enabled": true,
       "mechanical": false
     }

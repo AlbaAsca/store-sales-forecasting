@@ -111,6 +111,8 @@ def main(argv=None):
     ap.add_argument("variant", help="V-xxx (carpeta en variants/)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--card", help="tarjeta del panel que se cierra con el resultado (T-xxx)")
+    ap.add_argument("--lb", type=float, help="nota de Kaggle de un envío experimental ya hecho: si mejora la de la base, "
+                    "promueve aunque fallen las comprobaciones locales (decisión del consultor con OK de Alba; caso V-037)")
     o = ap.parse_args(argv)
     v = o.variant
     src = ROOT / "variants" / v
@@ -139,6 +141,12 @@ def main(argv=None):
         print(("  ✓ " if ok else "  · ") + r)
     new = last + 1
     summary = f"{v} → base-v{new}: " + "; ".join(reasons)
+    if not ok and o.lb is not None:
+        best = min((x["lb"] for x in json.loads((ROOT / "eval" / "kaggle.json").read_text(encoding="utf-8"))["submissions"]
+                    if x.get("base") == base_name and x.get("lb") is not None), default=None)
+        if best is not None and o.lb < best:
+            reasons.append(f"se promueve igualmente: Kaggle {best:.5f} → {o.lb:.5f} con el envío experimental")
+            ok = True
     if not ok:
         print(f"NO SE PROMUEVE {v}. La base sigue siendo {base_name}.")
         _close_card(o.card, f"NO se promueve {v} (comprobación automática): " + "; ".join(reasons), promoted=False)
@@ -160,7 +168,7 @@ def main(argv=None):
     kj = ROOT / "eval" / "kaggle.json"
     kd = json.loads(kj.read_text(encoding="utf-8"))
     kd["submissions"].append({"tag": tag, "base": nb, "cv": round(var_runs[v]["mean"], 4),
-                              "holdout": round(load(f"{v}-holdout")["mean"], 4), "lb": None, "date": pd.Timestamp.now().strftime("%Y-%m-%d")})
+                              "holdout": round(load(f"{v}-holdout")["mean"], 4), "lb": o.lb, "date": pd.Timestamp.now().strftime("%Y-%m-%d")})
     kj.write_text(json.dumps(kd, ensure_ascii=False, indent=2), encoding="utf-8")
     msg = (f"{tag} · {nb} ({v}) · backtest {var_runs[v]['mean']:.4f} · holdout {load(f'{v}-holdout')['mean']:.4f}")
     subprocess.run(["git", "add", "models/base", "eval/kaggle.json", str(RES / f"{nb}.json"), str(RES / f"{nb}-holdout.json")]
@@ -170,7 +178,8 @@ def main(argv=None):
     subprocess.run(["git", "tag", "-a", nb, "-m", f"{nb} = {v}"], cwd=ROOT, check=True)
     subprocess.run(["git", "tag", "-a", tag, "-m", msg], cwd=ROOT, check=True)
     print(f"PROMOVIDA: {nb} = {v}. CSV: dist/submission-{nb}.csv · tags {nb} y {tag}.")
-    _close_card(o.card, f"Promovida automáticamente: {summary}", promoted=True, upload=(nb, tag, msg, reasons))
+    _close_card(o.card, f"Promovida automáticamente: {summary}", promoted=True,
+                upload=None if o.lb is not None else (nb, tag, msg, reasons))
     return 0
 
 
