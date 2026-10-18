@@ -1,0 +1,92 @@
+{
+ "base-v6": {
+  "store": 32,
+  "family": "LIQUOR,WINE,BEER",
+  "rmsle_before": 0.9765895422106444,
+  "rmsle_after": 0.8500222553029042,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.39017279315510545,
+  "rmsle_fold_after": 0.39009695139493533
+ },
+ "base-v1": {
+  "store": 51,
+  "family": "POULTRY",
+  "rmsle_before": 0.663415576001864,
+  "rmsle_after": 0.12684630841505976,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.4737861997023569,
+  "rmsle_fold_after": 0.4368250097616872
+ },
+ "base-v2": {
+  "store": 16,
+  "family": "LIQUOR,WINE,BEER",
+  "rmsle_before": 1.1688196725102065,
+  "rmsle_after": 0.5561873670781425,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.43682500976168726,
+  "rmsle_fold_after": 0.4200565749902174
+ },
+ "base-v3": {
+  "store": 49,
+  "family": "SCHOOL AND OFFICE SUPPLIES",
+  "rmsle_before": 2.2782286836023675,
+  "rmsle_after": 1.745029955455777,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.4200565749902174,
+  "rmsle_fold_after": 0.39324865841638396
+ },
+ "base-v4": {
+  "store": 49,
+  "family": "SCHOOL AND OFFICE SUPPLIES",
+  "rmsle_before": 1.7450299554557769,
+  "rmsle_after": 1.5771006874148301,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.39324865841638396,
+  "rmsle_fold_after": 0.3908750938732944
+ },
+ "base-v5": {
+  "store": 7,
+  "family": "HOME AND KITCHEN I",
+  "rmsle_before": 0.6497507298519131,
+  "rmsle_after": 0.5522498596228974,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.3908750938732944,
+  "rmsle_fold_after": 0.39017279315510545
+ },
+ "base-v7": {
+  "store": 37,
+  "family": "GROCERY II",
+  "rmsle_before": 0.5330263495551733,
+  "rmsle_after": 0.4829014949735763,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.39009695139493533,
+  "rmsle_fold_after": 0.38961330090451984
+ },
+ "base-v8": {
+  "store": 26,
+  "family": "GROCERY II",
+  "rmsle_before": 1.337555778043226,
+  "rmsle_after": 1.2435403630610653,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.38961330090451984,
+  "rmsle_fold_after": 0.38857992960048865
+ },
+ "base-v9": {
+  "store": 17,
+  "family": "LIQUOR,WINE,BEER",
+  "rmsle_before": 0.6643615438993103,
+  "rmsle_after": 0.6064092965147144,
+  "fold": "f1",
+  "seed": 42,
+  "rmsle_fold_before": 0.38857992960048865,
+  "rmsle_fold_after": 0.38765232662651056
+ }
+}

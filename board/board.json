@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T15:24:57+02:00",
+  "updated": "2026-10-18T15:36:49+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5787,18 +5787,20 @@
       "id": "T-097",
       "title": "README: gráfica antes/después con ventas reales para cada teoría aprobada (script)",
       "owner": "desarrollador",
-      "status": "next",
+      "status": "review",
       "priority": "media",
       "estimate_min": 60.0,
-      "actual_min": null,
+      "actual_min": 11.8,
       "auto": true,
       "manual": null,
       "desc": "Alba quiere que cada idea aprobada (cada base-vN) se vea en el README con un ejemplo real: las ventas de verdad de una tienda y familia, la predicción de antes y la de después, para que la mejora salte a la vista.\n\nCómo sabremos si funciona: hay una imagen por base aprobada en docs/img/teorias/ y en cada una se ve sin explicación que la línea nueva se pega más a las ventas reales que la anterior.\n\n## Técnico\nNuevo scripts/make_theory_figures.py (sin red, solo .venv). Para cada tag base-v1..base-v9: lee models/base/model.py del tag anterior y del tag con git show desde Python (subprocess, sin cp) a una carpeta temporal dentro de eval/tmp/; predice el mismo fold de validación (por defecto el último de eval/folds.json, nunca el holdout) con semilla 42; elige automáticamente la serie tienda×familia donde más baja el error (RMSLE de la serie, con ventas medias no triviales, ni tiendas cerradas 18/25/52) y dibuja: ventas reales (negro), predicción antes (gris discontinuo), después (color), con 4-6 semanas de historia, título llano ('base-v6: el año anterior sin cierres') y el RMSLE antes→después en la leyenda. Guarda docs/img/teorias/base-vN.png y un eval/theory_figures.json con la serie elegida y los números. Cachea predicciones en eval/tmp para no recalcular. Tests: uno sobre la función pura que elige la serie. Estimación de cómputo: ~9 predicciones de un fold; dilo en la nota.",
-      "deps": [],
+      "deps": [
+        "T-099"
+      ],
       "created": "2026-10-18T14:50:54+02:00",
-      "updated": "2026-10-18T15:01:40+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T15:36:49+02:00",
+      "started_at": "2026-10-18T15:25:00+02:00",
+      "finished_at": "2026-10-18T15:36:49+02:00",
       "log": [
         {
           "t": "2026-10-18T14:50:54+02:00",
@@ -5809,6 +5811,38 @@
           "t": "2026-10-18T15:01:40+02:00",
           "by": "tú",
           "msg": "→ Próximo"
+        },
+        {
+          "t": "2026-10-18T15:25:00+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T15:36:49+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: script, 9 imágenes en docs/img/teorias/ y theory_figures.json generados; tests en verde."
+        },
+        {
+          "t": "2026-10-18T15:36:49+02:00",
+          "by": "desarrollador",
+          "msg": "⚠ 1 comandos denegados: git tag -n1 -l \"base-v*\""
+        },
+        {
+          "t": "2026-10-18T15:36:49+02:00",
+          "by": "runner",
+          "msg": "? permiso solicitado: git tag -n1* (T-099); la tarjeta espera la decisión"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T15:36:49+02:00",
+          "min": 11.8,
+          "turns": 23,
+          "tokens": 342494,
+          "cost_usd": 0.19443260000000004,
+          "verdict": "review"
         }
       ]
     },
@@ -5842,6 +5876,38 @@
           "msg": "→ Próximo"
         }
       ]
+    },
+    {
+      "id": "T-099",
+      "title": "Solicitud de permiso: git tag -n1*",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 2,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Abre la tarjeta y pulsa «Conceder» o «Denegar».",
+      "desc": "El agente «desarrollador» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-097. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: (no lo explicó)\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: git tag -n1 -l \"base-v*\"\n- Patrón que se concedería: git tag -n1*\n- Tarjeta: T-097",
+      "deps": [],
+      "created": "2026-10-18T15:36:49+02:00",
+      "updated": "2026-10-18T15:36:49+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T15:36:49+02:00",
+          "by": "runner",
+          "msg": "creada"
+        }
+      ],
+      "kind": "permiso",
+      "perm": {
+        "pattern": "git tag -n1*",
+        "command": "git tag -n1 -l \"base-v*\"",
+        "agent": "desarrollador",
+        "task": "T-097",
+        "why": ""
+      }
     }
   ],
   "runners": {
@@ -5860,13 +5926,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-093",
-      "message": "verificación mecánica de V-035: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-097",
+      "message": "desarrollador con T-097",
       "pid": 8496,
-      "heartbeat": "2026-10-18T15:24:11+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T15:04:03+02:00",
-      "live": "live-T-093-tester-20261018-152411.jsonl",
+      "heartbeat": "2026-10-18T15:25:00+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T15:25:00+02:00",
+      "live": "live-T-097-desarrollador-20261018-152500.jsonl",
       "enabled": true,
       "mechanical": false
     }
