@@ -9,6 +9,7 @@ Nunca ve el futuro: así se mide lo que pasaría de verdad en el test de Kaggle.
 Salida: eval/results/<name>.json (resumen, en git) y eval/results/<name>/preds-<fold>.csv.gz (predicciones, fuera de git).
 """
 import argparse
+import os
 import importlib.util
 import json
 import sys
@@ -126,7 +127,12 @@ def main(argv=None):
     ap.add_argument("--holdout", action="store_true", help="evalúa en el holdout (SOLO el consultor, antes de enviar)")
     ap.add_argument("--no-control", action="store_true", help="no mide los folds de control (control_folds)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--env", action="append", default=[], metavar="CLAVE=VALOR",
+                    help="variable de entorno para el modelo (p. ej. --env ZERO_N=28); repetible")
     o = ap.parse_args(argv)
+    for kv in o.env:  # el runner deniega «VAR=x python …»: así se pasan sin salir de «python *»
+        k, _, v = kv.partition("=")
+        os.environ[k.strip()] = v
     spec = json.loads((ROOT / "eval" / ("holdout.json" if o.holdout else "folds.json")).read_text(encoding="utf-8"))
     folds = spec["folds"][:1] if o.quick else spec["folds"]
     name = o.name or Path(o.src).name

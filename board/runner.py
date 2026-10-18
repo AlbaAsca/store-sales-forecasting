@@ -44,6 +44,9 @@ ALLOWED = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch",
            # en Windows la CLI puede usar PowerShell en vez de Bash: mismos permisos
            "PowerShell(python *)", "PowerShell(git status*)", "PowerShell(git diff*)", "PowerShell(git log*)",
            "PowerShell(Get-ChildItem*)", "PowerShell(Get-Content*)",
+           # el python del proyecto llamado por ruta, y git de solo lectura que usan al verificar
+           "Bash(.venv/Scripts/python *)", "Bash(.venv/Scripts/python.exe *)", "PowerShell(.venv/Scripts/python *)",
+           "Bash(git show*)", "Bash(git tag --list*)", "Bash(git tag -l*)", "PowerShell(git show*)",
            # Kaggle CLI solo lectura (leaderboard y notebooks públicos); nunca submit ni push
            "Bash(../KaggleFarm/.venv/Scripts/kaggle.exe competitions leaderboard *)",
            "Bash(../KaggleFarm/.venv/Scripts/kaggle.exe kernels list *)",
@@ -69,6 +72,9 @@ RULES = """Reglas (modo autónomo, permisos: solo código y tests):
   criterio exacto) van al final, debajo de una línea que diga exactamente «## Técnico». Sin siglas ni nombres de código en la parte de arriba.
 - NO edites board/board.json a mano: usa siempre board/board.py.
 - No hagas git add ni git commit (está bloqueado): el runner guarda tus cambios al terminar la tarjeta.
+- Variables de entorno: no escribas `VAR=x python …` (se deniega); usa `python scripts/backtest.py … --env VAR=x`.
+- No uses `python -c` de varias líneas, `cat >>` ni heredoc (se deniegan): crea o edita el fichero con Write/Edit
+  (por ejemplo un script en scripts/analysis/) y ejecútalo con `python scripts/analysis/<script>.py`.
 - Comandos permitidos: python (scripts, pytest, board.py), git status/diff/log, ls/cat/head/tail/diff, mkdir y
   `python scripts/new_variant.py V-xxx` (crea la carpeta de la variante; no uses cp). Lanza cada comando solo
   (sin `cd ... &&`, `;` ni `|`), o se denegará. Nunca toques models/base/ (la base vigente) ni eval/holdout.json.

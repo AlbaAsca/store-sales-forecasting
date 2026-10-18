@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:34:32+02:00",
+  "updated": "2026-10-18T09:36:09+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,10 +33,10 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "idle",
+    "state": "stopped",
     "current": null,
-    "heartbeat": "2026-10-18T09:34:32+02:00",
-    "message": "aportación experto (T-066): sin RESULT",
+    "heartbeat": "2026-10-18T09:34:34+02:00",
+    "message": "Runner parado",
     "pid": 19616,
     "agent": "experto",
     "started": "2026-10-18T09:34:06+02:00",
@@ -4031,7 +4031,7 @@
       "id": "T-066",
       "title": "Ronda de aportación: experto",
       "owner": "experto",
-      "status": "blocked",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 15,
       "actual_min": 0.4,
@@ -4040,7 +4040,7 @@
       "desc": "Si hay resultados en eval/results/*/ que nadie haya analizado, mira dónde se equivoca más el modelo (fold, tienda, familia, días festivos) y qué haría un data scientist senior.",
       "deps": [],
       "created": "2026-10-18T09:34:06+02:00",
-      "updated": "2026-10-18T09:34:32+02:00",
+      "updated": "2026-10-18T09:36:09+02:00",
       "started_at": "2026-10-18T09:34:06+02:00",
       "finished_at": "2026-10-18T09:34:32+02:00",
       "log": [
@@ -4058,6 +4058,11 @@
           "t": "2026-10-18T09:34:32+02:00",
           "by": "experto",
           "msg": "BLOCKED: sin RESULT"
+        },
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "Ronda sin resultado: le denegaron `.venv/Scripts/python board/board.py list` (ruta no permitida). Permiso añadido."
         }
       ],
       "kind": "contrib",
@@ -4071,6 +4076,88 @@
           "tokens": 122114,
           "cost_usd": 0.24746300000000004,
           "verdict": "blocked"
+        }
+      ]
+    },
+    {
+      "id": "T-067",
+      "title": "V-027: avisar al modelo de las promociones de los días de alrededor, no solo del día que predice",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 25,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hoy el modelo solo sabe si el producto está en promoción el mismo día que predice y cuántas promociones hubo en las dos semanas anteriores. Pero una promoción mueve las compras de los días cercanos: la gente espera a que empiece o compra de más justo antes de que acabe. Las promociones de las dos semanas siguientes ya se conocen de antemano, así que se le pueden dar al modelo sin hacer trampa.\nCómo sabremos si funciona: el error medio de las prácticas baja frente a la base actual con dos semillas y no empeora más de una de las cuatro ventanas.\n\n## Técnico\nFuente: ceshine/lgbm-starter (`promo_i` de los 16 días futuros), Favorita 1.º (suma de promos de los 16 días siguientes).\nCambio en `_features` y `_step_feats`: `promo_fut16 = P[:, origin:origin+16].sum(1)`; `promo_prev_day = P[:, origin+j-1]`; `promo_next_day = P[:, origin+j+1]` (j=15 → NaN siempre).\nCriterio: CV medio < base-v7 (0.3838/0.3836) con semillas 42 y 7, empeora ≤ 1 de 4 folds; anotar c1 sin las tiendas 18/25 y el tiempo.",
+      "deps": [],
+      "created": "2026-10-18T09:36:09+02:00",
+      "updated": "2026-10-18T09:36:09+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "Redactada por el modelador en T-065; no se pudo crear porque el permiso bloqueó board.py add (comando de varias líneas)."
+        }
+      ]
+    },
+    {
+      "id": "T-068",
+      "title": "V-028: enseñar al modelo cómo va la tienda entera y la familia en todas las tiendas",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 30,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Ahora cada serie (una familia en una tienda) solo se mira a sí misma. Si una tienda entera vende menos esta semana, o una familia sube en todo el país, el modelo no lo ve salvo por la propia serie, que en productos pequeños es muy ruidosa. Los ganadores de la competición de Favorita añadían el nivel reciente de la tienda completa y el de la familia sumando todas las tiendas.\nCómo sabremos si funciona: el error medio de las prácticas baja frente a la base actual con dos semillas y no empeora más de una de las cuatro ventanas.\n\n## Técnico\nFuente: Favorita 1.º/2.º (rasgos agregados a nivel de tienda y de artículo), M5 1.º (modelos por tienda/categoría).\nCambio en `_features` y `_step_feats`: `st_m7`, `st_m28` = media log1p de las 33 familias de la tienda en [origin−w, origin); `fam_m7`, `fam_m28` = media log1p de la familia en las 54 tiendas; `st_trend = st_m7 − st_m28`. Solo fechas < corte.\nCriterio: CV medio < base-v7 (0.3838/0.3836) con semillas 42 y 7, empeora ≤ 1 de 4 folds; anotar c1 sin las tiendas 18/25 y el tiempo.",
+      "deps": [],
+      "created": "2026-10-18T09:36:09+02:00",
+      "updated": "2026-10-18T09:36:09+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "Redactada por el modelador en T-065; no se pudo crear porque el permiso bloqueó board.py add (comando de varias líneas)."
+        }
+      ]
+    },
+    {
+      "id": "T-069",
+      "title": "Leer los notebooks públicos mejor valorados de Store Sales",
+      "owner": "investigador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 40,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "En la búsqueda anterior el investigador no pudo leer los notebooks de la competición porque usó un comando de Kaggle que el sistema no permite. Lo que sabemos de ellos viene de resúmenes y memoria, no del código.\n\nLa idea es descargar y leer de verdad los 5-8 notebooks más votados y anotar qué hacen que nosotros no hacemos.\n\nCómo sabremos si ha servido: queda una sección nueva en las notas con lo que hace cada notebook, su nota y las ideas que nos faltan, y como mucho dos tarjetas nuevas.\n\n## Técnico\n- Usa SOLO estos comandos (el «kaggle» sin ruta está bloqueado):\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels list --competition store-sales-time-series-forecasting --sort-by voteCount --page-size 20\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull <usuario/slug> -p data/kaggle-code/<slug>\n- Contrastar con docs/DISENO-MODELOS.md, docs/NOTAS-investigador.md y el panel para no duplicar (V-017, V-027, V-028).\n- Base vigente: base-v7 (CV 0.3838, LB 0.39720).",
+      "deps": [],
+      "created": "2026-10-18T09:36:09+02:00",
+      "updated": "2026-10-18T09:36:09+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T09:36:09+02:00",
+          "by": "consultor",
+          "msg": "creada"
         }
       ]
     }

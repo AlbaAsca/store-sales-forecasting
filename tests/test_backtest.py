@@ -104,3 +104,13 @@ def test_control_open_en_compare():
     b = {"folds": [{"id": "f1", "rmsle": 0.5, "by_family": {}}], "control": [{"id": "c1", "rmsle": 0.6, "rmsle_open": 0.3}]}
     assert results.compare(a, b)["control_open"] == [("c1", 0.4, 0.3)]
     assert results.compare(summ([0.5]), summ([0.5]))["control_open"] == []
+
+
+def test_env_pasa_variables_al_modelo(monkeypatch):
+    # el runner deniega «VAR=x python …»: --env es la forma permitida
+    import os
+    monkeypatch.setenv("ZERO_N", "56")  # registra el valor para que se restaure al acabar el test
+    monkeypatch.setattr(backtest, "load_data", lambda: (None, None))
+    monkeypatch.setattr(backtest, "run", lambda *a, **k: {"mean": 0.0, "std": 0.0, "secs": 0.0})
+    backtest.main(["--src", "models/base", "--name", "t", "--quick", "--env", "ZERO_N=28"])
+    assert os.environ["ZERO_N"] == "28"

@@ -5,6 +5,7 @@
 Subirlo a Kaggle lo hace Alba a mano (los agentes nunca envían). Antes: tag vX.Y y resultado de holdout (CLAUDE.md).
 """
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,12 @@ def main(argv=None):
     ap.add_argument("--src", required=True)
     ap.add_argument("--name", required=True)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--env", action="append", default=[], metavar="CLAVE=VALOR",
+                    help="variable de entorno para el modelo (p. ej. --env ZERO_N=28); repetible")
     o = ap.parse_args(argv)
+    for kv in o.env:  # el runner deniega «VAR=x python …»: así se pasan sin salir de «python *»
+        k, _, v = kv.partition("=")
+        os.environ[k.strip()] = v
     train, ctx = load_data()
     test = pd.read_csv(DATA / "test.csv", parse_dates=["date"], dtype={"family": "category"})
     p = np.clip(np.asarray(load_model(o.src).fit_predict(train, test, {**ctx, "seed": o.seed}), float), 0, None)
