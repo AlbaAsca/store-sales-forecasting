@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:45:47+02:00",
+  "updated": "2026-10-18T09:47:17+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -34,15 +34,15 @@
   "runner": {
     "enabled": true,
     "state": "working",
-    "current": "T-067",
-    "heartbeat": "2026-10-18T09:39:45+02:00",
-    "message": "tester con T-067",
+    "current": "T-068",
+    "heartbeat": "2026-10-18T09:45:50+02:00",
+    "message": "desarrollador con T-068",
     "pid": 6204,
-    "agent": "tester",
-    "started": "2026-10-18T09:39:45+02:00",
+    "agent": "desarrollador",
+    "started": "2026-10-18T09:45:50+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
-    "live": "live-T-067-tester-20261018-093945.jsonl"
+    "live": "live-T-068-desarrollador-20261018-094550.jsonl"
   },
   "agents": [
     {
@@ -4160,18 +4160,18 @@
       "id": "T-068",
       "title": "V-028: enseñar al modelo cómo va la tienda entera y la familia en todas las tiendas",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 30,
-      "actual_min": null,
+      "actual_min": 1.4,
       "auto": true,
       "manual": null,
       "desc": "Ahora cada serie (una familia en una tienda) solo se mira a sí misma. Si una tienda entera vende menos esta semana, o una familia sube en todo el país, el modelo no lo ve salvo por la propia serie, que en productos pequeños es muy ruidosa. Los ganadores de la competición de Favorita añadían el nivel reciente de la tienda completa y el de la familia sumando todas las tiendas.\nCómo sabremos si funciona: el error medio de las prácticas baja frente a la base actual con dos semillas y no empeora más de una de las cuatro ventanas.\n\n## Técnico\nFuente: Favorita 1.º/2.º (rasgos agregados a nivel de tienda y de artículo), M5 1.º (modelos por tienda/categoría).\nCambio en `_features` y `_step_feats`: `st_m7`, `st_m28` = media log1p de las 33 familias de la tienda en [origin−w, origin); `fam_m7`, `fam_m28` = media log1p de la familia en las 54 tiendas; `st_trend = st_m7 − st_m28`. Solo fechas < corte.\nCriterio: CV medio < base-v7 (0.3838/0.3836) con semillas 42 y 7, empeora ≤ 1 de 4 folds; anotar c1 sin las tiendas 18/25 y el tiempo.",
       "deps": [],
       "created": "2026-10-18T09:36:09+02:00",
-      "updated": "2026-10-18T09:36:09+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T09:47:17+02:00",
+      "started_at": "2026-10-18T09:45:50+02:00",
+      "finished_at": "2026-10-18T09:47:17+02:00",
       "log": [
         {
           "t": "2026-10-18T09:36:09+02:00",
@@ -4182,6 +4182,28 @@
           "t": "2026-10-18T09:36:09+02:00",
           "by": "consultor",
           "msg": "Redactada por el modelador en T-065; no se pudo crear porque el permiso bloqueó board.py add (comando de varias líneas)."
+        },
+        {
+          "t": "2026-10-18T09:45:50+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T09:47:17+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-028 implementada (rasgos agregados de tienda y familia); la prueba rápida del fold 1 da 0.3917 y los tests pasan; falta la medición completa con 2 semillas."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T09:47:17+02:00",
+          "min": 1.5,
+          "turns": 10,
+          "tokens": 125777,
+          "cost_usd": 0.10422940000000001,
+          "verdict": "review"
         }
       ]
     },
