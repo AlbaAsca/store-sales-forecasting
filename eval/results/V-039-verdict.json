@@ -1,0 +1,140 @@
+{
+ "accepted": false,
+ "rows": [
+  {
+   "run": "V-039",
+   "base": 0.3811,
+   "variant": 0.3815,
+   "delta": 0.0004,
+   "worse_folds": [
+    "f1",
+    "f3",
+    "f4"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3889
+    ],
+    [
+     "f2",
+     0.3726,
+     0.3723
+    ],
+    [
+     "f3",
+     0.3772,
+     0.3772
+    ],
+    [
+     "f4",
+     0.3868,
+     0.3875
+    ]
+   ],
+   "families_best": [
+    [
+     "LADIESWEAR",
+     -0.002
+    ],
+    [
+     "BREAD/BAKERY",
+     -0.002
+    ],
+    [
+     "BOOKS",
+     -0.001
+    ]
+   ],
+   "families_worst": [
+    [
+     "PRODUCE",
+     0.017
+    ],
+    [
+     "LIQUOR,WINE,BEER",
+     0.004
+    ],
+    [
+     "HOME APPLIANCES",
+     0.002
+    ]
+   ]
+  },
+  {
+   "run": "V-039-s7",
+   "base": 0.3813,
+   "variant": 0.3813,
+   "delta": -0.0001,
+   "worse_folds": [
+    "f1",
+    "f3"
+   ],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3886
+    ],
+    [
+     "f2",
+     0.3727,
+     0.3725
+    ],
+    [
+     "f3",
+     0.3773,
+     0.3774
+    ],
+    [
+     "f4",
+     0.3875,
+     0.3865
+    ]
+   ],
+   "families_best": [
+    [
+     "PRODUCE",
+     -0.006
+    ],
+    [
+     "BREAD/BAKERY",
+     -0.002
+    ],
+    [
+     "BOOKS",
+     -0.002
+    ]
+   ],
+   "families_worst": [
+    [
+     "LIQUOR,WINE,BEER",
+     0.003
+    ],
+    [
+     "HOME APPLIANCES",
+     0.002
+    ],
+    [
+     "LAWN AND GARDEN",
+     0.001
+    ]
+   ]
+  }
+ ],
+ "why": [
+  "V-039: media 0.3811 → 0.3815, empeora 3 fold(s)",
+  "V-039-s7: media 0.3813 → 0.3813, empeora 2 fold(s)"
+ ],
+ "variant": "V-039",
+ "base": "base-v10",
+ "control_open": {
+  "base": 0.3844908121110169,
+  "variant": 0.383884460630205
+ },
+ "secs": {
+  "base": 500.7,
+  "variant": 428.5
+ }
+}

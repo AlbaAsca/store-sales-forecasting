@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:41:55+02:00",
+  "updated": "2026-10-18T17:00:20+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6286,7 +6286,7 @@
       "id": "T-103",
       "title": "V-039: repesca de V-022 (series que se venden a ratos) sobre base-v10",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 45.0,
       "actual_min": 2.6,
@@ -6295,7 +6295,7 @@
       "desc": "V-022 mejoraba las prácticas con 2 semillas y solo se frenó porque el examen final local (holdout) empeoraba. Pero ese examen ya se ha equivocado 3 veces frente a Kaggle (v0.2, v0.6 y V-037), así que la volvemos a probar sobre la base actual.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 fold peor). Si pasa y la promoción la frena solo el holdout, el consultor la envía a Kaggle como experimento (OK de Alba ya dado) y decide con la nota.\n\n## Técnico\nCrea variants/V-039 desde models/base (base-v10) con new_variant.py y porta solo el cambio de variants/V-022 (rasgos zfrac14/28/56 y since_nz en _features y _step_feats). Ojo: base-v10 (V-037) ya trata los días de tienda cerrada como dato que falta; calcula zfrac/since_nz ignorando esos días para no contar cierres como ventas cero. NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-18T16:24:20+02:00",
-      "updated": "2026-10-18T16:41:55+02:00",
+      "updated": "2026-10-18T17:00:20+02:00",
       "started_at": "2026-10-18T16:39:21+02:00",
       "finished_at": "2026-10-18T16:41:55+02:00",
       "log": [
@@ -6313,6 +6313,26 @@
           "t": "2026-10-18T16:41:55+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-039 creada con los rasgos de V-022 ignorando los cierres; corre en `--quick` (0,3889) y los tests pasan; falta la medición del tester con las semillas 42 y 7."
+        },
+        {
+          "t": "2026-10-18T16:41:57+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T16:59:39+02:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: RECHAZADA (V-039: media 0.3811 → 0.3815, empeora 3 fold(s); V-039-s7: media 0.3813 → 0.3813, empeora 2 fold(s))"
+        },
+        {
+          "t": "2026-10-18T17:00:15+02:00",
+          "by": "tester",
+          "msg": "V-039 RECHAZADA: media 0.3811 → 0.3815 (semilla 42, empeora 3/4 folds); semilla 7: 0.3813 → 0.3813 (empeora 2/4). Control sin cerradas 0.3845 → 0.3839. Tests 74 verdes; sin fugas (solo pasado en _features y _step_feats). Sin promoción."
+        },
+        {
+          "t": "2026-10-18T17:00:20+02:00",
+          "by": "tester",
+          "msg": "DONE: V-039 RECHAZADA: no mejora la base-v10 con dos semillas; tests en verde y sin fugas."
         }
       ],
       "runs": [
@@ -6325,8 +6345,19 @@
           "tokens": 117045,
           "cost_usd": 0.09769339999999999,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T17:00:20+02:00",
+          "min": 0.7,
+          "turns": 14,
+          "tokens": 126303,
+          "cost_usd": 0.0058714299999999995,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T16:41:57+02:00"
     },
     {
       "id": "T-104",
@@ -6380,12 +6411,12 @@
     "measure": {
       "state": "working",
       "current": "T-103",
-      "message": "desarrollador con T-103",
+      "message": "verificación mecánica de V-039: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:39:21+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-18T16:39:21+02:00",
-      "live": "live-T-103-desarrollador-20261018-163921.jsonl",
+      "heartbeat": "2026-10-18T16:59:39+02:00",
+      "agent": "tester",
+      "started": "2026-10-18T16:41:57+02:00",
+      "live": "live-T-103-tester-20261018-165939.jsonl",
       "enabled": true,
       "mechanical": false
     }

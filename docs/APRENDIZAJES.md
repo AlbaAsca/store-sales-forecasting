@@ -213,3 +213,6 @@ Un día en que la tienda entera vende 0 (cierre, 25-dic, días antes de abrir) s
 
 ## V-038: pérdida Huber, para que los picos raros pesen menos (aceptada)
 La pérdida Huber penaliza igual que el error cuadrático los errores pequeños, pero solo linealmente los grandes (concepto: «función de pérdida» = lo que el modelo intenta minimizar). Así, los días con ventas disparatadas tiran menos del modelo. Con dos semillas baja el error (0.3806 / 0.3804 frente a 0.3811 / 0.3813), mejora 3/4 folds con semilla 42 y 4/4 con semilla 7, y el control sin cerradas baja de 0.3845 a 0.3838. Por qué: el error cuadrático obligaba al modelo a perseguir picos aislados; la ganancia es pequeña (≈ −0.0005/−0.0009) pero se repite.
+
+## V-039: repesca de V-022 (series que se venden a ratos) sobre base-v10 (rechazada)
+Añadimos al modelo la fracción de días con venta cero en las últimas 14/28/56 jornadas y los días desde la última venta, ignorando los días de cierre (así un cierre no cuenta como cero). Con dos semillas no mejora: 0.3815 frente a 0.3811 con semilla 42 y 0.3813 frente a 0.3813 con semilla 7; empeora 3 y 2 folds, y PRODUCE empeora mucho (+0.017 con semilla 42). Por qué: las series a ratos ya quedan bien recogidas por el promedio y el perfil semanal, y los nuevos rasgos añaden ruido en familias con muchas ventas nulas.
