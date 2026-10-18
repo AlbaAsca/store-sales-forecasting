@@ -5,6 +5,12 @@ Los conceptos nuevos se explican en el [glosario](#glosario) la primera vez que 
 
 ## Experimentos
 
+### v0.7 · el año anterior, ahora limpio, sí funciona en Kaggle — 🏁 LB 0.39720 (mejor nota)
+Qué: subir base-v7 (V-026: año anterior sin los cierres de 2016 + cero en series muertas salvo temporada). · Pasó: Kaggle 0.39940 → 0.39720
+(−0.0022), la mejor nota hasta ahora; v0.6, con la misma idea sin limpiar, había dado 0.40871. · Por qué: la información del año anterior
+era buena; lo que estropeaba v0.6 eran los cierres de las tiendas 18 y 25 que viajaban al test. Limpiar los datos antes de usarlos
+convirtió un retroceso de +0.0093 en una mejora de −0.0022.
+
 ### V-026 · año anterior sin cierres + cero en series muertas — ✅ ACEPTADA, nueva base-v7 (0.3852 → 0.3838 / 0.3836)
 Qué: juntar V-025 (aprender del mismo periodo del año anterior quitando las tiendas cerradas entonces) y V-023 (predecir cero en las
 series que llevan dos meses sin vender, salvo las de temporada). · Pasó: prácticas 0.3838/0.3836 con dos semillas (V-025 sola:
