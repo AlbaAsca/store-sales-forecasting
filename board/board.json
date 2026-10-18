@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T09:36:09+02:00",
+  "updated": "2026-10-18T09:39:06+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -33,16 +33,16 @@
   ],
   "runner": {
     "enabled": true,
-    "state": "stopped",
-    "current": null,
-    "heartbeat": "2026-10-18T09:34:34+02:00",
-    "message": "Runner parado",
-    "pid": 19616,
-    "agent": "experto",
-    "started": "2026-10-18T09:34:06+02:00",
+    "state": "working",
+    "current": "T-067",
+    "heartbeat": "2026-10-18T09:37:35+02:00",
+    "message": "desarrollador con T-067",
+    "pid": 6204,
+    "agent": "desarrollador",
+    "started": "2026-10-18T09:37:35+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
-    "live": "live-T-066-experto-20261018-093406.jsonl"
+    "live": "live-T-067-desarrollador-20261018-093735.jsonl"
   },
   "agents": [
     {
@@ -4083,18 +4083,18 @@
       "id": "T-067",
       "title": "V-027: avisar al modelo de las promociones de los días de alrededor, no solo del día que predice",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 25,
-      "actual_min": null,
+      "actual_min": 1.5,
       "auto": true,
       "manual": null,
       "desc": "Hoy el modelo solo sabe si el producto está en promoción el mismo día que predice y cuántas promociones hubo en las dos semanas anteriores. Pero una promoción mueve las compras de los días cercanos: la gente espera a que empiece o compra de más justo antes de que acabe. Las promociones de las dos semanas siguientes ya se conocen de antemano, así que se le pueden dar al modelo sin hacer trampa.\nCómo sabremos si funciona: el error medio de las prácticas baja frente a la base actual con dos semillas y no empeora más de una de las cuatro ventanas.\n\n## Técnico\nFuente: ceshine/lgbm-starter (`promo_i` de los 16 días futuros), Favorita 1.º (suma de promos de los 16 días siguientes).\nCambio en `_features` y `_step_feats`: `promo_fut16 = P[:, origin:origin+16].sum(1)`; `promo_prev_day = P[:, origin+j-1]`; `promo_next_day = P[:, origin+j+1]` (j=15 → NaN siempre).\nCriterio: CV medio < base-v7 (0.3838/0.3836) con semillas 42 y 7, empeora ≤ 1 de 4 folds; anotar c1 sin las tiendas 18/25 y el tiempo.",
       "deps": [],
       "created": "2026-10-18T09:36:09+02:00",
-      "updated": "2026-10-18T09:36:09+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T09:39:06+02:00",
+      "started_at": "2026-10-18T09:37:35+02:00",
+      "finished_at": "2026-10-18T09:39:06+02:00",
       "log": [
         {
           "t": "2026-10-18T09:36:09+02:00",
@@ -4105,6 +4105,28 @@
           "t": "2026-10-18T09:36:09+02:00",
           "by": "consultor",
           "msg": "Redactada por el modelador en T-065; no se pudo crear porque el permiso bloqueó board.py add (comando de varias líneas)."
+        },
+        {
+          "t": "2026-10-18T09:37:35+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T09:39:06+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-027 implementada en variants/V-027 (promo_fut16, promo_prev_day, promo_next_day), corre en modo rápido (0.3886 en f1) y los tests pasan; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T09:39:06+02:00",
+          "min": 1.5,
+          "turns": 11,
+          "tokens": 139350,
+          "cost_usd": 0.12205990000000001,
+          "verdict": "review"
         }
       ]
     },
