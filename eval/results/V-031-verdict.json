@@ -1,0 +1,133 @@
+{
+ "accepted": false,
+ "rows": [
+  {
+   "run": "V-031",
+   "base": 0.3814,
+   "variant": 0.3814,
+   "delta": 0.0,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3877,
+     0.3877
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3729
+    ],
+    [
+     "f3",
+     0.3775,
+     0.3775
+    ],
+    [
+     "f4",
+     0.3874,
+     0.3874
+    ]
+   ],
+   "families_best": [
+    [
+     "AUTOMOTIVE",
+     0.0
+    ],
+    [
+     "BABY CARE",
+     0.0
+    ],
+    [
+     "BEAUTY",
+     0.0
+    ]
+   ],
+   "families_worst": [
+    [
+     "SEAFOOD",
+     0.0
+    ],
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     0.0
+    ],
+    [
+     "PRODUCE",
+     0.0
+    ]
+   ]
+  },
+  {
+   "run": "V-031-s7",
+   "base": 0.3815,
+   "variant": 0.3815,
+   "delta": 0.0,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3878
+    ],
+    [
+     "f2",
+     0.3729,
+     0.3729
+    ],
+    [
+     "f3",
+     0.3778,
+     0.3778
+    ],
+    [
+     "f4",
+     0.3876,
+     0.3876
+    ]
+   ],
+   "families_best": [
+    [
+     "AUTOMOTIVE",
+     0.0
+    ],
+    [
+     "BABY CARE",
+     0.0
+    ],
+    [
+     "BEAUTY",
+     0.0
+    ]
+   ],
+   "families_worst": [
+    [
+     "SEAFOOD",
+     0.0
+    ],
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     0.0
+    ],
+    [
+     "PRODUCE",
+     0.0
+    ]
+   ]
+  }
+ ],
+ "why": [
+  "V-031: media 0.3814 → 0.3814, empeora 0 fold(s)",
+  "V-031-s7: media 0.3815 → 0.3815, empeora 0 fold(s)"
+ ],
+ "variant": "V-031",
+ "base": "base-v9",
+ "control_open": {
+  "base": 0.3845427275062961,
+  "variant": 0.3845427275062961
+ },
+ "secs": {
+  "base": 428.6,
+  "variant": 428.6
+ }
+}
