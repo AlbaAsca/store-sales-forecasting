@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:49:03+02:00",
+  "updated": "2026-10-18T15:04:01+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5638,23 +5638,45 @@
       "id": "T-093",
       "title": "V-035: el año anterior solo como forma, no como nivel",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 2.5,
       "auto": true,
       "manual": null,
       "desc": "Una de las familias de producto (GROCERY II) se predice siempre por debajo de lo real: este año vende más que nunca y el modelo se fija en cuánto vendía hace un año, que era menos. Probamos a quitarle ese dato de nivel y dejarle solo el de cuánto subió o bajó el año pasado en esas fechas.\nCómo sabremos si funciona: si el error medio baja con las dos semillas, la familia deja de quedarse corta y la quincena de control de la vuelta al cole no empeora.\n\n## Técnico\nFuente: docs/BRAINSTORM-v10.md (E1, apoyada por modelador 5 y N1). Cambio único: quitar ly_day y ly_win de los rasgos del directo y del recursivo en variants/V-035/model.py (l. 82-83 y 116-123 de la base); mantener ly_diff. Ganancia esperada -0.0005…-0.0015. Criterio por defecto (RMSLE medio < 0.3814/0.3815 con semillas 42 y 7, máx. 1 de 4 folds peor) y además c1 sin cerradas (0.3845) y SCHOOL en c1 (0.52) no peor en más de 0.002. Mirar sesgo de GROCERY II. Si gana, aparcar el objetivo relativo y linear_tree.",
       "deps": [],
       "created": "2026-10-18T14:48:46+02:00",
-      "updated": "2026-10-18T14:48:46+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T15:04:01+02:00",
+      "started_at": "2026-10-18T15:01:29+02:00",
+      "finished_at": "2026-10-18T15:04:01+02:00",
       "log": [
         {
           "t": "2026-10-18T14:48:46+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T15:01:29+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T15:04:01+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-035 lista (se quitan ly_day y ly_win, se mantiene ly_diff); prueba rápida 0.3868, tests en verde, falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T15:04:01+02:00",
+          "min": 2.5,
+          "turns": 11,
+          "tokens": 95198,
+          "cost_usd": 0.08702019999999999,
+          "verdict": "review"
         }
       ]
     },
@@ -5729,15 +5751,75 @@
           "msg": "creada"
         }
       ]
+    },
+    {
+      "id": "T-097",
+      "title": "README: gráfica antes/después con ventas reales para cada teoría aprobada (script)",
+      "owner": "desarrollador",
+      "status": "next",
+      "priority": "media",
+      "estimate_min": 60.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Alba quiere que cada idea aprobada (cada base-vN) se vea en el README con un ejemplo real: las ventas de verdad de una tienda y familia, la predicción de antes y la de después, para que la mejora salte a la vista.\n\nCómo sabremos si funciona: hay una imagen por base aprobada en docs/img/teorias/ y en cada una se ve sin explicación que la línea nueva se pega más a las ventas reales que la anterior.\n\n## Técnico\nNuevo scripts/make_theory_figures.py (sin red, solo .venv). Para cada tag base-v1..base-v9: lee models/base/model.py del tag anterior y del tag con git show desde Python (subprocess, sin cp) a una carpeta temporal dentro de eval/tmp/; predice el mismo fold de validación (por defecto el último de eval/folds.json, nunca el holdout) con semilla 42; elige automáticamente la serie tienda×familia donde más baja el error (RMSLE de la serie, con ventas medias no triviales, ni tiendas cerradas 18/25/52) y dibuja: ventas reales (negro), predicción antes (gris discontinuo), después (color), con 4-6 semanas de historia, título llano ('base-v6: el año anterior sin cierres') y el RMSLE antes→después en la leyenda. Guarda docs/img/teorias/base-vN.png y un eval/theory_figures.json con la serie elegida y los números. Cachea predicciones en eval/tmp para no recalcular. Tests: uno sobre la función pura que elige la serie. Estimación de cómputo: ~9 predicciones de un fold; dilo en la nota.",
+      "deps": [],
+      "created": "2026-10-18T14:50:54+02:00",
+      "updated": "2026-10-18T15:01:40+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:50:54+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T15:01:40+02:00",
+          "by": "tú",
+          "msg": "→ Próximo"
+        }
+      ]
+    },
+    {
+      "id": "T-098",
+      "title": "README: sección «Las ideas que funcionaron» con explicación sencilla y gráfica",
+      "owner": "arquitecto",
+      "status": "next",
+      "priority": "media",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Añadir al README una sección con todas las teorías aprobadas, en orden: para cada una, 2-4 frases que entienda cualquiera (qué problema había, qué idea tuvimos, por qué funciona) y justo debajo su gráfica con ventas reales.\n\nCómo sabremos si funciona: alguien que no sabe de forecasting entiende cada mejora leyendo la explicación y mirando la gráfica, y cada bloque dice cuánto bajó el error.\n\n## Técnico\nFuente: tags base-v1..base-v9 (git tag -n), docs/APRENDIZAJES.md, eval/theory_figures.json y docs/img/teorias/base-vN.png (de T-097). Formato por bloque: '### base-vN · <nombre llano> (V-xxx)', explicación friendly, imagen, línea 'Error: X → Y (−Z %) en validación; Kaggle: …' si hay nota en eval/kaggle.json. Enlaza la sección desde el índice del README y no dupliques la tabla de experimentos: enlázala.",
+      "deps": [
+        "T-097"
+      ],
+      "created": "2026-10-18T14:50:54+02:00",
+      "updated": "2026-10-18T15:01:23+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T14:50:54+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T15:01:23+02:00",
+          "by": "tú",
+          "msg": "→ Próximo"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-092",
-      "message": "investigador con T-092",
-      "pid": 17880,
-      "heartbeat": "2026-10-18T14:47:39+02:00",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
+      "pid": 21940,
+      "heartbeat": "2026-10-18T15:01:29+02:00",
       "agent": "investigador",
       "started": "2026-10-18T14:47:39+02:00",
       "live": "live-T-092-investigador-20261018-144739.jsonl",
@@ -5746,14 +5828,14 @@
       "enabled": true
     },
     "measure": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado",
-      "pid": 6920,
-      "heartbeat": "2026-10-18T14:39:02+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T13:10:56+02:00",
-      "live": "live-T-081-tester-20261018-132842.jsonl",
+      "state": "working",
+      "current": "T-093",
+      "message": "desarrollador con T-093",
+      "pid": 8496,
+      "heartbeat": "2026-10-18T15:01:29+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T15:01:29+02:00",
+      "live": "live-T-093-desarrollador-20261018-150129.jsonl",
       "enabled": true,
       "mechanical": false
     }
