@@ -228,6 +228,10 @@ def auto_promote(o):
 VARIANT_RE = re.compile(r"^(V-\d{3}[A-Za-z0-9-]*)\b")
 
 
+PRECHECK_MIN = 60   # tope de la verificación mecánica (dos semillas); la base tarda ~8 min por semilla
+TIMEOUT = "TIMEOUT"
+
+
 def precheck(t):
     """Verificación mecánica de una variante (scripts/verify_variant.py, 0 tokens) antes de llamar al evaluador.
     Devuelve el texto con los números y el veredicto, o None si la tarjeta no es una variante."""
@@ -237,14 +241,17 @@ def precheck(t):
     print(f"  verificación mecánica de {m.group(1)} (sin agente)…")
     set_runner(live=None, mechanical=True, started=now(),
                message=f"verificación mecánica de {m.group(1)}: backtest con 2 semillas, sin agente (0 tokens)")
+    p = subprocess.Popen([sys.executable, str(ROOT / "scripts" / "verify_variant.py"), m.group(1)], cwd=ROOT, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace", env={**os.environ, "PYTHONUTF8": "1"})
     try:
-        r = subprocess.run([sys.executable, str(ROOT / "scripts" / "verify_variant.py"), m.group(1)], cwd=ROOT, capture_output=True,
-                           text=True, encoding="utf-8", errors="replace", timeout=45 * 60, env={**os.environ, "PYTHONUTF8": "1"})
+        out, _ = p.communicate(timeout=PRECHECK_MIN * 60)
     except subprocess.TimeoutExpired:
-        return None
+        # matar el árbol entero: si no, backtest.py sigue vivo y el evaluador lanzaría otro en paralelo (V-040)
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(p.pid)], capture_output=True) if os.name == "nt" else p.kill()
+        return TIMEOUT
     finally:
         set_runner(mechanical=False)
-    return r.stdout.strip() if r.returncode in (0, 1) else None
+    return out.strip() if p.returncode in (0, 1) else None
 
 
 def build_prompt(t, mode, agent, pre=None):
@@ -665,6 +672,12 @@ def main():
 
             est = t.get("estimate_min") or 15
             pre = precheck(t) if mode == "verify" else None
+            if pre == TIMEOUT:  # demasiado lenta: no se gasta un evaluador en medirla otra vez
+                bd.update(lambda b: bd.set_status(b, bd.task(b, tid), "blocked", "runner",
+                          f"verificación mecánica > {PRECHECK_MIN} min (la base tarda ~16 min las dos semillas): "
+                          "hay que abaratar la variante o medirla a mano en segundo plano"))
+                set_runner(state="idle", current=None, message="Sin tareas ejecutables")
+                continue
             if pre:
                 bd.update(lambda b: bd.log(bd.task(b, tid), "runner", "verificación mecánica: " + pre.splitlines()[-1][:300]))
             r = run_claude(o.claude, build_prompt(t, mode, agent, pre), agent, timeout_s=int(min(120, max(15, est * 4)) * 60), tag=tid,
