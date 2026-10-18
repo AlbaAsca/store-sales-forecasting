@@ -193,6 +193,9 @@ Qué: … · Pasó: … · Por qué: …
 - **Estacionalidad**: patrón que se repite (semana, mes, año).
 - **Función de pérdida**: la regla con la que el modelo puntúa sus errores mientras aprende (L2 = error² ; tweedie = pensada para datos con muchos ceros y colas largas). Conviene que case con la métrica final: L2 sobre log1p(ventas) es exactamente RMSLE, así que optimiza lo que se evalúa; tweedie sobre ventas crudas optimiza otra cosa (V-007 lo pone a prueba).
 
+## V-033: banda de incertidumbre (cuantiles 10/50/90) — ❌ RECHAZADA como base (la banda sí cubre)
+Se añaden tres modelos que predicen el percentil 10, 50 y 90 de la venta, y con ellos una banda «entre X e Y». La previsión principal no cambia (RMSLE 0.3814, igual que base-v9). La banda acierta: cubre el 78-81 % de los días en los 4 folds y con dos semillas, dentro del objetivo 0.75-0.85. Pero la mediana sola empeora (0.391 de media frente a 0.383 de base-v8), así que no se promueve: sirve como información extra, no como envío. Tarda ×1.6 (429 → 688 s).
+
 ## V-032: una pizca de modelo tweedie en la media — ❌ RECHAZADA (0.3824 vs 0.3815, semilla 7)
 Se mezcla un 20 % de un segundo modelo entrenado con otra pérdida (tweedie, sobre ventas sin comprimir) con la base. Empeora 3 de 4 prácticas (+0.0002, +0.0016, +0.0025) y tarda el doble (432 → 940 s). Por qué: tweedie solo ya era peor (0.4094) y sus errores no se compensan con los del modelo actual; no aporta diversidad útil, solo ruido.
 
