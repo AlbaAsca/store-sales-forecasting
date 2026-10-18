@@ -94,4 +94,4 @@ Solo lo usa el consultor en sesiones interactivas: para leer puntuaciones y, **c
 El runner lo bloquea (`--strict-mcp-config` y `mcp__kaggle` en DENIED): los agentes autónomos nunca lo ven.
 
 ## Commits
-Autoría Alba Ascaso <albaasca@gmail.com>. En **inglés**, Conventional Commits, tarea al final: `feat(model): add weekday profile (T-012)`.
+Autoría Alba Ascaso <albaasca@gmail.com>. **Sin líneas de coautoría** (nada de «Co-Authored-By: Claude…»): el historial se limpió el 18-oct a petición de Alba. En **inglés**, Conventional Commits, tarea al final: `feat(model): add weekday profile (T-012)`.
