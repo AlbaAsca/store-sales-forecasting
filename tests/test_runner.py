@@ -127,6 +127,34 @@ def test_denegados_avisan_y_bloquean(monkeypatch):
     assert t["log"][0].startswith("⚠ 1 comandos denegados: cat x && python board/board.py add")
 
 
+def _add_events(*results):
+    out = []
+    for i, txt in enumerate(results):
+        cmd = 'python board/board.py add "Mi tarjeta" --owner x'
+        out.append(json.dumps({"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "id": str(i), "name": "Bash", "input": {"command": cmd}}]}}))
+        out.append(json.dumps({"type": "user", "message": {"content": [
+            {"type": "tool_result", "tool_use_id": str(i), "content": txt}]}}))
+    return out
+
+
+def test_reintento_que_crea_tarjeta_no_bloquea(monkeypatch):
+    den = "Permission for this tool use was denied"
+    assert runner.adds_recovered(_add_events(den, "Creada T-070"))
+    assert not runner.adds_recovered(_add_events(den))
+    assert not runner.adds_recovered(_add_events("Creada T-070", den))
+    fake = {"tasks": [{"id": "T-1", "owner": "investigador", "status": "doing", "log": []}], "agents": []}
+    monkeypatch.setattr(runner.bd, "update", lambda f: f(fake))
+    monkeypatch.setattr(runner.bd, "task", lambda b, tid: b["tasks"][0])
+    monkeypatch.setattr(runner.bd, "set_status", lambda b, t, s, by, msg: t.update(status=s))
+    monkeypatch.setattr(runner.bd, "log", lambda t, by, msg: t["log"].append(msg))
+    lines = _add_events(den, "Creada T-070")
+    r = dict(text="RESULT: done — listo", err="", code=0, secs=5, turns=1, cost=None, usage={}, is_error=False,
+             denied=runner.denied_commands(lines), adds_ok=runner.adds_recovered(lines))
+    new, verdict, _ = runner.finish("T-1", "work", "investigador", r)
+    assert (new, verdict) == ("done", "done") and fake["tasks"][0]["log"][0].startswith("⚠")
+
+
 def test_sin_denegados_sin_nota(monkeypatch):
     t, (new, verdict, _) = _finish(monkeypatch, False)
     assert (new, verdict) == ("done", "done") and t["log"] == []

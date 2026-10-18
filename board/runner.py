@@ -342,7 +342,7 @@ def run_claude(claude, prompt, agent, timeout_s, tag="run", max_turns=80):
     if killed:
         err, code = "timeout", -1
     text = data.get("result") if isinstance(data.get("result"), str) else "".join(lines[-20:])
-    return dict(denied=denied_commands(lines), text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
+    return dict(denied=denied_commands(lines), adds_ok=adds_recovered(lines), text=text or "", err=err[-2000:] if err else "", code=code, secs=time.time() - t0,
                 turns=data.get("num_turns"), cost=data.get("total_cost_usd"),
                 usage=data.get("usage") or {}, is_error=data.get("is_error", code != 0))
 
@@ -371,6 +371,42 @@ def denied_commands(lines):
             elif c.get("type") == "tool_result" and DENIED_MARK in json.dumps(c.get("content"), ensure_ascii=False):
                 out.append(uses.get(c.get("tool_use_id"), "?"))
     return out
+
+
+ADD_RE = re.compile(r"""board\.py\s+add\s+(?:"([^"]*)"|'([^']*)'|(\S+))""")
+TASK_ID_RE = re.compile(r"T-\d+")
+
+
+def _add_title(cmd):
+    m = ADD_RE.search(cmd or "")
+    return (m.group(1) or m.group(2) or m.group(3)).strip() if m else None
+
+
+def adds_recovered(lines):
+    """True si hubo board.py add denegados y cada uno se reintentó después con el mismo título y creó tarjeta (T-ddd)."""
+    uses, order = {}, []  # order: (título, denegado, creada)
+    for line in lines:
+        try:
+            ev = json.loads(line)
+        except (json.JSONDecodeError, TypeError):
+            continue
+        msg = ev.get("message") if isinstance(ev, dict) else None
+        content = msg.get("content") if isinstance(msg, dict) else None
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict):
+                continue
+            if c.get("type") == "tool_use":
+                uses[c.get("id")] = str((c.get("input") or {}).get("command") or "")
+            elif c.get("type") == "tool_result":
+                title = _add_title(uses.get(c.get("tool_use_id"), ""))
+                if title is None:
+                    continue
+                body = json.dumps(c.get("content"), ensure_ascii=False)
+                order.append((title, DENIED_MARK in body, bool(TASK_ID_RE.search(body)) and DENIED_MARK not in body))
+    denied = [(i, t) for i, (t, d, _) in enumerate(order) if d]
+    return bool(denied) and all(any(t2 == t and ok and j > i for j, (t2, _, ok) in enumerate(order)) for i, t in denied)
 
 
 def read_denied(path):
@@ -443,7 +479,7 @@ def finish(tid, mode, agent, r):
     verdict = m.group(1).lower() if m else ("blocked" if r["is_error"] else "review")
     summary = (m.group(2).strip() if m else (r["err"] or r["text"][-300:]).strip())[:400] or "sin resumen"
     denied = r.get("denied") or []
-    if any("board.py add" in d for d in denied) and verdict in ("done", "review"):
+    if any("board.py add" in d for d in denied) and verdict in ("done", "review") and not r.get("adds_ok"):
         verdict = "blocked"  # las tarjetas que debía crear no existen
     warn = (f"⚠ {len(denied)} comandos denegados: " + " | ".join(" ".join(d.split())[:80] for d in denied)) if denied else None
     u = r["usage"]

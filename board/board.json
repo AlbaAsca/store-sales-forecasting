@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T13:04:07+02:00",
+  "updated": "2026-10-18T13:04:42+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4574,23 +4574,69 @@
       "id": "T-075",
       "title": "Runner: no bloquear la tarjeta si el agente reintentó y sí creó la tarjeta",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "baja",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 0.5,
       "auto": true,
       "manual": null,
       "desc": "Cuando a un agente le deniegan crear una tarjeta, el runner deja la suya en «Bloqueado» para que no se pierda nada. Pero si el agente lo vuelve a intentar bien y la tarjeta sí se crea, el bloqueo es una falsa alarma (pasó en T-069).\n\nCómo sabremos que funciona: con un registro de ejemplo donde el primer intento se deniega y el segundo crea la tarjeta, la tarjeta del agente no queda bloqueada.\n\n## Técnico\nEn el aviso de comandos denegados: si después de cada board.py add denegado hay un board.py add con el mismo título cuyo resultado contiene «T-ddd», no pasar a blocked (mantener la nota). Test en tests/test_runner.py.",
-      "deps": [],
+      "deps": [
+        "T-083",
+        "T-084",
+        "T-085"
+      ],
       "created": "2026-10-18T10:53:17+02:00",
-      "updated": "2026-10-18T10:53:17+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T13:04:42+02:00",
+      "started_at": "2026-10-18T13:04:10+02:00",
+      "finished_at": "2026-10-18T13:04:42+02:00",
       "log": [
         {
           "t": "2026-10-18T10:53:17+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T13:04:10+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: el runner ya no bloquea la tarjeta si el agente reintentó y la creó; test añadido y en verde"
+        },
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "desarrollador",
+          "msg": "⚠ 3 comandos denegados: Grep | C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py | C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py"
+        },
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "? permiso solicitado: Grep * (T-083); la tarjeta espera la decisión"
+        },
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "? permiso solicitado: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py * (T-084); la tarjeta espera la decisión"
+        },
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "? permiso solicitado: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py * (T-085); la tarjeta espera la decisión"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T13:04:42+02:00",
+          "min": 0.5,
+          "turns": 9,
+          "tokens": 78901,
+          "cost_usd": 0.0900593,
+          "verdict": "review"
         }
       ]
     },
@@ -4992,6 +5038,102 @@
           "msg": "creada"
         }
       ]
+    },
+    {
+      "id": "T-083",
+      "title": "Solicitud de permiso: Grep *",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 2,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Abre la tarjeta y pulsa «Conceder» o «Denegar».",
+      "desc": "El agente «desarrollador» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-075. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: (no lo explicó)\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: Grep\n- Patrón que se concedería: Grep *\n- Tarjeta: T-075",
+      "deps": [],
+      "created": "2026-10-18T13:04:42+02:00",
+      "updated": "2026-10-18T13:04:42+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "creada"
+        }
+      ],
+      "kind": "permiso",
+      "perm": {
+        "pattern": "Grep *",
+        "command": "Grep",
+        "agent": "desarrollador",
+        "task": "T-075",
+        "why": ""
+      }
+    },
+    {
+      "id": "T-084",
+      "title": "Solicitud de permiso: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py *",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 2,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Abre la tarjeta y pulsa «Conceder» o «Denegar».",
+      "desc": "El agente «desarrollador» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-075. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: (no lo explicó)\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py\n- Patrón que se concedería: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py *\n- Tarjeta: T-075",
+      "deps": [],
+      "created": "2026-10-18T13:04:42+02:00",
+      "updated": "2026-10-18T13:04:42+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "creada"
+        }
+      ],
+      "kind": "permiso",
+      "perm": {
+        "pattern": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py *",
+        "command": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\board\\runner.py",
+        "agent": "desarrollador",
+        "task": "T-075",
+        "why": ""
+      }
+    },
+    {
+      "id": "T-085",
+      "title": "Solicitud de permiso: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py *",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 2,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Abre la tarjeta y pulsa «Conceder» o «Denegar».",
+      "desc": "El agente «desarrollador» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-075. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: (no lo explicó)\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py\n- Patrón que se concedería: C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py *\n- Tarjeta: T-075",
+      "deps": [],
+      "created": "2026-10-18T13:04:42+02:00",
+      "updated": "2026-10-18T13:04:42+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T13:04:42+02:00",
+          "by": "runner",
+          "msg": "creada"
+        }
+      ],
+      "kind": "permiso",
+      "perm": {
+        "pattern": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py *",
+        "command": "C:\\Users\\albaa\\Documents\\2026\\store-sales-forecasting\\tests\\test_runner.py",
+        "agent": "desarrollador",
+        "task": "T-075",
+        "why": ""
+      }
     }
   ],
   "runners": {
@@ -5010,13 +5152,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-080",
-      "message": "tester con T-080",
-      "pid": 9820,
-      "heartbeat": "2026-10-18T13:03:04+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T12:36:30+02:00",
-      "live": "live-T-080-tester-20261018-130304.jsonl",
+      "current": "T-075",
+      "message": "desarrollador con T-075",
+      "pid": 22440,
+      "heartbeat": "2026-10-18T13:04:10+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T13:04:10+02:00",
+      "live": "live-T-075-desarrollador-20261018-130410.jsonl",
       "enabled": true
     }
   }
