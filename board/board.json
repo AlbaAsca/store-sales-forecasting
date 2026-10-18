@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T14:35:33+02:00",
+  "updated": "2026-10-18T14:35:56+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5358,23 +5358,45 @@
       "id": "T-087",
       "title": "AB-01: plantilla de tarjeta «especificación» para agent-board (inspirada en spec-kit)",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 25.0,
-      "actual_min": null,
+      "actual_min": 0.3,
       "auto": true,
       "manual": null,
       "desc": "En proyectos de producto los requisitos cambian y una tarjeta normal no distingue bien «qué queremos» de «cómo lo hacemos». Probamos una plantilla opcional de tarjeta con historias de usuario, criterios de aceptación y marcas de duda, más una constitución de una página, sin añadir ficheros nuevos por tarea.\nCómo sabremos si funciona: la plantilla cabe en menos de 2 KB por tarjeta y un agente nuevo entiende qué construir leyéndola sola.\n## Técnico\nFuente: docs/NOTAS-investigador.md (T-082). Tomar de spec-kit solo: spec.md simplificado, [NEEDS CLARIFICATION], constitution.md ≤1 página. Descartar plan/research/data-model/contracts separados. Tareas viven en el tablero, no en tasks.md. Criterio: +≤2 KB de contexto por tarea.",
       "deps": [],
       "created": "2026-10-18T13:30:52+02:00",
-      "updated": "2026-10-18T13:30:52+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T14:35:56+02:00",
+      "started_at": "2026-10-18T14:35:35+02:00",
+      "finished_at": "2026-10-18T14:35:56+02:00",
       "log": [
         {
           "t": "2026-10-18T13:30:52+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T14:35:35+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-18T14:35:56+02:00",
+          "by": "arquitecto",
+          "msg": "DONE: creada docs/spec-plantilla.md con la plantilla (cabe en menos de 2 KB por tarjeta), la constitución de una página y las decisiones con lo descartado."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-18T14:35:56+02:00",
+          "min": 0.4,
+          "turns": 6,
+          "tokens": 59059,
+          "cost_usd": 0.0927003,
+          "verdict": "done"
         }
       ]
     },
@@ -5406,13 +5428,13 @@
   "runners": {
     "think": {
       "state": "working",
-      "current": "T-082",
-      "message": "investigador con T-082",
+      "current": "T-087",
+      "message": "arquitecto con T-087",
       "pid": 4564,
-      "heartbeat": "2026-10-18T14:34:07+02:00",
-      "agent": "investigador",
-      "started": "2026-10-18T14:34:07+02:00",
-      "live": "live-T-082-investigador-20261018-143407.jsonl",
+      "heartbeat": "2026-10-18T14:35:35+02:00",
+      "agent": "arquitecto",
+      "started": "2026-10-18T14:35:35+02:00",
+      "live": "live-T-087-arquitecto-20261018-143535.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
