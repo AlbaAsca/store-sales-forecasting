@@ -53,6 +53,9 @@ def glow(ax, under=False, lines=None):
     core = _core()
     if core is None:
         return
+    before = set(ax.get_lines())
     core.make_lines_glow(ax, lines=lines)
     if under:
         core.add_underglow(ax)
+    for ln in set(ax.get_lines()) - before:  # las copias del brillo no van a la leyenda
+        ln.set_label("_nolegend_")

@@ -81,12 +81,12 @@ def ventas(train):
     d = train.groupby("date")["sales"].sum()
     fig, ax = plt.subplots(figsize=(10, 3.8))
     ax.plot(d.index, d.values / 1e3, color=MUTED, lw=0.6, label="diaria")
-    ax.plot(d.index, d.rolling(28, center=True).mean() / 1e3, color=ACCENT, lw=2, label="media de 4 semanas")
+    ma, = ax.plot(d.index, d.rolling(28, center=True).mean() / 1e3, color=ACCENT, lw=2, label="media de 4 semanas")
     for date, txt, off in [("2016-04-16", "terremoto", (10, 40)),
                            ("2014-01-01", "1 de enero:\ntiendas cerradas", (-95, 10))]:
         ax.annotate(txt, (pd.Timestamp(date), d.get(pd.Timestamp(date), 0) / 1e3), xytext=off,
                     textcoords="offset points", fontsize=9, color=WARN, arrowprops=dict(arrowstyle="->", color=WARN))
-    figstyle.glow(ax)
+    figstyle.glow(ax, lines=[ma])  # solo la media: el brillo en la serie diaria la vuelve borrosa
     ax.set_ylabel("miles de unidades")
     ax.set_title("Ventas totales por día (2013–2017): tendencia, picos de diciembre y huecos", loc="left")
     ax.legend(frameon=False)

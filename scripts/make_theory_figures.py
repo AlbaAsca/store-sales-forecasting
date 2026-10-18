@@ -99,7 +99,7 @@ def draw(n, row, df, train, fold, out):
     ax.axvline(start - pd.Timedelta(hours=12), color=GRID, lw=1.5)
     ax.set_title(f"{TITLES[n]}\ntienda {s} · {f.lower()}", fontsize=11)
     ax.set_ylabel("unidades vendidas al día")
-    ax.legend(fontsize=9, loc="best")
+    ax.legend(fontsize=9, loc="upper left", frameon=True, facecolor=figstyle.BG, edgecolor=GRID, framealpha=0.9)
     fig.autofmt_xdate()
     IMG.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=110, bbox_inches="tight")
