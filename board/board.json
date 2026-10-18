@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:58:30+02:00",
+  "updated": "2026-10-18T11:00:07+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4523,18 +4523,18 @@
       "id": "T-074",
       "title": "Subir v0.8 (base-v8) a Kaggle y apuntar la puntuación",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 3,
-      "actual_min": null,
+      "actual_min": 0.5,
       "auto": false,
       "manual": "Pulsa «Subir a Kaggle» en esta tarjeta: sube el CSV, espera la nota y la apunta sola.",
       "desc": "La comprobación automática ha preparado una nueva base: mejora en las prácticas y no empeora el examen final, el control ni ninguna tienda del test. Toca subirla y ver qué dice Kaggle.\n\n## Técnico\n- prácticas (V-027): 0.3838 → 0.3829, empeora 0 fold(s)\n- prácticas (V-027-s7): 0.3836 → 0.3829, empeora 0 fold(s)\n- examen final: 0.4139 → 0.4073\n- control sin cerradas: 0.3857 → 0.3876\n- test: ninguna tienda cambia más de 0.05 ni familia más de 0.1 en log (máx. tienda 0.012, familia 0.021)\n- CSV: dist/submission-base-v8.csv",
       "deps": [],
       "created": "2026-10-18T10:52:24+02:00",
-      "updated": "2026-10-18T10:52:24+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T11:00:07+02:00",
+      "started_at": "2026-10-18T10:59:40+02:00",
+      "finished_at": "2026-10-18T11:00:07+02:00",
       "log": [
         {
           "t": "2026-10-18T10:52:24+02:00",
@@ -4545,6 +4545,21 @@
           "t": "2026-10-18T10:57:57+02:00",
           "by": "consultor",
           "msg": "añadido el botón «Subir a Kaggle»"
+        },
+        {
+          "t": "2026-10-18T10:59:40+02:00",
+          "by": "tú",
+          "msg": "pulsado «Subir a Kaggle»"
+        },
+        {
+          "t": "2026-10-18T10:59:42+02:00",
+          "by": "consultor",
+          "msg": "Subiendo dist/submission-base-v8.csv a Kaggle…"
+        },
+        {
+          "t": "2026-10-18T11:00:07+02:00",
+          "by": "consultor",
+          "msg": "Kaggle: 0.39212 (antes 0.39720)"
         }
       ],
       "upload": {
