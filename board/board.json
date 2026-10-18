@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T18:45:40+02:00",
+  "updated": "2026-10-18T19:37:08+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6500,7 +6500,7 @@
       "id": "T-105",
       "title": "V-040: corregir el sesgo por familia y día de la semana",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "blocked",
       "priority": "alta",
       "estimate_min": 50.0,
       "actual_min": 23.5,
@@ -6509,7 +6509,7 @@
       "desc": "La base acierta la forma de las ventas pero en algunas familias se queda corta siempre: GROCERY II un 20 % por debajo y los licores los viernes y sábados un 15 % por debajo (gráfica de base-v9, tienda 17). Idea: medir cuánto se equivoca de media el modelo en cada familia y día de la semana en el pasado reciente y corregirlo, con prudencia para no perseguir ruido.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que el sesgo medio de GROCERY II y de LIQUOR en viernes y sábado se acerque a 0.\n\n## Técnico\nMedido por el consultor en base-v9, fold f1 sin tiendas 18/25/52 (eval/tmp/theory/base-v9-f1-s42.csv.gz): sesgo log global −0.009 (desplazar todo no sirve: ±0.0001); por familia GROCERY II −0.224, HOME AND KITCHEN II −0.101, BEAUTY −0.091, HOME APPLIANCES +0.154; LIQUOR por día vie −0.167, sáb −0.165. Variante sobre models/base (base-v10): dentro de model.py, sin mirar el periodo a predecir, reservar las últimas 2-4 ventanas de 16 días antes del corte, predecirlas con el mismo modelo (o usar los residuos fuera de muestra del entrenamiento directo) y calcular el residuo medio en log por (familia, día de la semana). Encoger hacia 0 (b × n/(n+k), k por defecto 200 filas) y recortar a ±0.25. Sumar −b al log de la predicción. Parámetros por env (V040_K, V040_CLIP) para probar sin cambiar código. Ojo al coste: si reentrenar para las ventanas pasa de 15 min por medición, usa la versión barata (residuos de la última ventana del entrenamiento). Una sola cosa cambiada; NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-18T17:50:05+02:00",
-      "updated": "2026-10-18T18:45:40+02:00",
+      "updated": "2026-10-18T19:27:46+02:00",
       "started_at": "2026-10-18T18:22:08+02:00",
       "finished_at": "2026-10-18T18:45:40+02:00",
       "log": [
@@ -6537,6 +6537,16 @@
           "t": "2026-10-18T18:45:40+02:00",
           "by": "runner",
           "msg": "✗ «python - <<'EOF' import re p='variants/V-040/model.py' s=open(p,encoding='utf-8').read() i»: borrar o mover ficheros: usa Write/Edit"
+        },
+        {
+          "t": "2026-10-18T18:45:43+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T19:27:46+02:00",
+          "by": "consultor",
+          "msg": "Medición de V-040 muy lenta (>40 min solo la semilla 42; la base tarda ~8 min). La dejo terminar en segundo plano (verify_variant.py, sin agente) y la reanudo cuando estén eval/results/V-040*.json."
         }
       ],
       "runs": [
@@ -6550,7 +6560,8 @@
           "cost_usd": 0.23561639999999998,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T18:45:43+02:00"
     },
     {
       "id": "T-106",
@@ -6603,23 +6614,45 @@
       "id": "T-107",
       "title": "V-041: enseñar al modelo cómo vende cada tienda al principio y al final del mes",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 35.0,
-      "actual_min": null,
+      "actual_min": 9.3,
       "auto": true,
       "manual": null,
       "desc": "El modelo se equivoca siempre igual alrededor de la paga: los últimos días del mes y los días antes del 15 predice de más, y los cuatro primeros días del mes predice de menos (la gente cobra y compra). Ya probamos darle el día del mes tal cual y lo memorizó sin aprender nada. La idea ahora es darle un resumen: cuánto suele vender esa tienda en cada tramo del mes comparado con su venta normal, calculado solo con su historia anterior, igual que hicimos con el perfil de los días de la semana, que sí funcionó.\nCómo sabremos si funciona: baja el error medio con las dos semillas sin empeorar más de un fold, y el sesgo de los días 1-4 y 27-31 se acerca a cero.\n\n## Técnico\nEvidencia en docs/NOTAS-experto.md (T-106), script scripts/analysis/errors_daybias.py V-038. Sesgo log por tramo (f1..f4): días 1-4 -0.088 (f2) / -0.071 (f4); 27-31 -0.016/+0.038/+0.052/+0.052; 12-15 +0.025/+0.006/+0.022/+0.045; 16-19 ~0. Techo con corrección por 5 tramos (fuga): 0.3807 -> 0.3794.\nCambio único: rasgo pay_prof = media de (log1p(ventas) - media log1p 28d móvil) por tienda (y opcionalmente tienda x familia con encogimiento hacia tienda) y tramo del día objetivo {1-4, 12-15, 16-19, 27-31, resto}, calculado con los ~180-365 días anteriores al corte. NO meter día del mes crudo (V-016 rechazada por sobreajuste).\nCriterio: RMSLE medio < base con semillas 42 y 7, como mucho 1 de 4 folds peor; mirar c1 sin cerradas. Aviso: el test de Kaggle (16-31 ago) solo cubre los tramos 16-19 y 27-31; esperar ganancia menor allí.",
       "deps": [],
       "created": "2026-10-18T18:24:09+02:00",
-      "updated": "2026-10-18T18:24:09+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T19:37:08+02:00",
+      "started_at": "2026-10-18T19:27:52+02:00",
+      "finished_at": "2026-10-18T19:37:08+02:00",
       "log": [
         {
           "t": "2026-10-18T18:24:09+02:00",
           "by": "experto",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T19:27:52+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T19:37:08+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-041 implementada (rasgo pay_prof por tienda y tramo del mes), quick f1=0.3889, tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T19:37:08+02:00",
+          "min": 9.3,
+          "turns": 18,
+          "tokens": 150079,
+          "cost_usd": 0.14642750000000002,
+          "verdict": "review"
         }
       ]
     }
@@ -6629,8 +6662,8 @@
       "state": "stopped",
       "current": null,
       "message": "Runner parado",
-      "pid": 23064,
-      "heartbeat": "2026-10-18T18:24:26+02:00",
+      "pid": 6548,
+      "heartbeat": "2026-10-18T19:31:29+02:00",
       "agent": "experto",
       "started": "2026-10-18T18:22:08+02:00",
       "live": "live-T-106-experto-20261018-182208.jsonl",
@@ -6640,15 +6673,15 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-105",
-      "message": "desarrollador con T-105",
-      "pid": 3204,
-      "heartbeat": "2026-10-18T18:22:08+02:00",
+      "current": "T-107",
+      "message": "desarrollador con T-107",
+      "pid": 11376,
+      "heartbeat": "2026-10-18T19:27:52+02:00",
       "agent": "desarrollador",
-      "started": "2026-10-18T18:22:08+02:00",
-      "live": "live-T-105-desarrollador-20261018-182208.jsonl",
+      "started": "2026-10-18T19:27:52+02:00",
+      "live": "live-T-107-desarrollador-20261018-192752.jsonl",
       "enabled": true,
-      "mechanical": false
+      "mechanical": true
     }
   }
 }
