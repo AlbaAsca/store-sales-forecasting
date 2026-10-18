@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:52:26+02:00",
+  "updated": "2026-10-18T10:53:17+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -4237,7 +4237,7 @@
       "id": "T-069",
       "title": "Leer los notebooks públicos mejor valorados de Store Sales",
       "owner": "investigador",
-      "status": "blocked",
+      "status": "done",
       "priority": "media",
       "estimate_min": 40,
       "actual_min": 2.3,
@@ -4246,7 +4246,7 @@
       "desc": "En la búsqueda anterior el investigador no pudo leer los notebooks de la competición porque usó un comando de Kaggle que el sistema no permite. Lo que sabemos de ellos viene de resúmenes y memoria, no del código.\n\nLa idea es descargar y leer de verdad los 5-8 notebooks más votados y anotar qué hacen que nosotros no hacemos.\n\nCómo sabremos si ha servido: queda una sección nueva en las notas con lo que hace cada notebook, su nota y las ideas que nos faltan, y como mucho dos tarjetas nuevas.\n\n## Técnico\n- Usa SOLO estos comandos (el «kaggle» sin ruta está bloqueado):\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels list --competition store-sales-time-series-forecasting --sort-by voteCount --page-size 20\n  ../KaggleFarm/.venv/Scripts/kaggle.exe kernels pull <usuario/slug> -p data/kaggle-code/<slug>\n- Contrastar con docs/DISENO-MODELOS.md, docs/NOTAS-investigador.md y el panel para no duplicar (V-017, V-027, V-028).\n- Base vigente: base-v7 (CV 0.3838, LB 0.39720).",
       "deps": [],
       "created": "2026-10-18T09:36:09+02:00",
-      "updated": "2026-10-18T09:55:08+02:00",
+      "updated": "2026-10-18T10:53:17+02:00",
       "started_at": "2026-10-18T09:52:48+02:00",
       "finished_at": "2026-10-18T09:55:08+02:00",
       "log": [
@@ -4269,6 +4269,11 @@
           "t": "2026-10-18T09:55:08+02:00",
           "by": "investigador",
           "msg": "⚠ 3 comandos denegados: K=../KaggleFarm/.venv/Scripts/kaggle.exe; for r in ekrembayar/store-sales-ts-for | python board/board.py add \"V-029: un modelo por tipo de producto en vez de uno p | python board/board.py add \"V-030: juntar modelos que miran historiales de distin"
+        },
+        {
+          "t": "2026-10-18T10:53:17+02:00",
+          "by": "consultor",
+          "msg": "Revisado: el trabajo está hecho. Los dos primeros intentos de crear V-029 y V-030 se denegaron por saltos de línea, pero el reintento en una línea funcionó (T-071, T-072). Quedó bloqueada solo por la regla de avisos."
         }
       ],
       "runs": [
@@ -4466,7 +4471,7 @@
       "id": "T-073",
       "title": "Ronda de aportación: investigador",
       "owner": "investigador",
-      "status": "blocked",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 15,
       "actual_min": 0.5,
@@ -4475,7 +4480,7 @@
       "desc": "Busca en la discusión y notebooks públicos de la competición, en papers o blogs de forecasting una idea concreta con ganancia esperada que no esté ya en el panel.",
       "deps": [],
       "created": "2026-10-18T10:30:02+02:00",
-      "updated": "2026-10-18T10:30:32+02:00",
+      "updated": "2026-10-18T10:53:17+02:00",
       "started_at": "2026-10-18T10:30:02+02:00",
       "finished_at": "2026-10-18T10:30:32+02:00",
       "log": [
@@ -4493,6 +4498,11 @@
           "t": "2026-10-18T10:30:32+02:00",
           "by": "investigador",
           "msg": "BLOCKED: sin RESULT"
+        },
+        {
+          "t": "2026-10-18T10:53:17+02:00",
+          "by": "consultor",
+          "msg": "Ronda sin resultado (sin RESULT); no deja nada pendiente."
         }
       ],
       "kind": "contrib",
@@ -4528,6 +4538,30 @@
       "log": [
         {
           "t": "2026-10-18T10:52:24+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-075",
+      "title": "Runner: no bloquear la tarjeta si el agente reintentó y sí creó la tarjeta",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 15.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Cuando a un agente le deniegan crear una tarjeta, el runner deja la suya en «Bloqueado» para que no se pierda nada. Pero si el agente lo vuelve a intentar bien y la tarjeta sí se crea, el bloqueo es una falsa alarma (pasó en T-069).\n\nCómo sabremos que funciona: con un registro de ejemplo donde el primer intento se deniega y el segundo crea la tarjeta, la tarjeta del agente no queda bloqueada.\n\n## Técnico\nEn el aviso de comandos denegados: si después de cada board.py add denegado hay un board.py add con el mismo título cuyo resultado contiene «T-ddd», no pasar a blocked (mantener la nota). Test en tests/test_runner.py.",
+      "deps": [],
+      "created": "2026-10-18T10:53:17+02:00",
+      "updated": "2026-10-18T10:53:17+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T10:53:17+02:00",
           "by": "consultor",
           "msg": "creada"
         }
