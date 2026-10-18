@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:08:35+02:00",
+  "updated": "2026-10-18T16:10:13+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "working",
-      "current": "T-094"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "tester",
@@ -5715,18 +5715,18 @@
       "id": "T-094",
       "title": "V-036: mirar el año anterior con una ventana más ancha",
       "owner": "desarrollador",
-      "status": "doing",
+      "status": "review",
       "priority": "media",
       "estimate_min": 50.0,
-      "actual_min": null,
+      "actual_min": 3.0,
       "auto": true,
       "manual": null,
       "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
       "deps": [],
       "created": "2026-10-18T14:48:49+02:00",
-      "updated": "2026-10-18T16:07:13+02:00",
+      "updated": "2026-10-18T16:10:13+02:00",
       "started_at": "2026-10-18T16:07:13+02:00",
-      "finished_at": null,
+      "finished_at": "2026-10-18T16:10:13+02:00",
       "log": [
         {
           "t": "2026-10-18T14:48:49+02:00",
@@ -5737,6 +5737,23 @@
           "t": "2026-10-18T16:07:13+02:00",
           "by": "runner",
           "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T16:10:13+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-036 implementada (ly_win14 y ly_diff14, en directo y recursivo), backtest rápido OK (0,3871) y tests en verde; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T16:10:13+02:00",
+          "min": 3.0,
+          "turns": 10,
+          "tokens": 92851,
+          "cost_usd": 0.0849106,
+          "verdict": "review"
         }
       ]
     },
@@ -5994,6 +6011,11 @@
           "t": "2026-10-18T16:08:35+02:00",
           "by": "runner",
           "msg": "? permiso solicitado: git tag -n* (T-102); la tarjeta espera la decisión"
+        },
+        {
+          "t": "2026-10-18T16:08:47+02:00",
+          "by": "tú",
+          "msg": "✓ permiso concedido: git tag -n*"
         }
       ],
       "runs": [
@@ -6118,7 +6140,7 @@
       "id": "T-102",
       "title": "Solicitud de permiso: git tag -n*",
       "owner": "consultor",
-      "status": "human",
+      "status": "done",
       "priority": "media",
       "estimate_min": 2,
       "actual_min": null,
@@ -6127,7 +6149,7 @@
       "desc": "El agente «arquitecto» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-098. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: leer los mensajes de los tags base-v1..base-v9 para confirmar qué experimento corresponde a cada uno.\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: git tag -n\n- Patrón que se concedería: git tag -n*\n- Tarjeta: T-098",
       "deps": [],
       "created": "2026-10-18T16:08:35+02:00",
-      "updated": "2026-10-18T16:08:35+02:00",
+      "updated": "2026-10-18T16:08:47+02:00",
       "started_at": null,
       "finished_at": null,
       "log": [
@@ -6135,6 +6157,11 @@
           "t": "2026-10-18T16:08:35+02:00",
           "by": "runner",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:08:47+02:00",
+          "by": "tú",
+          "msg": "✓ Concedido: git tag -n*"
         }
       ],
       "kind": "permiso",
@@ -6149,11 +6176,11 @@
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-098",
-      "message": "arquitecto con T-098",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
       "pid": 17116,
-      "heartbeat": "2026-10-18T16:07:52+02:00",
+      "heartbeat": "2026-10-18T16:08:37+02:00",
       "agent": "arquitecto",
       "started": "2026-10-18T16:07:52+02:00",
       "live": "live-T-098-arquitecto-20261018-160752.jsonl",
