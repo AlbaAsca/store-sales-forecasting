@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:39:19+02:00",
+  "updated": "2026-10-18T16:41:55+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6286,23 +6286,45 @@
       "id": "T-103",
       "title": "V-039: repesca de V-022 (series que se venden a ratos) sobre base-v10",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "alta",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 2.6,
       "auto": true,
       "manual": null,
       "desc": "V-022 mejoraba las prácticas con 2 semillas y solo se frenó porque el examen final local (holdout) empeoraba. Pero ese examen ya se ha equivocado 3 veces frente a Kaggle (v0.2, v0.6 y V-037), así que la volvemos a probar sobre la base actual.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 fold peor). Si pasa y la promoción la frena solo el holdout, el consultor la envía a Kaggle como experimento (OK de Alba ya dado) y decide con la nota.\n\n## Técnico\nCrea variants/V-039 desde models/base (base-v10) con new_variant.py y porta solo el cambio de variants/V-022 (rasgos zfrac14/28/56 y since_nz en _features y _step_feats). Ojo: base-v10 (V-037) ya trata los días de tienda cerrada como dato que falta; calcula zfrac/since_nz ignorando esos días para no contar cierres como ventas cero. NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-18T16:24:20+02:00",
-      "updated": "2026-10-18T16:24:20+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T16:41:55+02:00",
+      "started_at": "2026-10-18T16:39:21+02:00",
+      "finished_at": "2026-10-18T16:41:55+02:00",
       "log": [
         {
           "t": "2026-10-18T16:24:20+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:39:21+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T16:41:55+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-039 creada con los rasgos de V-022 ignorando los cierres; corre en `--quick` (0,3889) y los tests pasan; falta la medición del tester con las semillas 42 y 7."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T16:41:55+02:00",
+          "min": 2.6,
+          "turns": 14,
+          "tokens": 117045,
+          "cost_usd": 0.09769339999999999,
+          "verdict": "review"
         }
       ]
     },
@@ -6357,13 +6379,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-104",
-      "message": "promoción automática de V-038",
+      "current": "T-103",
+      "message": "desarrollador con T-103",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:35:11+02:00",
-      "agent": "consultor",
-      "started": "2026-10-18T16:35:11+02:00",
-      "live": "live-T-096-tester-20261018-163412.jsonl",
+      "heartbeat": "2026-10-18T16:39:21+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T16:39:21+02:00",
+      "live": "live-T-103-desarrollador-20261018-163921.jsonl",
       "enabled": true,
       "mechanical": false
     }
