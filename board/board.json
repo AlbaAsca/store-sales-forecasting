@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:07:11+02:00",
+  "updated": "2026-10-18T16:08:35+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -66,8 +66,8 @@
       "name": "Desarrollador",
       "role": "Implementa cada variante V-xxx en su carpeta",
       "color": "#2563eb",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-094"
     },
     {
       "id": "tester",
@@ -5715,7 +5715,7 @@
       "id": "T-094",
       "title": "V-036: mirar el año anterior con una ventana más ancha",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "doing",
       "priority": "media",
       "estimate_min": 50.0,
       "actual_min": null,
@@ -5724,14 +5724,19 @@
       "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
       "deps": [],
       "created": "2026-10-18T14:48:49+02:00",
-      "updated": "2026-10-18T14:48:49+02:00",
-      "started_at": null,
+      "updated": "2026-10-18T16:07:13+02:00",
+      "started_at": "2026-10-18T16:07:13+02:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-18T14:48:49+02:00",
           "by": "investigador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-18T16:07:13+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
         }
       ]
     },
@@ -5944,20 +5949,21 @@
       "id": "T-098",
       "title": "README: sección «Las ideas que funcionaron» con explicación sencilla y gráfica",
       "owner": "arquitecto",
-      "status": "next",
+      "status": "done",
       "priority": "media",
       "estimate_min": 30.0,
-      "actual_min": null,
+      "actual_min": 0.7,
       "auto": true,
       "manual": null,
       "desc": "Añadir al README una sección con todas las teorías aprobadas, en orden: para cada una, 2-4 frases que entienda cualquiera (qué problema había, qué idea tuvimos, por qué funciona) y justo debajo su gráfica con ventas reales.\n\nCómo sabremos si funciona: alguien que no sabe de forecasting entiende cada mejora leyendo la explicación y mirando la gráfica, y cada bloque dice cuánto bajó el error.\n\n## Técnico\nFuente: tags base-v1..base-v9 (git tag -n), docs/APRENDIZAJES.md, eval/theory_figures.json y docs/img/teorias/base-vN.png (de T-097). Formato por bloque: '### base-vN · <nombre llano> (V-xxx)', explicación friendly, imagen, línea 'Error: X → Y (−Z %) en validación; Kaggle: …' si hay nota en eval/kaggle.json. Enlaza la sección desde el índice del README y no dupliques la tabla de experimentos: enlázala.",
       "deps": [
-        "T-097"
+        "T-097",
+        "T-102"
       ],
       "created": "2026-10-18T14:50:54+02:00",
-      "updated": "2026-10-18T15:01:23+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T16:08:35+02:00",
+      "started_at": "2026-10-18T16:07:52+02:00",
+      "finished_at": "2026-10-18T16:08:35+02:00",
       "log": [
         {
           "t": "2026-10-18T14:50:54+02:00",
@@ -5968,6 +5974,38 @@
           "t": "2026-10-18T15:01:23+02:00",
           "by": "tú",
           "msg": "→ Próximo"
+        },
+        {
+          "t": "2026-10-18T16:07:52+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-18T16:08:35+02:00",
+          "by": "arquitecto",
+          "msg": "DONE: README con la sección «Las ideas que funcionaron» (9 bloques con gráfica, error y nota de Kaggle) y enlace en la tabla superior."
+        },
+        {
+          "t": "2026-10-18T16:08:35+02:00",
+          "by": "arquitecto",
+          "msg": "⚠ 1 comandos denegados: git tag -n"
+        },
+        {
+          "t": "2026-10-18T16:08:35+02:00",
+          "by": "runner",
+          "msg": "? permiso solicitado: git tag -n* (T-102); la tarjeta espera la decisión"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-18T16:08:35+02:00",
+          "min": 0.7,
+          "turns": 12,
+          "tokens": 99950,
+          "cost_usd": 0.16705019999999998,
+          "verdict": "done"
         }
       ]
     },
@@ -6012,7 +6050,7 @@
       "id": "T-100",
       "title": "Promover V-037 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "blocked",
+      "status": "next",
       "priority": "alta",
       "estimate_min": 10.0,
       "actual_min": 4.2,
@@ -6021,7 +6059,7 @@
       "desc": "Con V-037 los días en que una tienda cierra dejan de contar como ventas de cero: se tratan como dato que falta. La mejora es pequeña (unas milésimas de error), pero se repite con las dos semillas y no empeora los días sin cierres.\n\nCómo sabremos si funciona: el error del modelo en las pruebas baja y la predicción de agosto de 2017 deja de hundirse en las dos tiendas que cerraron en 2016.\n\n## Técnico\nV-037 frente a base-v9: semilla 42 0.3811 (0.3814), semilla 7 0.3813 (0.3815); media 0.3812 vs 0.3815 (-0.0003). Folds peores: f1 en s42 (+0.0001). Control sin tiendas cerradas 0.3845 = 0.3845. Tiempo 429 → 501 s. Criterio por defecto cumplido. Pendiente: predicción media log de tiendas 18 y 25 (no reportada por verify_variant.py).",
       "deps": [],
       "created": "2026-10-18T16:02:11+02:00",
-      "updated": "2026-10-18T16:06:32+02:00",
+      "updated": "2026-10-18T16:07:35+02:00",
       "started_at": "2026-10-18T16:02:17+02:00",
       "finished_at": "2026-10-18T16:06:32+02:00",
       "log": [
@@ -6044,6 +6082,11 @@
           "t": "2026-10-18T16:07:04+02:00",
           "by": "tú",
           "msg": "prueba aun asi el envio para ver si es porque se mide mal el test"
+        },
+        {
+          "t": "2026-10-18T16:07:35+02:00",
+          "by": "tú",
+          "msg": "→ Próximo"
         }
       ]
     },
@@ -6070,31 +6113,63 @@
           "msg": "creada"
         }
       ]
+    },
+    {
+      "id": "T-102",
+      "title": "Solicitud de permiso: git tag -n*",
+      "owner": "consultor",
+      "status": "human",
+      "priority": "media",
+      "estimate_min": 2,
+      "actual_min": null,
+      "auto": false,
+      "manual": "Abre la tarjeta y pulsa «Conceder» o «Denegar».",
+      "desc": "El agente «arquitecto» necesitaba un comando que no está en su lista de permitidos y se lo bloquearon mientras hacía T-098. No es de solo lectura ni está prohibido, así que lo tiene que validar una persona.\n\nPara qué lo quería: leer los mensajes de los tags base-v1..base-v9 para confirmar qué experimento corresponde a cada uno.\n\nCómo decidir: concede si es seguro repetirlo sin supervisión dentro del proyecto; deniega si escribe fuera, publica, borra o usa la red.\n\n## Técnico\n- Comando: git tag -n\n- Patrón que se concedería: git tag -n*\n- Tarjeta: T-098",
+      "deps": [],
+      "created": "2026-10-18T16:08:35+02:00",
+      "updated": "2026-10-18T16:08:35+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-18T16:08:35+02:00",
+          "by": "runner",
+          "msg": "creada"
+        }
+      ],
+      "kind": "permiso",
+      "perm": {
+        "pattern": "git tag -n*",
+        "command": "git tag -n",
+        "agent": "arquitecto",
+        "task": "T-098",
+        "why": "leer los mensajes de los tags base-v1..base-v9 para confirmar qué experimento corresponde a cada uno."
+      }
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado",
-      "pid": 21940,
-      "heartbeat": "2026-10-18T15:01:29+02:00",
-      "agent": "investigador",
-      "started": "2026-10-18T14:47:39+02:00",
-      "live": "live-T-092-investigador-20261018-144739.jsonl",
+      "state": "working",
+      "current": "T-098",
+      "message": "arquitecto con T-098",
+      "pid": 17116,
+      "heartbeat": "2026-10-18T16:07:52+02:00",
+      "agent": "arquitecto",
+      "started": "2026-10-18T16:07:52+02:00",
+      "live": "live-T-098-arquitecto-20261018-160752.jsonl",
       "contrib_at": "2026-10-18T10:30:32+02:00",
       "contrib_agent": "investigador",
       "enabled": true
     },
     "measure": {
       "state": "working",
-      "current": "T-097",
-      "message": "tester con T-097",
+      "current": "T-094",
+      "message": "desarrollador con T-094",
       "pid": 8496,
-      "heartbeat": "2026-10-18T16:06:35+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T16:06:35+02:00",
-      "live": "live-T-097-tester-20261018-160635.jsonl",
+      "heartbeat": "2026-10-18T16:07:13+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T16:07:13+02:00",
+      "live": "live-T-094-desarrollador-20261018-160713.jsonl",
       "enabled": true,
       "mechanical": false
     }

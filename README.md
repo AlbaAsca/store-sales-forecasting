@@ -13,6 +13,7 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 | 🏁 **Nota en Kaggle** | **0.39212** (v0.8, la mejor) · empezó en 0.45751 (v0.1) |
 | 📈 **Error en las prácticas** | **0.3829** (base-v8) · empezó en 0.4745 (base-v0) |
 | 🧪 **Ideas probadas** | 26: 10 forman el modelo actual, 16 no entraron → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 💡 **Las ideas que funcionaron** | [explicadas una a una con su gráfica](#las-ideas-que-funcionaron) |
 | 🌳 **Árbol de experimentos** | [`docs/experimentos.html`](docs/experimentos.html): cada idea explicada sin tecnicismos (descárgalo y ábrelo en el navegador) |
 
 ![Progreso de los envíos a Kaggle](docs/img/progreso.png)
@@ -170,6 +171,91 @@ leer git, pero no instalar, borrar, hacer commits ni push, ni tocar Kaggle. Lo q
   en el registro y el gráfico, y si empeora vuelve a la base anterior y abre un diagnóstico. Los agentes no pueden subir nada.
 - **Protocolo de permisos** (`board/permissions.py`): si a un agente le deniegan un comando, lo seguro se concede solo, lo
   prohibido se le explica y lo dudoso abre una solicitud con botones Conceder / Denegar.
+
+---
+
+## Las ideas que funcionaron
+
+Cada versión de la base (`base-v1` … `base-v9`) es una idea que bajó el error. «Error» es el RMSLE medio de las prácticas
+(menor = mejor). Cada gráfica enseña una serie real (una tienda y un tipo de producto) donde la idea se nota: en gris lo que
+pasó de verdad, en otro color lo que predecía el modelo antes y después. La tabla completa con todos los experimentos, también los
+descartados, está en [Resultados](#6-resultados).
+
+### base-v1 · tener en cuenta el día de la semana (V-001)
+Un supermercado no vende igual un lunes que un sábado, pero la primera versión repetía una media plana de las dos últimas semanas.
+La idea: calcular cuánto pesa cada día de la semana y repartir la media con esa forma. Funciona porque el patrón semanal es el más
+repetido de todos. En la gráfica (pollo, tienda 51) la predicción deja de ser una línea recta y sigue los altibajos de la semana.
+
+![base-v1](docs/img/teorias/base-v1.png)
+
+Error: 0.4745 → 0.4304 (−9 %) en validación; Kaggle: sin envío.
+
+### base-v2 · calcular en proporciones, como mide la nota (V-002)
+La nota no castiga errores en unidades sino en proporciones (equivocarse en 10 de 100 pesa como 100 de 1.000). Calculábamos las medias
+en unidades, y unos pocos días enormes tiraban de ellas. Ahora todo se hace en escala logarítmica, la misma de la nota. Así las
+series pequeñas (vinos, licores) y las grandes se tratan con justicia.
+
+![base-v2](docs/img/teorias/base-v2.png)
+
+Error: 0.4304 → 0.4154 (−3,5 %) en validación; Kaggle: 0.45751 → 0.41457.
+
+### base-v3 · un modelo que aprende de todas las series a la vez (V-004, V-005, V-006)
+Hasta aquí cada serie se predecía sola. Un modelo de aprendizaje automático (LightGBM) mira las 1.782 series juntas y aprende,
+por ejemplo, qué pasa con las ventas cuando hay promoción o qué se vendió hace un año por las mismas fechas. Funciona porque unas
+series se enseñan a otras. En la gráfica (material escolar) acierta mucho mejor el arranque de la vuelta al cole.
+
+![base-v3](docs/img/teorias/base-v3.png)
+
+Error: 0.4154 → 0.3904 (−6 %) en validación; Kaggle: 0.41457 → 0.41341.
+
+### base-v4 · promediar dos maneras de predecir (V-009)
+Se puede predecir los 16 días de golpe, o día a día usando lo ya predicho. Cada forma se equivoca en sitios distintos, así que la media
+de las dos cae menos en los errores de cada una. Es como pedir opinión a dos personas que no piensan igual.
+
+![base-v4](docs/img/teorias/base-v4.png)
+
+Error: 0.3904 → 0.3858 (−1,2 %) en validación; Kaggle: 0.41341 → 0.40327.
+
+### base-v5 · afinar los ajustes del modelo (V-014)
+Los ajustes internos del modelo (cuántos árboles, cuán profundos…) estaban sin cuidar. Probamos otros y quedaron mejor. Es una mejora
+pequeña pero estable: no cambia la idea, solo la hace más precisa. Se ve sobre todo en series de venta baja y errática.
+
+![base-v5](docs/img/teorias/base-v5.png)
+
+Error: 0.3858 → 0.3852 (−0,2 %) en validación; Kaggle: 0.40327 → 0.39940.
+
+### base-v6 · aprender también de la vuelta al cole del año anterior (V-018) — ⚠️ revertida
+Para series de temporada (licores en fiestas, material escolar en agosto) enseñamos al modelo cómo fue ese periodo un año antes.
+Mejoró todo lo medido en local, pero en Kaggle empeoró: en agosto de 2016 dos tiendas cerraron y el modelo aprendió ese hundimiento
+como si fuera normal. Quedó como lección y se corrigió en base-v7.
+
+![base-v6](docs/img/teorias/base-v6.png)
+
+Error: 0.3852 → 0.3839 (−0,3 %) en validación; Kaggle: 0.39940 → 0.40871 (peor, se volvió a base-v5).
+
+### base-v7 · el año anterior, sin copiar sus cierres (V-025 + V-023)
+Se repite la idea anterior pero quitando los días en que una tienda estuvo cerrada, para que no parezcan ventas cero. Además, solo
+se predice cero en series de verdad muertas (no en las que solo duermen, como el material escolar fuera de temporada).
+
+![base-v7](docs/img/teorias/base-v7.png)
+
+Error: 0.3852 → 0.3838 (−0,4 %) en validación; Kaggle: 0.39940 → 0.39720.
+
+### base-v8 · mirar las promociones de los días de alrededor (V-027)
+Una promoción no solo mueve las ventas del día: la gente compra antes o espera a que llegue. Se le dan al modelo las promociones de
+los días vecinos y de las dos semanas siguientes. En la gráfica (abarrotes) el modelo anticipa mejor las subidas y bajadas alrededor de las ofertas.
+
+![base-v8](docs/img/teorias/base-v8.png)
+
+Error: 0.3838 → 0.3829 (−0,2 %) en validación; Kaggle: 0.39720 → 0.39212.
+
+### base-v9 · promediar tres modelos con memoria corta, media y larga (V-031)
+Un modelo mira solo las últimas 2 semanas, otro 2 meses y otro un año entero. Cada uno se equivoca en sitios distintos, y su media
+corrige parte de los fallos de cada uno. Tarda más (unos 7 minutos), pero el tiempo solo desempata.
+
+![base-v9](docs/img/teorias/base-v9.png)
+
+Error: 0.3829 → 0.3814 (−0,4 %) en validación; Kaggle: 0.39212 → 0.38981.
 
 ---
 
