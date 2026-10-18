@@ -38,3 +38,6 @@ en board/runner.py) y este CLAUDE.md más corto. Volver a medir con `runs[].toke
 - V-019: mejoraba las prácticas y empeoraba el examen final (ponía a cero material escolar de temporada) → mirar siempre el holdout.
 - v0.6 (V-018): copiaba al test el cierre de las tiendas 18 y 25 de agosto de 2016 → limpiar anomalías del año anterior.
 - V-030: rechazada por tiempo y era mejor → el tiempo solo desempata.
+- V-037: el holdout empeoraba (0,4051 → 0,4085) y Kaggle mejoró (0,38981 → 0,38839). El holdout acertó el sentido en 6 de 9
+  versiones. Si una variante pasa las prácticas y la frena solo el holdout, se envía como experimento (OK de Alba, 18-oct) y se
+  promueve con `promote.py V-xxx --lb <nota>` si Kaggle mejora. Repesca de V-022 por lo mismo: V-039 (T-103).
