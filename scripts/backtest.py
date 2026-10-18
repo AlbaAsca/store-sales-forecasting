@@ -30,6 +30,18 @@ def rmsle(y, p):
     return float(np.sqrt(np.mean((np.log1p(p) - np.log1p(y)) ** 2)))
 
 
+def interval_metrics(y, iv):
+    """Cobertura del intervalo q10-q90 (debería ser ~0.80), pinball loss por cuantil (en log1p) y RMSLE de la mediana."""
+    y = np.asarray(y, float)
+    lo, md, hi = (np.asarray(iv[k], float) for k in ("q10", "q50", "q90"))
+    ly = np.log1p(y)
+    out = dict(coverage_10_90=float(np.mean((y >= lo) & (y <= hi))), rmsle_q50=rmsle(y, md))
+    for k, a in (("q10", 0.1), ("q50", 0.5), ("q90", 0.9)):
+        d = ly - np.log1p(np.asarray(iv[k], float))
+        out[f"pinball_{k}"] = float(np.mean(np.maximum(a * d, (a - 1) * d)))
+    return out
+
+
 def open_mask(df, thr=0.5):
     """True en las filas de tiendas «abiertas» en la ventana: se excluyen las que tienen >= thr de sus días con ventas totales 0
     (cierres como 18 y 25 en c1). Un cierre no se puede prever."""
@@ -92,6 +104,11 @@ def _one(model, f, train, ctx, seed, out_dir, save_preds):
     r = dict(id=f["id"], start=f["start"], end=f["end"], rmsle=rmsle(y, p), secs=round(secs, 1),
              by_family={k: float(np.sqrt(v)) for k, v in le.groupby(df["family"], observed=True).mean().items()},
              bias=float((np.log1p(df["pred"]) - np.log1p(df["sales"])).mean()))
+    iv = getattr(model, "INTERVALS", None)  # opcional (V-033): cuantiles q10/q50/q90 en ventas
+    if iv:
+        r["intervals"] = interval_metrics(y, iv)
+        print(f"    intervalo 10-90: cobertura {r['intervals']['coverage_10_90']:.3f}, "
+              f"RMSLE mediana {r['intervals']['rmsle_q50']:.4f}")
     m = open_mask(df)
     r["rmsle_open"] = rmsle(df["sales"][m], df["pred"][m])
     r["closed_stores"] = sorted(int(x) for x in df["store_nbr"][~m].unique())

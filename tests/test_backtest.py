@@ -106,6 +106,15 @@ def test_control_open_en_compare():
     assert results.compare(summ([0.5]), summ([0.5]))["control_open"] == []
 
 
+def test_interval_metrics():
+    y = np.array([10.0, 20.0, 30.0, 40.0])
+    iv = {"q10": y * 0.5, "q50": y, "q90": y * 2}
+    m = backtest.interval_metrics(y, iv)
+    assert m["coverage_10_90"] == 1.0 and m["rmsle_q50"] == 0.0 and m["pinball_q50"] == 0.0
+    iv["q90"] = y * 0.9  # y queda fuera del intervalo
+    assert backtest.interval_metrics(y, iv)["coverage_10_90"] == 0.0
+
+
 def test_env_pasa_variables_al_modelo(monkeypatch):
     # el runner deniega «VAR=x python …»: --env es la forma permitida
     import os
