@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T16:13:54+02:00",
+  "updated": "2026-10-18T16:16:33+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -5715,7 +5715,7 @@
       "id": "T-094",
       "title": "V-036: mirar el año anterior con una ventana más ancha",
       "owner": "desarrollador",
-      "status": "blocked",
+      "status": "backlog",
       "priority": "media",
       "estimate_min": 50.0,
       "actual_min": 3.0,
@@ -5724,7 +5724,7 @@
       "desc": "La vuelta al cole no cae el mismo día cada año: en 2017 arranca unas tres semanas antes que en 2016. Con una ventana de solo unos días el modelo no ve que se acerca una temporada fuerte. Probamos a darle también el promedio de un mes alrededor de la misma fecha del año pasado.\nCómo sabremos si funciona: si baja el error medio con las dos semillas, sobre todo en material escolar, sin empeorar el resto.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (E2, afín a modelador 4). Cambio único: añadir ly_win14 = media de log1p en t-364 ±14 d y ly_diff14 = ly_win14 menos media 14 d previos a t-378, en directo y recursivo. Todo ≥350 d antes del objetivo (sin fuga). Excluir cierres como hace V-025. Criterio por defecto + c1 sin cerradas no peor de +0.002; comparar predicción de SCHOOL en el test frente a base-v9 (riesgo lección v0.6). Si V-035 y V-036 pasan por separado, probar juntas.",
       "deps": [],
       "created": "2026-10-18T14:48:49+02:00",
-      "updated": "2026-10-18T16:13:54+02:00",
+      "updated": "2026-10-18T16:14:15+02:00",
       "started_at": "2026-10-18T16:07:13+02:00",
       "finished_at": "2026-10-18T16:10:13+02:00",
       "log": [
@@ -5757,6 +5757,11 @@
           "t": "2026-10-18T16:13:54+02:00",
           "by": "tester",
           "msg": "BLOCKED: }\n{\"type\":\"tool_progress\",\"tool_use_id\":\"toolu_0164hmutDaugQDEFZyQrefoc-heartbeat-0\",\"tool_name\":\"Bash\",\"parent_tool_use_id\":\"toolu_0164hmutDaugQDEFZyQrefoc\",\"elapsed_time_seconds\":30,\"heartbeat\":true,\"session_id\":\"d85f3747-f6d0-4a81-a6d0-45909e0a53b0\",\"uuid\":\"29728279-2431-4573-8324-68b35c82fe1c\"}"
+        },
+        {
+          "t": "2026-10-18T16:14:15+02:00",
+          "by": "consultor",
+          "msg": "Desbloqueada: la paré yo. Rehacer V-036 sobre base-v10 (models/base actual) y volver a review."
         }
       ],
       "runs": [
@@ -5864,18 +5869,18 @@
       "id": "T-096",
       "title": "V-038: que los días con ventas disparatadas confundan menos al modelo",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 2.6,
       "auto": true,
       "manual": null,
       "desc": "Algunas series tienen días raros con ventas altísimas (2962 en una serie que suele rondar 400) y el modelo, al aprender, se esfuerza demasiado por acertarlos. Probamos una forma de medir el error que perdona más los picos aislados y se parece más a lo que puntúa la competición.\nCómo sabremos si funciona: si el error medio baja con las dos semillas y el modelo no se queda sistemáticamente corto en las series irregulares.\n\n## Técnico\nFuente: BRAINSTORM-v10.md (N2; E3 cubre el mismo problema desde los rasgos). Cambio único: objective=\"huber\", alpha=1.0 (si no cambia nada, 0.7) en PARAMS del directo y del recursivo, sobre log1p. A diferencia de tweedie (V-007/V-032) sigue en escala log. Criterio por defecto; mirar sesgo medio en log y c1. Ganancia -0.0003…-0.001. Si pasa, probar junto con V-037.",
       "deps": [],
       "created": "2026-10-18T14:48:55+02:00",
-      "updated": "2026-10-18T14:48:55+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-18T16:16:33+02:00",
+      "started_at": "2026-10-18T16:13:56+02:00",
+      "finished_at": "2026-10-18T16:16:33+02:00",
       "log": [
         {
           "t": "2026-10-18T14:48:55+02:00",
@@ -5886,6 +5891,28 @@
           "t": "2026-10-18T16:13:17+02:00",
           "by": "consultor",
           "msg": "Ojo: la base es ahora base-v10 (V-037). Crea la variante desde models/base actual."
+        },
+        {
+          "t": "2026-10-18T16:13:56+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-18T16:16:33+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-038 (huber alpha=1.0) creada; corre en `--quick` con RMSLE 0,3879 y los tests pasan; falta la medición completa del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-18T16:16:33+02:00",
+          "min": 2.6,
+          "turns": 8,
+          "tokens": 63485,
+          "cost_usd": 0.0527721,
+          "verdict": "review"
         }
       ]
     },
@@ -6229,9 +6256,9 @@
     "think": {
       "state": "stopped",
       "current": null,
-      "message": "Runner parado (pid muerto)",
-      "pid": null,
-      "heartbeat": "2026-10-18T16:08:37+02:00",
+      "message": "Runner parado",
+      "pid": 24652,
+      "heartbeat": "2026-10-18T16:14:18+02:00",
       "agent": "arquitecto",
       "started": "2026-10-18T16:07:52+02:00",
       "live": "live-T-098-arquitecto-20261018-160752.jsonl",
@@ -6241,13 +6268,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-094",
-      "message": "verificación mecánica de V-036: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-096",
+      "message": "desarrollador con T-096",
       "pid": 22808,
-      "heartbeat": "2026-10-18T16:12:59+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T16:10:19+02:00",
-      "live": "live-T-094-tester-20261018-161259.jsonl",
+      "heartbeat": "2026-10-18T16:13:56+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-18T16:13:56+02:00",
+      "live": "live-T-096-desarrollador-20261018-161356.jsonl",
       "enabled": true,
       "mechanical": false
     }
