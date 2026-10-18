@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T10:04:18+02:00",
+  "updated": "2026-10-18T10:16:50+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -35,14 +35,14 @@
     "enabled": true,
     "state": "working",
     "current": "T-072",
-    "heartbeat": "2026-10-18T10:01:58+02:00",
-    "message": "desarrollador con T-072",
+    "heartbeat": "2026-10-18T10:04:31+02:00",
+    "message": "tester con T-072",
     "pid": 6204,
-    "agent": "desarrollador",
-    "started": "2026-10-18T10:01:58+02:00",
+    "agent": "tester",
+    "started": "2026-10-18T10:04:31+02:00",
     "contrib_at": "2026-10-18T09:34:32+02:00",
     "contrib_agent": "experto",
-    "live": "live-T-072-desarrollador-20261018-100158.jsonl"
+    "live": "live-T-072-tester-20261018-100431.jsonl"
   },
   "agents": [
     {
@@ -4384,7 +4384,7 @@
       "id": "T-072",
       "title": "V-030: juntar modelos que miran historiales de distinta longitud",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 35.0,
       "actual_min": 2.3,
@@ -4393,7 +4393,7 @@
       "desc": "Nuestro intento de promediar varios modelos casi iguales apenas ayudó. Los notebooks buenos promedian modelos que miran el pasado de formas muy distintas: uno solo la última semana, otro el último año. Probamos esa variedad real.\nCómo sabremos si funciona: si el promedio baja el error medio de los 4 tramos con 2 semillas y no empeora más de un tramo, la aceptamos; si queda dentro del ruido, la rechazamos.\n## Técnico\nFuente: chongzhenjie (ensemble con lags 7/63/365/730; promedio de entrenar con todo vs desde 2015). Cambio: 3 versiones de base-v7 con ventanas de rasgos cortas (7/14), medias (28/56) y largas (112/365), promedio en log. Criterio: CV < 0.3838, 2 semillas, máximo 1 fold peor. V-010 dio -0.0002 con tiempo x3: aceptar solo si supera claramente eso y el tiempo es como mucho x2. Mejor tras V-029 (misma infraestructura).",
       "deps": [],
       "created": "2026-10-18T09:55:00+02:00",
-      "updated": "2026-10-18T10:04:18+02:00",
+      "updated": "2026-10-18T10:16:50+02:00",
       "started_at": "2026-10-18T10:01:58+02:00",
       "finished_at": "2026-10-18T10:04:18+02:00",
       "log": [
@@ -4411,6 +4411,21 @@
           "t": "2026-10-18T10:04:18+02:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-030 implementada (3 modelos con ventanas corta/media/larga promediados en log); el modo rápido corre (0.3891 en el fold 1, 72 s) y los tests pasan; falta la medición completa del tester."
+        },
+        {
+          "t": "2026-10-18T10:04:31+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T10:16:34+02:00",
+          "by": "tester",
+          "msg": "CV 0.3822 (semilla 42) y 0.3821 (semilla 7) vs base-v7 0.3838: mejora 4/4 folds (-0.0005/-0.0009/-0.0022/-0.0030), c1_open -0.0021. Pero tiempo 78 s -> 308 s (x3.9) y el criterio exigía <= x2 → RECHAZADA"
+        },
+        {
+          "t": "2026-10-18T10:16:50+02:00",
+          "by": "tester",
+          "msg": "DONE: V-030 RECHAZADA: CV 0.3822 / 0.3821 (2 semillas) vs base 0.3838, mejora 4/4 folds, pero tiempo ×3.9 (límite ×2)"
         }
       ],
       "runs": [
@@ -4423,8 +4438,19 @@
           "tokens": 132642,
           "cost_usd": 0.12176269999999999,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T10:16:50+02:00",
+          "min": 12.3,
+          "turns": 21,
+          "tokens": 254155,
+          "cost_usd": 0.15127640000000003,
+          "verdict": "done"
         }
-      ]
+      ],
+      "verify_started": "2026-10-18T10:04:31+02:00"
     }
   ],
   "runners": {

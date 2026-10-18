@@ -159,6 +159,9 @@ Qué: añadir al entrenamiento del modelo directo 4 cortes de hace un año (mism
 ### V-020 · reparto distinto directo/recursivo por tipo de producto — ❌ RECHAZADA (0.3856 / 0.3857 vs 0.3852)
 Qué: en vez de mezclar 50/50 «16 días de golpe» y «día a día», usar 65/35, 50/50 o 35/65 según lo a ratos que se vende el producto. · Pasó: empeora 3 de 4 prácticas (+0.0004 a +0.0007) con dos semillas; c1 0.7552 (base 0.7526). · Por qué: los dos métodos fallan de forma parecida en todos los grupos, así que el 50/50 ya estaba cerca del óptimo y los pesos a priori solo añaden ruido.
 
+### V-030 · promediar 3 modelos con historiales de longitud distinta — ❌ RECHAZADA por tiempo (0.3822 / 0.3821 vs 0.3838)
+Qué: tres copias del modelo, una mirando solo las últimas 1-2 semanas, otra ~2 meses y otra hasta un año, promediadas en log. · Pasó: mejora los 4 tramos con dos semillas (−0.0005 a −0.0030; c1 sin cerradas 0.3837 vs 0.3857), pero tarda 78 s → 308 s (×3.9) y el criterio pedía como mucho ×2. · Por qué: la variedad real de ventanas sí aporta algo (mejor que V-010, −0.0002), pero ~−0.0016 por cuadruplicar el coste es poco; queda como candidata si se abarata (p. ej. solo 2 ventanas o menos rondas).
+
 ### V-029 · un modelo por familia de producto — ❌ RECHAZADA (0.3870 / 0.3870 vs 0.3838)
 Qué: entrenar 33 modelos (uno por familia, directo y recursivo) en vez de uno global, con árboles más pequeños. · Pasó: peor en los 4 tramos con dos semillas (+0.0003 a +0.0061); BREAD/BAKERY +0.046, BEAUTY +0.015; en la quincena de control sin cerradas mejora un pelo (0.3849 vs 0.3857); tiempo 78 s → 115 s. · Por qué: cada modelo ve ~33 veces menos ejemplos y pierde lo que las familias se enseñan entre sí (festivos, tendencias de tienda); el modelo global ya distingue la familia con su identificador.
 
