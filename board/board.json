@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T20:03:26+02:00",
+  "updated": "2026-10-18T20:04:04+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6500,7 +6500,7 @@
       "id": "T-105",
       "title": "V-040: corregir el sesgo por familia y día de la semana",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 50.0,
       "actual_min": 23.5,
@@ -6509,7 +6509,7 @@
       "desc": "La base acierta la forma de las ventas pero en algunas familias se queda corta siempre: GROCERY II un 20 % por debajo y los licores los viernes y sábados un 15 % por debajo (gráfica de base-v9, tienda 17). Idea: medir cuánto se equivoca de media el modelo en cada familia y día de la semana en el pasado reciente y corregirlo, con prudencia para no perseguir ruido.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que el sesgo medio de GROCERY II y de LIQUOR en viernes y sábado se acerque a 0.\n\n## Técnico\nMedido por el consultor en base-v9, fold f1 sin tiendas 18/25/52 (eval/tmp/theory/base-v9-f1-s42.csv.gz): sesgo log global −0.009 (desplazar todo no sirve: ±0.0001); por familia GROCERY II −0.224, HOME AND KITCHEN II −0.101, BEAUTY −0.091, HOME APPLIANCES +0.154; LIQUOR por día vie −0.167, sáb −0.165. Variante sobre models/base (base-v10): dentro de model.py, sin mirar el periodo a predecir, reservar las últimas 2-4 ventanas de 16 días antes del corte, predecirlas con el mismo modelo (o usar los residuos fuera de muestra del entrenamiento directo) y calcular el residuo medio en log por (familia, día de la semana). Encoger hacia 0 (b × n/(n+k), k por defecto 200 filas) y recortar a ±0.25. Sumar −b al log de la predicción. Parámetros por env (V040_K, V040_CLIP) para probar sin cambiar código. Ojo al coste: si reentrenar para las ventanas pasa de 15 min por medición, usa la versión barata (residuos de la última ventana del entrenamiento). Una sola cosa cambiada; NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-18T17:50:05+02:00",
-      "updated": "2026-10-18T20:00:31+02:00",
+      "updated": "2026-10-18T20:04:04+02:00",
       "started_at": "2026-10-18T18:22:08+02:00",
       "finished_at": "2026-10-18T18:45:40+02:00",
       "log": [
@@ -6552,6 +6552,26 @@
           "t": "2026-10-18T20:00:31+02:00",
           "by": "consultor",
           "msg": "Medición terminada en segundo plano: RECHAZADA (0.3811→0.3816 y 0.3813→0.3818, empeora f2-f4 con las dos semillas; ×4 de tiempo). El evaluador solo cierra con el veredicto ya hecho."
+        },
+        {
+          "t": "2026-10-18T20:03:29+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-18T20:03:30+02:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: RECHAZADA (V-040: media 0.3811 → 0.3816, empeora 3 fold(s); V-040-s7: media 0.3813 → 0.3818, empeora 3 fold(s))"
+        },
+        {
+          "t": "2026-10-18T20:04:01+02:00",
+          "by": "tester",
+          "msg": "V-040 RECHAZADA: CV 0.3816 y 0.3818 (base-v10 0.3811 y 0.3813, semillas 42 y 7): media peor en ambas; empeora f2, f3, f4 (3/4 folds); control sin cerradas 0.3839 (0.3845, mejor); tiempo 500 s → 1993 s. Revisado: un solo cambio en model.py, sin fuga (la ventana de sesgo solo usa history anterior al corte), 76 tests en verde. Sesgo GROCERY II y licores: no se verifica la reducción pedida; la corrección no generaliza entre ventanas. NOTAS.md dice ~2× de coste y se midió 4×."
+        },
+        {
+          "t": "2026-10-18T20:04:04+02:00",
+          "by": "tester",
+          "msg": "DONE: V-040 RECHAZADA: empeora la media con las dos semillas (0.3816/0.3818 frente a 0.3811/0.3813) y 3 de 4 folds, con 4× de tiempo."
         }
       ],
       "runs": [
@@ -6564,9 +6584,19 @@
           "tokens": 58526,
           "cost_usd": 0.23561639999999998,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-18T20:04:04+02:00",
+          "min": 0.6,
+          "turns": 9,
+          "tokens": 89653,
+          "cost_usd": 0.0052149399999999995,
+          "verdict": "done"
         }
       ],
-      "verify_started": "2026-10-18T18:45:43+02:00"
+      "verify_started": "2026-10-18T20:03:29+02:00"
     },
     {
       "id": "T-106",
@@ -6709,13 +6739,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-107",
-      "message": "verificación mecánica de V-041: backtest con 2 semillas, sin agente (0 tokens)",
+      "current": "T-105",
+      "message": "verificación mecánica de V-040: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 11376,
-      "heartbeat": "2026-10-18T20:02:50+02:00",
+      "heartbeat": "2026-10-18T20:03:30+02:00",
       "agent": "tester",
-      "started": "2026-10-18T19:37:11+02:00",
-      "live": "live-T-107-tester-20261018-200250.jsonl",
+      "started": "2026-10-18T20:03:29+02:00",
+      "live": "live-T-105-tester-20261018-200330.jsonl",
       "enabled": true,
       "mechanical": false
     }
