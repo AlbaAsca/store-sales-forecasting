@@ -47,6 +47,12 @@
       "why": "concedido por Alba desde el panel",
       "by": "Alba",
       "at": "2026-10-18T16:08:47+02:00"
+    },
+    {
+      "pattern": "ls *",
+      "why": "concedido automáticamente a desarrollador (T-108): solo lectura dentro del proyecto",
+      "by": "runner",
+      "at": "2026-10-19T15:25:35+02:00"
     }
   ],
   "denied": [

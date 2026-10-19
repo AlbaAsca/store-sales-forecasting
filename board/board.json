@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-18T20:04:04+02:00",
+  "updated": "2026-10-19T15:25:35+02:00",
   "columns": [
     {
       "id": "backlog",
@@ -6721,6 +6721,110 @@
         }
       ],
       "verify_started": "2026-10-18T19:37:11+02:00"
+    },
+    {
+      "id": "T-108",
+      "title": "V-042: hojas lineales en LightGBM para que el árbol pueda extrapolar (linear_tree)",
+      "owner": "desarrollador",
+      "status": "review",
+      "priority": "alta",
+      "estimate_min": 40.0,
+      "actual_min": 7.3,
+      "auto": true,
+      "manual": null,
+      "desc": "Un árbol solo puede predecir valores que ya ha visto, por eso se queda corto cuando una familia vende más que nunca (GROCERY II, por debajo en los 4 folds). Con hojas lineales, cada hoja ajusta una recta en lugar de un número fijo y puede seguir una subida. Lo propuso el investigador en el brainstorming (N1) y quedó aparcado hasta saber si V-035 lo arreglaba; V-035 se rechazó.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que GROCERY II deje de quedarse corta en los 4 folds.\n\n## Técnico\nSobre models/base (base-v10): parámetro linear_tree=True (y linear_lambda, por env V042_LAMBDA, por defecto 1.0) en los modelos LightGBM del directo y del recursivo. Sin otros cambios. Coste estimado ×2-3 (la base tarda ~500 s por backtest); si pasa de ~25 min por semilla, prueba primero solo en el modelo directo y anótalo. Ref. docs/BRAINSTORM-v10.md (Síntesis, fila 7).",
+      "deps": [],
+      "created": "2026-10-19T15:17:55+02:00",
+      "updated": "2026-10-19T15:25:35+02:00",
+      "started_at": "2026-10-19T15:18:15+02:00",
+      "finished_at": "2026-10-19T15:25:35+02:00",
+      "log": [
+        {
+          "t": "2026-10-19T15:17:55+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-19T15:18:15+02:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-19T15:25:35+02:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-042 (linear_tree en directo y recursivo) lista; backtest rápido OK (fold 1: 0.3841, 324 s); pytest en rojo por tests antiguos con rutas movidas (T-110)"
+        },
+        {
+          "t": "2026-10-19T15:25:35+02:00",
+          "by": "desarrollador",
+          "msg": "⚠ 1 comandos denegados: ls variants/V-042 variants/V-042/.."
+        },
+        {
+          "t": "2026-10-19T15:25:35+02:00",
+          "by": "runner",
+          "msg": "✓ permiso concedido automáticamente: ls * (solo lectura dentro del proyecto); se reintenta"
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-19T15:25:35+02:00",
+          "min": 7.3,
+          "turns": 17,
+          "tokens": 318042,
+          "cost_usd": 0.263871,
+          "verdict": "review"
+        }
+      ]
+    },
+    {
+      "id": "T-109",
+      "title": "V-043: predecir las ventas relativas a la media de 14 días, no el nivel",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 45.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Otra forma de atacar lo mismo que V-042: en vez de pedir al modelo «cuántas unidades», le pedimos «cuánto por encima o por debajo de su media de las últimas 2 semanas». Así una familia que vende más que nunca no queda fuera de lo que el árbol ha visto. Lo propuso el modelador (idea 5) y quedó aparcado tras V-035.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que GROCERY II deje de quedarse corta en los 4 folds.\n\n## Técnico\nSobre models/base (base-v10): objetivo y = log1p(ventas) − log1p(m14) (m14 = media de 14 días al corte, ya existe como rasgo); predecir y y deshacer sumando log1p(m14) antes de expm1. En el recursivo, m14 se recalcula con lo predicho como ya hace. Cuidar series con m14 = 0 (dejar el objetivo absoluto o usar m28). Riesgo ±0.003 según la síntesis (fila 8). Un solo cambio; NOTAS.md con el porqué.",
+      "deps": [],
+      "created": "2026-10-19T15:17:55+02:00",
+      "updated": "2026-10-19T15:17:55+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-19T15:17:55+02:00",
+          "by": "consultor",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-110",
+      "title": "Tests de variantes antiguas apuntan a variants/ pero los ficheros están en models/variants/",
+      "owner": "arquitecto",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 15.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Las variantes cerradas se movieron de carpeta y 28 tests (test_v001…test_v032) ya no encuentran su model.py, así que pytest sale en rojo.\nIdea: actualizar la ruta de los tests o archivar los tests de variantes cerradas.\nCómo sabremos si funciona: pytest vuelve a salir en verde.\n\n## Técnico\ntests/test_vNNN.py cargan variants/V-NNN/model.py; git status muestra variants/V-001..V-041 borradas y models/variants/ sin seguir.",
+      "deps": [],
+      "created": "2026-10-19T15:25:24+02:00",
+      "updated": "2026-10-19T15:25:24+02:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-19T15:25:24+02:00",
+          "by": "desarrollador",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
@@ -6739,13 +6843,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-105",
-      "message": "verificación mecánica de V-040: backtest con 2 semillas, sin agente (0 tokens)",
-      "pid": 11376,
-      "heartbeat": "2026-10-18T20:03:30+02:00",
-      "agent": "tester",
-      "started": "2026-10-18T20:03:29+02:00",
-      "live": "live-T-105-tester-20261018-200330.jsonl",
+      "current": "T-108",
+      "message": "desarrollador con T-108",
+      "pid": 5724,
+      "heartbeat": "2026-10-19T15:18:15+02:00",
+      "agent": "desarrollador",
+      "started": "2026-10-19T15:18:15+02:00",
+      "live": "live-T-108-desarrollador-20261019-151815.jsonl",
       "enabled": true,
       "mechanical": false
     }
