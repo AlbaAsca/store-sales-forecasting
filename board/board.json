@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-19T15:25:35+02:00",
+  "updated": "2026-10-26T22:18:44+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-108"
     },
     {
       "id": "investigador",
@@ -6763,6 +6763,31 @@
           "t": "2026-10-19T15:25:35+02:00",
           "by": "runner",
           "msg": "✓ permiso concedido automáticamente: ls * (solo lectura dentro del proyecto); se reintenta"
+        },
+        {
+          "t": "2026-10-19T15:25:38+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-21T22:14:04+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-23T08:19:25+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-23T23:18:34+02:00",
+          "by": "tester",
+          "msg": "verificando"
+        },
+        {
+          "t": "2026-10-26T22:18:33+01:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -6776,7 +6801,8 @@
           "cost_usd": 0.263871,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-10-26T22:18:33+01:00"
     },
     {
       "id": "T-109",
@@ -6806,37 +6832,79 @@
       "id": "T-110",
       "title": "Tests de variantes antiguas apuntan a variants/ pero los ficheros están en models/variants/",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "blocked",
       "priority": "media",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 5219.3,
       "auto": true,
       "manual": null,
       "desc": "Las variantes cerradas se movieron de carpeta y 28 tests (test_v001…test_v032) ya no encuentran su model.py, así que pytest sale en rojo.\nIdea: actualizar la ruta de los tests o archivar los tests de variantes cerradas.\nCómo sabremos si funciona: pytest vuelve a salir en verde.\n\n## Técnico\ntests/test_vNNN.py cargan variants/V-NNN/model.py; git status muestra variants/V-001..V-041 borradas y models/variants/ sin seguir.",
       "deps": [],
       "created": "2026-10-19T15:25:24+02:00",
-      "updated": "2026-10-19T15:25:24+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-26T22:18:44+01:00",
+      "started_at": "2026-10-26T22:18:33+01:00",
+      "finished_at": "2026-10-26T22:18:44+01:00",
       "log": [
         {
           "t": "2026-10-19T15:25:24+02:00",
           "by": "desarrollador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-23T08:19:25+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-23T23:18:34+02:00",
+          "by": "runner",
+          "msg": "interrumpida (runner reiniciado); se reintentará"
+        },
+        {
+          "t": "2026-10-23T23:18:34+02:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-26T22:18:33+01:00",
+          "by": "runner",
+          "msg": "interrumpida (runner reiniciado); se reintentará"
+        },
+        {
+          "t": "2026-10-26T22:18:33+01:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-10-26T22:18:44+01:00",
+          "by": "arquitecto",
+          "msg": "BLOCKED: es trabajo del desarrollador (cambiar rutas en tests); pásala a su columna con la propuesta de arriba."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-10-26T22:18:44+01:00",
+          "min": 0.2,
+          "turns": 1,
+          "tokens": 12981,
+          "cost_usd": 0.055244,
+          "verdict": "blocked"
         }
       ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado",
-      "pid": 6548,
-      "heartbeat": "2026-10-18T19:31:29+02:00",
-      "agent": "experto",
-      "started": "2026-10-18T18:22:08+02:00",
-      "live": "live-T-106-experto-20261018-182208.jsonl",
+      "state": "working",
+      "current": "T-110",
+      "message": "arquitecto con T-110",
+      "pid": 7308,
+      "heartbeat": "2026-10-26T22:18:33+01:00",
+      "agent": "arquitecto",
+      "started": "2026-10-26T22:18:33+01:00",
+      "live": "live-T-110-arquitecto-20261026-221833.jsonl",
       "contrib_at": "2026-10-18T18:24:23+02:00",
       "contrib_agent": "experto",
       "enabled": true
@@ -6844,14 +6912,14 @@
     "measure": {
       "state": "working",
       "current": "T-108",
-      "message": "desarrollador con T-108",
-      "pid": 5724,
-      "heartbeat": "2026-10-19T15:18:15+02:00",
-      "agent": "desarrollador",
-      "started": "2026-10-19T15:18:15+02:00",
-      "live": "live-T-108-desarrollador-20261019-151815.jsonl",
+      "message": "verificación mecánica de V-042: backtest con 2 semillas, sin agente (0 tokens)",
+      "pid": 22904,
+      "heartbeat": "2026-10-26T22:18:33+01:00",
+      "agent": "tester",
+      "started": "2026-10-26T22:18:33+01:00",
+      "live": null,
       "enabled": true,
-      "mechanical": false
+      "mechanical": true
     }
   }
 }
