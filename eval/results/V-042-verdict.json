@@ -1,0 +1,130 @@
+{
+ "accepted": true,
+ "rows": [
+  {
+   "run": "V-042",
+   "base": 0.3811,
+   "variant": 0.3797,
+   "delta": -0.0014,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3841
+    ],
+    [
+     "f2",
+     0.3726,
+     0.3716
+    ],
+    [
+     "f3",
+     0.3772,
+     0.3767
+    ],
+    [
+     "f4",
+     0.3868,
+     0.3862
+    ]
+   ],
+   "families_best": [
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     -0.014
+    ],
+    [
+     "BOOKS",
+     -0.004
+    ],
+    [
+     "PRODUCE",
+     -0.003
+    ]
+   ],
+   "families_worst": [
+    [
+     "GROCERY I",
+     0.013
+    ],
+    [
+     "LINGERIE",
+     0.0
+    ],
+    [
+     "HOME AND KITCHEN II",
+     0.0
+    ]
+   ]
+  },
+  {
+   "run": "V-042-s7",
+   "base": 0.3813,
+   "variant": 0.3795,
+   "delta": -0.0018,
+   "worse_folds": [],
+   "folds": [
+    [
+     "f1",
+     0.3878,
+     0.3833
+    ],
+    [
+     "f2",
+     0.3727,
+     0.3715
+    ],
+    [
+     "f3",
+     0.3773,
+     0.3766
+    ],
+    [
+     "f4",
+     0.3875,
+     0.3865
+    ]
+   ],
+   "families_best": [
+    [
+     "SCHOOL AND OFFICE SUPPLIES",
+     -0.016
+    ],
+    [
+     "PRODUCE",
+     -0.008
+    ],
+    [
+     "BOOKS",
+     -0.004
+    ]
+   ],
+   "families_worst": [
+    [
+     "LINGERIE",
+     0.001
+    ],
+    [
+     "HARDWARE",
+     0.0
+    ],
+    [
+     "HOME AND KITCHEN II",
+     0.0
+    ]
+   ]
+  }
+ ],
+ "why": [],
+ "variant": "V-042",
+ "base": "base-v10",
+ "control_open": {
+  "base": 0.3844908121110169,
+  "variant": 0.3836025009954814
+ },
+ "secs": {
+  "base": 500.7,
+  "variant": 374.6
+ }
+}

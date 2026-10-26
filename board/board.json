@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-26T22:18:44+01:00",
+  "updated": "2026-10-26T22:39:53+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-108"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -6726,7 +6726,7 @@
       "id": "T-108",
       "title": "V-042: hojas lineales en LightGBM para que el árbol pueda extrapolar (linear_tree)",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "alta",
       "estimate_min": 40.0,
       "actual_min": 7.3,
@@ -6735,7 +6735,7 @@
       "desc": "Un árbol solo puede predecir valores que ya ha visto, por eso se queda corto cuando una familia vende más que nunca (GROCERY II, por debajo en los 4 folds). Con hojas lineales, cada hoja ajusta una recta en lugar de un número fijo y puede seguir una subida. Lo propuso el investigador en el brainstorming (N1) y quedó aparcado hasta saber si V-035 lo arreglaba; V-035 se rechazó.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que GROCERY II deje de quedarse corta en los 4 folds.\n\n## Técnico\nSobre models/base (base-v10): parámetro linear_tree=True (y linear_lambda, por env V042_LAMBDA, por defecto 1.0) en los modelos LightGBM del directo y del recursivo. Sin otros cambios. Coste estimado ×2-3 (la base tarda ~500 s por backtest); si pasa de ~25 min por semilla, prueba primero solo en el modelo directo y anótalo. Ref. docs/BRAINSTORM-v10.md (Síntesis, fila 7).",
       "deps": [],
       "created": "2026-10-19T15:17:55+02:00",
-      "updated": "2026-10-19T15:25:35+02:00",
+      "updated": "2026-10-26T22:39:53+01:00",
       "started_at": "2026-10-19T15:18:15+02:00",
       "finished_at": "2026-10-19T15:25:35+02:00",
       "log": [
@@ -6788,6 +6788,21 @@
           "t": "2026-10-26T22:18:33+01:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-10-26T22:38:30+01:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: ACEPTADA"
+        },
+        {
+          "t": "2026-10-26T22:39:44+01:00",
+          "by": "tester",
+          "msg": "CV 0.3797 / 0.3795 (base-v10 0.3811 / 0.3813; semillas 42 y 7): mejora 4/4 folds con ambas; control sin cerradas 0.3836 (0.3845); 375 s vs 501 s. GROCERY II no mejora de forma clara (±0.004, mixto) y GROCERY I empeora +0.013; la hipótesis de GROCERY II no se confirma → ACEPTADA por criterio (media baja, 0 folds peores)"
+        },
+        {
+          "t": "2026-10-26T22:39:53+01:00",
+          "by": "tester",
+          "msg": "DONE: V-042 ACEPTADA por criterio (media baja con ambas semillas, 0 folds peores); GROCERY II no mejora, tests rojos por T-110 ajenos al cambio."
         }
       ],
       "runs": [
@@ -6800,6 +6815,16 @@
           "tokens": 318042,
           "cost_usd": 0.263871,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-10-26T22:39:53+01:00",
+          "min": 1.4,
+          "turns": 18,
+          "tokens": 304223,
+          "cost_usd": 0.01291159,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-10-26T22:18:33+01:00"
@@ -6893,15 +6918,39 @@
           "verdict": "blocked"
         }
       ]
+    },
+    {
+      "id": "T-111",
+      "title": "Promover V-042 a base y preparar envío a Kaggle",
+      "owner": "consultor",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 10.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hacemos que el modelo pueda seguir subidas de ventas que nunca ha visto: cada rama final del árbol aprende una recta en vez de un número fijo. Mejora un poco la predicción, de forma repetida, y tarda menos que antes.\n\nCómo sabremos si funciona: la mejora se confirma en el holdout y en Kaggle; GROCERY II no mejora de forma clara, así que no lo vendemos como arreglo de esa familia.\n\n## Técnico\nVeredicto ACEPTADA (criterio por defecto): base-v10 0.3811 / 0.3813 → 0.3797 / 0.3795 (semillas 42 y 7), 4/4 folds mejor con ambas semillas. Control sin cerradas 0.3845 → 0.3836. Tiempo 501 s → 375 s. Cambio: linear_tree=True y linear_lambda=1.0 (env V042_LAMBDA) en los LightGBM del directo y del recursivo. Empeora GROCERY I +0.013. GROCERY II por fold (base → V-042): 0.6532→0.6493, 0.5460→0.5477, 0.5171→0.5183, 0.5352→0.5346. Tests: 28 fallos preexistentes por rutas variants/V-0xx movidas (T-110), no por V-042.",
+      "deps": [],
+      "created": "2026-10-26T22:39:49+01:00",
+      "updated": "2026-10-26T22:39:49+01:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-26T22:39:49+01:00",
+          "by": "tester",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-110",
-      "message": "arquitecto con T-110",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
       "pid": 7308,
-      "heartbeat": "2026-10-26T22:18:33+01:00",
+      "heartbeat": "2026-10-26T22:18:49+01:00",
       "agent": "arquitecto",
       "started": "2026-10-26T22:18:33+01:00",
       "live": "live-T-110-arquitecto-20261026-221833.jsonl",
@@ -6914,12 +6963,12 @@
       "current": "T-108",
       "message": "verificación mecánica de V-042: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 22904,
-      "heartbeat": "2026-10-26T22:18:33+01:00",
+      "heartbeat": "2026-10-26T22:38:30+01:00",
       "agent": "tester",
       "started": "2026-10-26T22:18:33+01:00",
-      "live": null,
+      "live": "live-T-108-tester-20261026-223830.jsonl",
       "enabled": true,
-      "mechanical": true
+      "mechanical": false
     }
   }
 }
