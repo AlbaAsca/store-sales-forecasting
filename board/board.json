@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-29T18:37:33+01:00",
+  "updated": "2026-10-29T21:23:54+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -6833,23 +6833,55 @@
       "id": "T-109",
       "title": "V-043: predecir las ventas relativas a la media de 14 días, no el nivel",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 45.0,
-      "actual_min": null,
+      "actual_min": 113.9,
       "auto": true,
       "manual": null,
       "desc": "Otra forma de atacar lo mismo que V-042: en vez de pedir al modelo «cuántas unidades», le pedimos «cuánto por encima o por debajo de su media de las últimas 2 semanas». Así una familia que vende más que nunca no queda fuera de lo que el árbol ha visto. Lo propuso el modelador (idea 5) y quedó aparcado tras V-035.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que GROCERY II deje de quedarse corta en los 4 folds.\n\n## Técnico\nSobre models/base (base-v10): objetivo y = log1p(ventas) − log1p(m14) (m14 = media de 14 días al corte, ya existe como rasgo); predecir y y deshacer sumando log1p(m14) antes de expm1. En el recursivo, m14 se recalcula con lo predicho como ya hace. Cuidar series con m14 = 0 (dejar el objetivo absoluto o usar m28). Riesgo ±0.003 según la síntesis (fila 8). Un solo cambio; NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-19T15:17:55+02:00",
-      "updated": "2026-10-19T15:17:55+02:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-10-29T21:23:54+01:00",
+      "started_at": "2026-10-29T21:18:38+01:00",
+      "finished_at": "2026-10-29T21:23:54+01:00",
       "log": [
         {
           "t": "2026-10-19T15:17:55+02:00",
           "by": "consultor",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-29T19:30:03+01:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-29T21:18:38+01:00",
+          "by": "runner",
+          "msg": "interrumpida (runner reiniciado); se reintentará"
+        },
+        {
+          "t": "2026-10-29T21:18:38+01:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-10-29T21:23:54+01:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: V-043 implementada (objetivo relativo a la media de 14 días); el quick corre con RMSLE 0,3880 en el fold 1; faltan semillas 42 y 7 y el veredicto del tester."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-10-29T21:23:54+01:00",
+          "min": 5.3,
+          "turns": 9,
+          "tokens": 115277,
+          "cost_usd": 0.11879050000000002,
+          "verdict": "review"
         }
       ]
     },
@@ -6999,6 +7031,30 @@
           "verdict": "blocked"
         }
       ]
+    },
+    {
+      "id": "T-113",
+      "title": "Limpiar tests de variantes antiguas que ya no existen",
+      "owner": "arquitecto",
+      "status": "backlog",
+      "priority": "baja",
+      "estimate_min": 15.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Varios tests apuntan a carpetas de variantes antiguas que ya no están, así que fallan sin que el código esté mal. Hay que borrarlos o apuntarlos a la base.\n\nCómo sabremos si funciona: la batería de tests completa pasa en verde.\n\n## Técnico\ntests/test_v001..test_v032 cargan variants/V-0xx/model.py inexistente (FileNotFoundError); ~28 fallos preexistentes.",
+      "deps": [],
+      "created": "2026-10-29T21:23:44+01:00",
+      "updated": "2026-10-29T21:23:44+01:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-10-29T21:23:44+01:00",
+          "by": "desarrollador",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
@@ -7006,8 +7062,8 @@
       "state": "stopped",
       "current": null,
       "message": "Runner parado",
-      "pid": 10764,
-      "heartbeat": "2026-10-29T18:19:34+01:00",
+      "pid": 22408,
+      "heartbeat": "2026-10-29T21:18:38+01:00",
       "agent": "arquitecto",
       "started": "2026-10-29T18:18:59+01:00",
       "live": "live-T-112-arquitecto-20261029-181900.jsonl",
@@ -7017,13 +7073,13 @@
     },
     "measure": {
       "state": "working",
-      "current": "T-111",
-      "message": "promoción automática de V-042",
-      "pid": 11780,
-      "heartbeat": "2026-10-29T18:18:56+01:00",
-      "agent": "consultor",
-      "started": "2026-10-29T18:18:56+01:00",
-      "live": "live-T-108-tester-20261026-223830.jsonl",
+      "current": "T-109",
+      "message": "desarrollador con T-109",
+      "pid": 7580,
+      "heartbeat": "2026-10-29T21:18:38+01:00",
+      "agent": "desarrollador",
+      "started": "2026-10-29T21:18:38+01:00",
+      "live": "live-T-109-desarrollador-20261029-211838.jsonl",
       "enabled": true,
       "mechanical": false
     }
