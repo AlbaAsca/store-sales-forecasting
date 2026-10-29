@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-26T22:39:53+01:00",
+  "updated": "2026-10-29T18:19:29+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -50,8 +50,8 @@
       "name": "Consultor",
       "role": "Habla contigo, prioriza y mueve tarjetas",
       "color": "#c2410c",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-111"
     },
     {
       "id": "arquitecto",
@@ -6923,7 +6923,7 @@
       "id": "T-111",
       "title": "Promover V-042 a base y preparar envío a Kaggle",
       "owner": "consultor",
-      "status": "backlog",
+      "status": "doing",
       "priority": "alta",
       "estimate_min": 10.0,
       "actual_min": null,
@@ -6932,40 +6932,92 @@
       "desc": "Hacemos que el modelo pueda seguir subidas de ventas que nunca ha visto: cada rama final del árbol aprende una recta en vez de un número fijo. Mejora un poco la predicción, de forma repetida, y tarda menos que antes.\n\nCómo sabremos si funciona: la mejora se confirma en el holdout y en Kaggle; GROCERY II no mejora de forma clara, así que no lo vendemos como arreglo de esa familia.\n\n## Técnico\nVeredicto ACEPTADA (criterio por defecto): base-v10 0.3811 / 0.3813 → 0.3797 / 0.3795 (semillas 42 y 7), 4/4 folds mejor con ambas semillas. Control sin cerradas 0.3845 → 0.3836. Tiempo 501 s → 375 s. Cambio: linear_tree=True y linear_lambda=1.0 (env V042_LAMBDA) en los LightGBM del directo y del recursivo. Empeora GROCERY I +0.013. GROCERY II por fold (base → V-042): 0.6532→0.6493, 0.5460→0.5477, 0.5171→0.5183, 0.5352→0.5346. Tests: 28 fallos preexistentes por rutas variants/V-0xx movidas (T-110), no por V-042.",
       "deps": [],
       "created": "2026-10-26T22:39:49+01:00",
-      "updated": "2026-10-26T22:39:49+01:00",
-      "started_at": null,
+      "updated": "2026-10-29T18:18:56+01:00",
+      "started_at": "2026-10-29T18:18:56+01:00",
       "finished_at": null,
       "log": [
         {
           "t": "2026-10-26T22:39:49+01:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-10-29T18:18:56+01:00",
+          "by": "runner",
+          "msg": "promoción automática de V-042 (scripts/promote.py)"
+        }
+      ]
+    },
+    {
+      "id": "T-112",
+      "title": "Ronda de aportación: arquitecto",
+      "owner": "arquitecto",
+      "status": "blocked",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": 0.6,
+      "auto": true,
+      "manual": null,
+      "desc": "Revisa que el panel refleje el plan (CLAUDE.md): dependencias, tareas grandes sin trocear, huecos, y que README.md y docs/APRENDIZAJES.md estén al día con los experimentos cerrados.",
+      "deps": [],
+      "created": "2026-10-29T18:18:56+01:00",
+      "updated": "2026-10-29T18:19:29+01:00",
+      "started_at": "2026-10-29T18:18:56+01:00",
+      "finished_at": "2026-10-29T18:19:29+01:00",
+      "log": [
+        {
+          "t": "2026-10-29T18:18:56+01:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-10-29T18:18:56+01:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-10-29T18:19:29+01:00",
+          "by": "arquitecto",
+          "msg": "BLOCKED: sin RESULT"
+        }
+      ],
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "contrib",
+          "at": "2026-10-29T18:19:29+01:00",
+          "min": 0.5,
+          "turns": 3,
+          "tokens": 48002,
+          "cost_usd": 0.0851687,
+          "verdict": "blocked"
         }
       ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
+      "state": "idle",
       "current": null,
-      "message": "Runner parado",
-      "pid": 7308,
-      "heartbeat": "2026-10-26T22:18:49+01:00",
+      "message": "aportación arquitecto (T-112): sin RESULT",
+      "pid": 10764,
+      "heartbeat": "2026-10-29T18:19:29+01:00",
       "agent": "arquitecto",
-      "started": "2026-10-26T22:18:33+01:00",
-      "live": "live-T-110-arquitecto-20261026-221833.jsonl",
-      "contrib_at": "2026-10-18T18:24:23+02:00",
-      "contrib_agent": "experto",
+      "started": "2026-10-29T18:18:59+01:00",
+      "live": "live-T-112-arquitecto-20261029-181900.jsonl",
+      "contrib_at": "2026-10-29T18:19:29+01:00",
+      "contrib_agent": "arquitecto",
       "enabled": true
     },
     "measure": {
       "state": "working",
-      "current": "T-108",
-      "message": "verificación mecánica de V-042: backtest con 2 semillas, sin agente (0 tokens)",
-      "pid": 22904,
-      "heartbeat": "2026-10-26T22:38:30+01:00",
-      "agent": "tester",
-      "started": "2026-10-26T22:18:33+01:00",
+      "current": "T-111",
+      "message": "promoción automática de V-042",
+      "pid": 11780,
+      "heartbeat": "2026-10-29T18:18:56+01:00",
+      "agent": "consultor",
+      "started": "2026-10-29T18:18:56+01:00",
       "live": "live-T-108-tester-20261026-223830.jsonl",
       "enabled": true,
       "mechanical": false
