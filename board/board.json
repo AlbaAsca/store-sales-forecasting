@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-10-29T21:23:54+01:00",
+  "updated": "2026-11-01T13:30:10+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-109"
     },
     {
       "id": "investigador",
@@ -6870,6 +6870,11 @@
           "t": "2026-10-29T21:23:54+01:00",
           "by": "desarrollador",
           "msg": "REVIEW: V-043 implementada (objetivo relativo a la media de 14 días); el quick corre con RMSLE 0,3880 en el fold 1; faltan semillas 42 y 7 y el veredicto del tester."
+        },
+        {
+          "t": "2026-11-01T13:30:03+01:00",
+          "by": "tester",
+          "msg": "verificando"
         }
       ],
       "runs": [
@@ -6883,7 +6888,8 @@
           "cost_usd": 0.11879050000000002,
           "verdict": "review"
         }
-      ]
+      ],
+      "verify_started": "2026-11-01T13:30:03+01:00"
     },
     {
       "id": "T-110",
@@ -7036,37 +7042,59 @@
       "id": "T-113",
       "title": "Limpiar tests de variantes antiguas que ya no existen",
       "owner": "arquitecto",
-      "status": "backlog",
+      "status": "blocked",
       "priority": "baja",
       "estimate_min": 15.0,
-      "actual_min": null,
+      "actual_min": 0.1,
       "auto": true,
       "manual": null,
       "desc": "Varios tests apuntan a carpetas de variantes antiguas que ya no están, así que fallan sin que el código esté mal. Hay que borrarlos o apuntarlos a la base.\n\nCómo sabremos si funciona: la batería de tests completa pasa en verde.\n\n## Técnico\ntests/test_v001..test_v032 cargan variants/V-0xx/model.py inexistente (FileNotFoundError); ~28 fallos preexistentes.",
       "deps": [],
       "created": "2026-10-29T21:23:44+01:00",
-      "updated": "2026-10-29T21:23:44+01:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-11-01T13:30:10+01:00",
+      "started_at": "2026-11-01T13:30:03+01:00",
+      "finished_at": "2026-11-01T13:30:10+01:00",
       "log": [
         {
           "t": "2026-10-29T21:23:44+01:00",
           "by": "desarrollador",
           "msg": "creada"
+        },
+        {
+          "t": "2026-11-01T13:30:03+01:00",
+          "by": "runner",
+          "msg": "empieza arquitecto"
+        },
+        {
+          "t": "2026-11-01T13:30:10+01:00",
+          "by": "arquitecto",
+          "msg": "BLOCKED: es trabajo del desarrollador, porque implica modificar o borrar tests y el arquitecto no toca código ni tests; hay que reasignar la tarjeta al desarrollador."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "arquitecto",
+          "mode": "work",
+          "at": "2026-11-01T13:30:10+01:00",
+          "min": 0.1,
+          "turns": 1,
+          "tokens": 12730,
+          "cost_usd": 0.053238,
+          "verdict": "blocked"
         }
       ]
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado",
-      "pid": 22408,
-      "heartbeat": "2026-10-29T21:18:38+01:00",
+      "state": "working",
+      "current": "T-113",
+      "message": "arquitecto con T-113",
+      "pid": 4452,
+      "heartbeat": "2026-11-01T13:30:03+01:00",
       "agent": "arquitecto",
-      "started": "2026-10-29T18:18:59+01:00",
-      "live": "live-T-112-arquitecto-20261029-181900.jsonl",
+      "started": "2026-11-01T13:30:03+01:00",
+      "live": "live-T-113-arquitecto-20261101-133003.jsonl",
       "contrib_at": "2026-10-29T18:19:29+01:00",
       "contrib_agent": "arquitecto",
       "enabled": true
@@ -7074,14 +7102,14 @@
     "measure": {
       "state": "working",
       "current": "T-109",
-      "message": "desarrollador con T-109",
-      "pid": 7580,
-      "heartbeat": "2026-10-29T21:18:38+01:00",
-      "agent": "desarrollador",
-      "started": "2026-10-29T21:18:38+01:00",
-      "live": "live-T-109-desarrollador-20261029-211838.jsonl",
+      "message": "verificación mecánica de V-043: backtest con 2 semillas, sin agente (0 tokens)",
+      "pid": 22536,
+      "heartbeat": "2026-11-01T13:30:03+01:00",
+      "agent": "tester",
+      "started": "2026-11-01T13:30:03+01:00",
+      "live": null,
       "enabled": true,
-      "mechanical": false
+      "mechanical": true
     }
   }
 }
