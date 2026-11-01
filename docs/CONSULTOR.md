@@ -17,7 +17,7 @@ necesite entre el 26 y el 30.
   espera la nota, la apunta en `eval/kaggle.json`, la tarjeta y el gráfico; si es peor que la mejor base activa, vuelve a esa base,
   marca la nueva como retirada (`"active": false` en `eval/results/base-vN.json`) y abre un diagnóstico para el analista.
 - El consultor puede proponer un envío experimental de una variante rechazada por poco (como V-014) si la evidencia es ambigua.
-- **MCP de Kaggle** (`.mcp.json`, https://www.kaggle.com/mcp, sin token; Alba inicia sesión con `authorize`): solo en sesiones
+- **MCP de Kaggle** (configuración local, fuera del repo; https://www.kaggle.com/mcp, sin token; Alba inicia sesión con `authorize`): solo en sesiones
   interactivas del consultor, para leer notas y, con el OK explícito de Alba en cada envío, subir. El runner lo bloquea.
 - A mano: `python scripts/make_submission.py --src models/base --name base-vX` → `dist/`; tag `vX.Y`; el mensaje lleva tag,
   backtest y holdout.

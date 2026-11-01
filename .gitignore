@@ -11,3 +11,9 @@ data/
 eval/results/*/
 dist/
 eval/tmp/
+
+# configuración local y pruebas rápidas de los agentes
+.mcp.json
+.claude/launch.json
+eval/results/*quick*
+variants/
