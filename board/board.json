@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-11-01T13:30:10+01:00",
+  "updated": "2026-11-01T13:45:45+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -74,8 +74,8 @@
       "name": "Evaluador",
       "role": "Mide cada variante con el backtest fijo y da el veredicto",
       "color": "#16a34a",
-      "status": "working",
-      "current": "T-109"
+      "status": "idle",
+      "current": null
     },
     {
       "id": "investigador",
@@ -6833,7 +6833,7 @@
       "id": "T-109",
       "title": "V-043: predecir las ventas relativas a la media de 14 días, no el nivel",
       "owner": "desarrollador",
-      "status": "review",
+      "status": "done",
       "priority": "media",
       "estimate_min": 45.0,
       "actual_min": 113.9,
@@ -6842,7 +6842,7 @@
       "desc": "Otra forma de atacar lo mismo que V-042: en vez de pedir al modelo «cuántas unidades», le pedimos «cuánto por encima o por debajo de su media de las últimas 2 semanas». Así una familia que vende más que nunca no queda fuera de lo que el árbol ha visto. Lo propuso el modelador (idea 5) y quedó aparcado tras V-035.\n\nCómo sabremos si funciona: criterio por defecto (media menor con semillas 42 y 7, como mucho 1 de 4 folds peor) y que GROCERY II deje de quedarse corta en los 4 folds.\n\n## Técnico\nSobre models/base (base-v10): objetivo y = log1p(ventas) − log1p(m14) (m14 = media de 14 días al corte, ya existe como rasgo); predecir y y deshacer sumando log1p(m14) antes de expm1. En el recursivo, m14 se recalcula con lo predicho como ya hace. Cuidar series con m14 = 0 (dejar el objetivo absoluto o usar m28). Riesgo ±0.003 según la síntesis (fila 8). Un solo cambio; NOTAS.md con el porqué.",
       "deps": [],
       "created": "2026-10-19T15:17:55+02:00",
-      "updated": "2026-10-29T21:23:54+01:00",
+      "updated": "2026-11-01T13:45:45+01:00",
       "started_at": "2026-10-29T21:18:38+01:00",
       "finished_at": "2026-10-29T21:23:54+01:00",
       "log": [
@@ -6875,6 +6875,21 @@
           "t": "2026-11-01T13:30:03+01:00",
           "by": "tester",
           "msg": "verificando"
+        },
+        {
+          "t": "2026-11-01T13:44:42+01:00",
+          "by": "runner",
+          "msg": "verificación mecánica: VEREDICTO: RECHAZADA (V-043: media 0.3811 → 0.3827, empeora 4 fold(s); V-043-s7: media 0.3813 → 0.3828, empeora 4 fold(s))"
+        },
+        {
+          "t": "2026-11-01T13:45:40+01:00",
+          "by": "tester",
+          "msg": "V-043 RECHAZADA: media 0.3811 → 0.3827 (semilla 42) y 0.3813 → 0.3828 (semilla 7); empeora 4/4 folds con ambas semillas (f1 +0.0003, f2 +0.0024, f3 +0.0033, f4 +0.0005); control sin cerradas 0.3840 (0.3845); 321 s vs 501 s; GROCERY I +0.014, GROCERY II no sale entre las que más cambian → sin mejora; tests: 48 pasan, 28 fallan por variantes V-001..V-032 sin model.py (ajeno a V-043)"
+        },
+        {
+          "t": "2026-11-01T13:45:45+01:00",
+          "by": "tester",
+          "msg": "DONE: V-043 rechazada: empeora 4/4 folds con ambas semillas (media 0.3811 → 0.3827)."
         }
       ],
       "runs": [
@@ -6887,6 +6902,16 @@
           "tokens": 115277,
           "cost_usd": 0.11879050000000002,
           "verdict": "review"
+        },
+        {
+          "agent": "tester",
+          "mode": "verify",
+          "at": "2026-11-01T13:45:45+01:00",
+          "min": 1.0,
+          "turns": 17,
+          "tokens": 220789,
+          "cost_usd": 0.01080493,
+          "verdict": "done"
         }
       ],
       "verify_started": "2026-11-01T13:30:03+01:00"
@@ -7083,15 +7108,39 @@
           "verdict": "blocked"
         }
       ]
+    },
+    {
+      "id": "T-114",
+      "title": "Arreglar 28 tests que fallan: faltan las carpetas de variantes V-001 a V-032",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 20.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Los tests de las variantes antiguas no encuentran su código y fallan, aunque el código de la base sí funciona. Pasa porque las carpetas variants/V-001 a V-032 no están en el repositorio y el test intenta cargar su model.py. Idea: o restaurar esas carpetas desde el historial, o marcar esos tests como archivados, para que la suite vuelva a estar en verde y avise solo cuando algo real se rompa.\n\nCómo sabremos si funciona: python -m pytest tests -q termina sin fallos.\n\n## Técnico\nFallan 28 tests en tests/test_v0*.py con FileNotFoundError en variants/V-0xx/model.py. git ls-files variants solo lista V-042. Los 48 tests restantes pasan.",
+      "deps": [],
+      "created": "2026-11-01T13:45:41+01:00",
+      "updated": "2026-11-01T13:45:41+01:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-11-01T13:45:41+01:00",
+          "by": "tester",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-113",
-      "message": "arquitecto con T-113",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
       "pid": 4452,
-      "heartbeat": "2026-11-01T13:30:03+01:00",
+      "heartbeat": "2026-11-01T13:30:15+01:00",
       "agent": "arquitecto",
       "started": "2026-11-01T13:30:03+01:00",
       "live": "live-T-113-arquitecto-20261101-133003.jsonl",
@@ -7104,12 +7153,12 @@
       "current": "T-109",
       "message": "verificación mecánica de V-043: backtest con 2 semillas, sin agente (0 tokens)",
       "pid": 22536,
-      "heartbeat": "2026-11-01T13:30:03+01:00",
+      "heartbeat": "2026-11-01T13:44:42+01:00",
       "agent": "tester",
       "started": "2026-11-01T13:30:03+01:00",
-      "live": null,
+      "live": "live-T-109-tester-20261101-134442.jsonl",
       "enabled": true,
-      "mechanical": true
+      "mechanical": false
     }
   }
 }
