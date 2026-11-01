@@ -10,9 +10,10 @@ coordinado desde un tablero kanban (más abajo explico cómo).
 
 | | |
 |---|---|
-| 🏁 **Nota en Kaggle** | **0.39212** (v0.8, la mejor) · empezó en 0.45751 (v0.1) |
-| 📈 **Error en las prácticas** | **0.3829** (base-v8) · empezó en 0.4745 (base-v0) |
-| 🧪 **Ideas probadas** | 26: 10 forman el modelo actual, 16 no entraron → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 🏁 **Nota en Kaggle** | **0.38839** (v0.10, la final) · empezó en 0.45751 (v0.1): **−15 %** |
+| 📈 **Error en las prácticas** | **0.3811** (base-v10) · empezó en 0.4745 (base-v0) |
+| 🧪 **Ideas probadas** | 45 (V-001 a V-045): 13 forman el modelo final, el resto no entró → [qué aprendí en cada una](docs/APRENDIZAJES.md) |
+| 🔚 **Estado** | **Cerrado el 1-nov-2026.** El mejor notebook público saca 0.37984 con tres ideas que ya probé aquí y no mejoraron mi modelo (un modelo por familia, media de ventanas de entrenamiento, transacciones y petróleo); seguir costaba horas por milésima |
 | 💡 **Las ideas que funcionaron** | [explicadas una a una con su gráfica](#las-ideas-que-funcionaron) |
 | 🌳 **Árbol de experimentos** | [`docs/experimentos.html`](docs/experimentos.html): cada idea explicada sin tecnicismos (descárgalo y ábrelo en el navegador) |
 
@@ -277,7 +278,9 @@ Error: 0.3829 → 0.3814 (−0,4 %) en validación; Kaggle: 0.39212 → 0.38981.
 | V-009 | media de dos maneras de predecir: los 16 días de golpe y día a día | 0.3858 | 0.4187 | 0.40327 |
 | V-014 | afinar los ajustes del LightGBM (aceptada tras el envío experimental) | 0.3852 | 0.4179 | 0.39940 |
 | V-025 + V-023 | aprender del año anterior sin sus cierres, y predecir cero solo en series de verdad muertas | 0.3838 | 0.4139 | 0.39720 |
-| **V-027** | **avisar al modelo de las promociones de los días de alrededor** (promovida automáticamente) | **0.3829** | **0.4073** | **0.39212** |
+| V-027 | avisar al modelo de las promociones de los días de alrededor (promovida automáticamente) | 0.3829 | 0.4073 | 0.39212 |
+| V-031 | promediar tres modelos con historial corto, medio y largo | 0.3814 | 0.4051 | 0.38981 |
+| **V-037** | **los días de tienda cerrada son datos que faltan, no ventas cero** (aceptada tras el envío experimental) | **0.3811** | **0.4085** | **0.38839** |
 
 ### Las ramas: lo que se probó y se descartó
 
@@ -308,11 +311,11 @@ Error: 0.3829 → 0.3814 (−0,4 %) en validación; Kaggle: 0.39212 → 0.38981.
 | V-035 · el año anterior solo como forma (cambio de nivel quitado, se mantiene la subida/bajada) (rechazada) | prácticas 0.3820 / 0.3819 (base-v9 0.3814 / 0.3815), peor en 2/4 folds; control agosto 0.3853 (0.3845); 478 s | GROCERY II mejora, GROCERY I empeora más: el nivel del año pasado sí informa del tamaño de cada familia |
 | V-036 · año anterior con ventana ancha (±14 días, promedio y subida de un mes) (rechazada) | prácticas 0.3810 / 0.3811 (base-v10 0.3811 / 0.3813), peor en 1/4 y 2/4 folds; control sin cerradas 0.3845 (0.3845); 410 s | diferencia dentro del ruido entre semillas; la señal del año pasado ya está en la ventana de ±3 días |
 | V-043 · objetivo relativo a la media de 14 días (desviación en vez de nivel) sobre base-v10 (rechazada) | prácticas 0.3827 / 0.3828 (base-v10 0.3811 / 0.3813), peor en 4/4 folds con ambas semillas; control sin cerradas 0.3840 (0.3845); 321 s vs 501 s | predecir la desviación no mejora el nivel; GROCERY I empeora +0.014 |
-| V-042 · hojas lineales en LightGBM (linear_tree) sobre base-v10 (aceptada) | prácticas 0.3797 / 0.3795 (base-v10 0.3811 / 0.3813), mejor en 4/4 folds con ambas semillas; control sin cerradas 0.3836 (0.3845); 375 s vs 501 s | ganancia pequeña y repetida; GROCERY II no mejora de forma clara y GROCERY I empeora (+0.013) |
+| V-042 · hojas lineales en LightGBM (linear_tree) sobre base-v10 (aceptada en local, **0.42499 en Kaggle**: no entra) | prácticas 0.3797 / 0.3795 (base-v10 0.3811 / 0.3813), mejor en 4/4 folds con ambas semillas; control sin cerradas 0.3836 (0.3845); 375 s vs 501 s | ganancia pequeña y repetida; GROCERY II no mejora de forma clara y GROCERY I empeora (+0.013) |
 | V-040 · corrección de sesgo por familia y día de la semana con la última ventana (encogida y recortada) sobre base-v10 (rechazada) | prácticas 0.3816 / 0.3818 (base-v10 0.3811 / 0.3813), peor en 3/4 folds; control sin cerradas 0.3839 (0.3845); 501 s vs 1993 s | el sesgo de una ventana no es estable; corregir a mano persigue ruido y cuesta 4× el tiempo |
 | V-039 · repesca de V-022 (rasgos de series a ratos, ignorando cierres) sobre base-v10 (rechazada) | prácticas 0.3815 / 0.3813 (base-v10 0.3811 / 0.3813), peor en 3/4 y 2/4 folds; control sin cerradas 0.3839 (0.3845); 429-501 s | no mejora con dos semillas; PRODUCE empeora mucho; el promedio y el perfil semanal ya recogen las series a ratos |
 | V-041 · perfil de paga por tienda y tramo del mes (rechazada) | prácticas 0.3812 / 0.3813 (base-v10 0.3811 / 0.3813), peor en 2/4 folds con ambas semillas; control sin cerradas 0.3855 (0.3845); 501-743 s | el sesgo de días 1-4 y 27-31 es real, pero un promedio por tramo es demasiado grueso para corregirlo |
-| V-038 · pérdida Huber (picos aislados pesan menos; alpha 1.0 sobre log1p) (aceptada) | prácticas 0.3806 / 0.3804 (base-v10 0.3811 / 0.3813), mejor en 3/4 y 4/4 folds; control sin cerradas 0.3838 (0.3845); 395 s | ganancia pequeña y repetida; mismo error en log, sin tocar la escala como tweedie |
+| V-038 · pérdida Huber (picos aislados pesan menos; alpha 1.0 sobre log1p) (aceptada en local, **0.39098 en Kaggle**: no entra) | prácticas 0.3806 / 0.3804 (base-v10 0.3811 / 0.3813), mejor en 3/4 y 4/4 folds; control sin cerradas 0.3838 (0.3845); 395 s | ganancia pequeña y repetida; mismo error en log, sin tocar la escala como tweedie |
 | V-037 · días de tienda cerrada tratados como dato que falta, no como cero (aceptada) | prácticas 0.3811 / 0.3813 (base-v9 0.3814 / 0.3815), mejor en 3/4 folds (f1 +0.0001); control sin cerradas 0.3845 (igual); 501 s | ganancia pequeña pero repetida; los ceros de cierre sí sesgaban los promedios, pero no era el problema grande |
 | V-029 · un modelo aparte por familia de producto (rechazada) | prácticas 0.3870 / 0.3870 (base-v7 0.3838), peor en 4/4 folds; tarda 78 s → 115 s | cada modelo ve 33 veces menos datos y pierde lo que las familias se enseñan entre sí |
 | V-020 · repartir distinto las dos formas de predecir según el producto | igual o peor (0.3856) | el reparto a medias ya era el bueno |
@@ -320,7 +323,7 @@ Error: 0.3829 → 0.3814 (−0,4 %) en validación; Kaggle: 0.39212 → 0.38981.
 | V-022 · decirle qué series se venden a ratos (repesca de V-015) | mejora un poco las prácticas (0.3850) pero empeora el examen final (0.4204) | no compensa |
 
 Los números exactos de cada experimento (por fold, por familia y por semilla) están en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md)
-y en `eval/results/`. En curso: festivos por tienda (V-017).
+y en `eval/results/`.
 
 ---
 
@@ -374,6 +377,12 @@ este proyecto frente a la práctica estándar (versión gráfica en [`docs/mapa-
 6. **Lo que copias del pasado incluye sus accidentes.** Entrenar con el mismo periodo del año anterior (V-018) mejoraba en todas
    las medidas locales y empeoró en Kaggle: en esas fechas de 2016 dos tiendas estuvieron cerradas, y el modelo lo trasladó a 2017.
    Ninguna medida local cubría esa quincena con esas tiendas abiertas. Limpiando esos cierres (v0.7), la misma idea dio la mejor nota.
-7. **Rechazar también es avanzar.** Doce ideas no entraron en el modelo, y cada una dejó escrito por qué.
+7. **Rechazar también es avanzar.** Más de treinta ideas no entraron en el modelo, y cada una dejó escrito por qué.
+8. **Ningún examen local es infalible; varios juntos casi.** El examen final (holdout) acertó el sentido de Kaggle en 7 de 10
+   envíos: falló con V-037 (empeoraba en local y mejoró en Kaggle) y acertó con V-038. La alarma más fiable fue otra: «¿cambia de
+   golpe la previsión de alguna familia en el test?». V-042 mejoraba todo lo local, predecía un 26 % más de material escolar y en
+   Kaggle se hundió (0.42499): las hojas lineales alargaban la subida de la vuelta al cole.
+9. **Saber parar.** Al final cada milésima costaba horas. Comparé con los mejores notebooks públicos: sus ideas ya estaban
+   probadas aquí y no ayudaban a este modelo. Ahí cerré.
 
 La bitácora completa, con un glosario de cada concepto nuevo, está en [docs/APRENDIZAJES.md](docs/APRENDIZAJES.md).
