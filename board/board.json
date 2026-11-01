@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-11-01T16:30:44+01:00",
+  "updated": "2026-11-01T16:32:56+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -98,8 +98,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "working",
-      "current": "T-115"
+      "status": "idle",
+      "current": null
     }
   ],
   "tasks": [
@@ -7159,18 +7159,18 @@
       "id": "T-115",
       "title": "Ronda de aportación: modelador",
       "owner": "modelador",
-      "status": "doing",
+      "status": "done",
       "priority": "baja",
       "estimate_min": 15,
-      "actual_min": null,
+      "actual_min": 2.9,
       "auto": true,
       "manual": null,
       "desc": "Sigue tu definición (.claude/agents/modelador.md): compara models/base/ con el código de soluciones de referencia y actualiza docs/DISENO-MODELOS.md con las técnicas que nos faltan.",
       "deps": [],
       "created": "2026-11-01T16:30:03+01:00",
-      "updated": "2026-11-01T16:30:03+01:00",
+      "updated": "2026-11-01T16:32:56+01:00",
       "started_at": "2026-11-01T16:30:03+01:00",
-      "finished_at": null,
+      "finished_at": "2026-11-01T16:32:56+01:00",
       "log": [
         {
           "t": "2026-11-01T16:30:03+01:00",
@@ -7181,31 +7181,96 @@
           "t": "2026-11-01T16:30:03+01:00",
           "by": "runner",
           "msg": "empieza la ronda"
+        },
+        {
+          "t": "2026-11-01T16:32:56+01:00",
+          "by": "modelador",
+          "msg": "DONE: ronda 2026-11-01 añadida a DISENO-MODELOS.md y tarjetas T-116 (V-044: Huber + hojas lineales) y T-117 (V-045: tipo, grupo y ciudad de la tienda)"
         }
       ],
-      "kind": "contrib"
+      "kind": "contrib",
+      "runs": [
+        {
+          "agent": "modelador",
+          "mode": "contrib",
+          "at": "2026-11-01T16:32:56+01:00",
+          "min": 2.9,
+          "turns": 27,
+          "tokens": 708632,
+          "cost_usd": 0.957615,
+          "verdict": "done"
+        }
+      ]
+    },
+    {
+      "id": "T-116",
+      "title": "V-044: juntar la pérdida robusta (V-038) y las hojas lineales (V-042) en una sola variante",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "alta",
+      "estimate_min": 30.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hay dos ideas que funcionaron por separado: que los picos sueltos pesen menos al aprender, y que el árbol pueda seguir una tendencia en vez de dar escalones. Ninguna está todavía en la base. Probamos las dos juntas para saber si sus mejoras se suman o se pisan, y así decidir qué entra en la próxima base.\nCómo sabremos si funciona: si con las dos semillas mejora a la mejor de las dos por separado (hojas lineales) y no empeora más de una de las cuatro prácticas.\n\n## Técnico\nSobre base-v10 (V-037). Un cambio: PARAMS objective=huber, alpha=1.0 (como V-038) + los parámetros linear_tree de V-042, en directo y recursivo. Referencias: V-038 0.3806/0.3804, V-042 0.3797/0.3795, base-v10 0.3811/0.3813. Criterio: CV medio < base-v10 con semillas 42 y 7, max 1/4 folds peor; anotar además frente a V-042 y c1 sin tiendas 18/25. Riesgo: Huber puede recortar la extrapolación lineal. Ver docs/DISENO-MODELOS.md (ronda T-115).",
+      "deps": [],
+      "created": "2026-11-01T16:32:43+01:00",
+      "updated": "2026-11-01T16:32:43+01:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-11-01T16:32:43+01:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
+    },
+    {
+      "id": "T-117",
+      "title": "V-045: decirle al modelo de qué tipo, grupo y ciudad es cada tienda",
+      "owner": "desarrollador",
+      "status": "backlog",
+      "priority": "media",
+      "estimate_min": 25.0,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Hoy el modelo solo conoce cada tienda por su número, así que no sabe qué tiendas se parecen entre sí. Los datos traen el tipo de tienda, un grupo de tiendas parecidas y la ciudad, y los mejores cuadernos públicos se los dan al modelo. Probamos a añadir esos tres datos fijos para que las tiendas parecidas compartan lo que aprenden.\nCómo sabremos si funciona: si con las dos semillas mejora a la base y no empeora más de una de las cuatro prácticas; si no se mueve, es que el número de tienda ya lo decía todo.\n\n## Técnico\nFuente: chongzhenjie/ecuador-store-sales-global-forecasting-lightgbm (static covariates cluster, type), ekrembayar (stores.cluster), brainstorm v10 N3. Un cambio: store_type, store_cluster, store_city como categóricas (códigos desde ctx['stores']) en _features y _step_feats. Medir sobre la base vigente (tras V-044 si se promueve). Criterio por defecto (2 semillas, max 1/4 folds peor); mirar tiendas 18/25 en c1 y riesgo de redundancia como V-028. Ver docs/DISENO-MODELOS.md (ronda T-115).",
+      "deps": [],
+      "created": "2026-11-01T16:32:47+01:00",
+      "updated": "2026-11-01T16:32:47+01:00",
+      "started_at": null,
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-11-01T16:32:47+01:00",
+          "by": "modelador",
+          "msg": "creada"
+        }
+      ]
     }
   ],
   "runners": {
     "think": {
-      "state": "working",
-      "current": "T-115",
-      "message": "modelador: ronda de aportación (T-115)",
+      "state": "idle",
+      "current": null,
+      "message": "aportación modelador (T-115): ronda 2026-11-01 añadida a DISENO-MODELOS.md y tarjetas T-116 (V-044: Huber + hojas lineales) y T-117 (V-045: tipo, grupo y ciudad de la tienda)",
       "pid": 9140,
-      "heartbeat": "2026-11-01T16:30:04+01:00",
+      "heartbeat": "2026-11-01T16:32:56+01:00",
       "agent": "modelador",
       "started": "2026-11-01T16:30:04+01:00",
       "live": "live-T-115-modelador-20261101-163004.jsonl",
-      "contrib_at": "2026-10-29T18:19:29+01:00",
-      "contrib_agent": "arquitecto",
+      "contrib_at": "2026-11-01T16:32:56+01:00",
+      "contrib_agent": "modelador",
       "enabled": true
     },
     "measure": {
-      "state": "working",
-      "current": "T-114",
-      "message": "desarrollador con T-114",
+      "state": "stopped",
+      "current": null,
+      "message": "Runner parado",
       "pid": 3824,
-      "heartbeat": "2026-11-01T16:30:04+01:00",
+      "heartbeat": "2026-11-01T16:30:47+01:00",
       "agent": "desarrollador",
       "started": "2026-11-01T16:30:04+01:00",
       "live": "live-T-114-desarrollador-20261101-163004.jsonl",
