@@ -211,7 +211,7 @@ Se promedian tres copias del modelo que miran 2 semanas, 2 meses y 1 año de his
 ## V-037: días de tienda cerrada como dato que falta (aceptada)
 Un día en que la tienda entera vende 0 (cierre, 25-dic, días antes de abrir) se trataba como un cero más. Ahora esos días son «NaN» (dato ausente) en las medias y perfiles, y las medias ignoran los huecos. Con dos semillas baja un poco el error (0.3811 / 0.3813 frente a 0.3814 / 0.3815) y el control sin cerradas no cambia; la ganancia es pequeña, pero se repite. Por qué: el cero falso restaba nivel a las tiendas cerradas; quitarlo ayuda sin tocar el objetivo de entrenamiento.
 
-## V-038: pérdida Huber, para que los picos raros pesen menos (aceptada)
+## V-038: pérdida Huber, para que los picos raros pesen menos (aceptada en local, ❌ no entra: 0.39098 en Kaggle)
 La pérdida Huber penaliza igual que el error cuadrático los errores pequeños, pero solo linealmente los grandes (concepto: «función de pérdida» = lo que el modelo intenta minimizar). Así, los días con ventas disparatadas tiran menos del modelo. Con dos semillas baja el error (0.3806 / 0.3804 frente a 0.3811 / 0.3813), mejora 3/4 folds con semilla 42 y 4/4 con semilla 7, y el control sin cerradas baja de 0.3845 a 0.3838. Por qué: el error cuadrático obligaba al modelo a perseguir picos aislados; la ganancia es pequeña (≈ −0.0005/−0.0009) pero se repite.
 
 ## V-036: ventana ancha del año anterior (±14 días, no ±3) — ❌ RECHAZADA (0.3810 vs 0.3811, semilla 42; 0.3811 vs 0.3813, semilla 7)
@@ -226,8 +226,28 @@ Antes de predecir, el modelo vuelve a predecir la última ventana de 16 días de
 ## V-041: perfil de paga por tienda y tramo del mes (rechazada)
 Damos al modelo, por tienda, cuánto suele desviarse cada tramo del mes (1-4, 12-15, 16-19, 27-31, resto) respecto a su venta normal de los 28 días previos, usando solo los 365 días anteriores al corte. Con semilla 42 queda 0.3812 frente a 0.3811 y con semilla 7, 0.3813 frente a 0.3813; empeora 2 de 4 folds en ambas semillas (f1 y f4) y PRODUCE sube +0.022. Por qué: el sesgo de los días 1-4 y 27-31 es real, pero el promedio por tramo es tan grueso que mezcla meses buenos y malos y no corrige el error concreto; además el modelo ya recoge buena parte de ese patrón con el perfil semanal y las ventas recientes.
 
-## V-042: hojas lineales en LightGBM, linear_tree (aceptada)
+## V-042: hojas lineales en LightGBM, linear_tree (aceptada en local, ❌ no entra: 0.42499 en Kaggle)
 Cada hoja del árbol deja de dar un número fijo y ajusta una recta sobre sus rasgos, así que puede seguir una subida que el árbol normal no ha visto ("hojas lineales"). Con semilla 42 baja la media de 0.3811 a 0.3797 y con semilla 7 de 0.3813 a 0.3795; mejora los 4 folds en ambas semillas y el control sin cerradas pasa de 0.3845 a 0.3836. Por qué: la mejora es pequeña y repetida, pero no arregla lo que se buscaba: GROCERY II apenas cambia (±0.004, mixto) y GROCERY I empeora +0.013; además tarda igual o menos (375 s frente a 501 s), así que el coste no es un problema.
 
 ## V-043: objetivo relativo a la media de 14 días (rechazada)
 En vez de enseñar al modelo «cuántas unidades se venden», le enseñamos «cuánto se desvía de su media de las 2 últimas semanas» (un objetivo relativo: se resta la media y se suma al predecir). Con semilla 42 sube la media de 0.3811 a 0.3827 y con semilla 7 de 0.3813 a 0.3828; empeora los 4 folds en ambas semillas, el control sin cerradas baja solo 0.0005 y GROCERY II no aparece entre las familias que más cambian. Por qué: la idea de que el modelo no «vea» subidas nuevas no se cumple, porque el árbol predice bien desviaciones pequeñas pero pierde precisión en el nivel de cada familia (GROCERY I +0.014).
+
+## Lo que pasó en Kaggle con las aceptadas en local (18-oct y 1-nov-2026)
+- **V-037** empeoraba el examen final (0.4051 → 0.4085), pero en Kaggle mejoró (0.38981 → **0.38839**) y pasó a ser base-v10.
+- **V-038** (Huber) mejoraba las prácticas y empeoraba el examen final (0.4085 → 0.4134). En Kaggle empeoró: 0.39098.
+- **V-042** (hojas lineales) mejoraba todo lo local: prácticas −0.0016, examen final 0.4085 → 0.3996 y control. Solo saltaba la
+  alarma de cambio en el test: predecía un 26 % más de material escolar (+0.233 en log). En Kaggle se hundió: **0.42499**.
+  Por qué: una hoja lineal prolonga la tendencia sin límite. La vuelta al cole sube en las fechas del test y la recta sigue
+  subiendo, cuando las ventas reales se frenan. Un árbol normal no puede pasarse de lo que ha visto; esa limitación aquí protegía.
+- Lección: el examen final acertó el sentido de Kaggle en 7 de 10 envíos, así que es una alarma, no un veredicto. La alarma
+  «¿cambia de golpe la previsión de alguna familia o tienda en el test?» acertó las dos veces que saltó (v0.6 y V-042). Ninguna
+  medida local ve las fechas del test; esta es la única que mira directamente lo que vamos a enviar.
+
+## Cierre del proyecto (1-nov-2026)
+Comparé con los mejores notebooks públicos. El mejor que publica su nota saca 0.37984 con un LightGBM por familia (darts) y la
+media de varios retrasos y de dos ventanas de entrenamiento. Esas ideas ya estaban probadas aquí y no mejoraban este modelo:
+un modelo por familia (V-029), media de ventanas (V-010/V-021), y transacciones y petróleo (descartados en el brainstorming).
+La diferencia probablemente viene de muchos detalles pequeños, no de una idea que falte.
+Tras ocho variantes seguidas sin mejora, cada milésima costaba horas, así que cerré en **v1.0 = base-v10, 0.38839 en Kaggle**
+(−15 % desde 0.45751).
+Concepto: **rendimientos decrecientes** = cada mejora cuesta más que la anterior. Saber parar también es una decisión de proyecto.
