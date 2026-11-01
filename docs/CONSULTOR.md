@@ -43,3 +43,6 @@ en board/runner.py) y este CLAUDE.md más corto. Volver a medir con `runs[].toke
   promueve con `promote.py V-xxx --lb <nota>` si Kaggle mejora. Repesca de V-022 por lo mismo: V-039 (T-103).
 - V-038 (Huber): mismo caso, pero Kaggle empeoró (0,38839 → 0,39098) y el holdout acertó (0,4085 → 0,4134). Balance del holdout:
   7 de 10 aciertos. Sigue valiendo como alarma; el envío experimental es lo que decide.
+- V-042 (linear_tree): mejoraba prácticas (−0,0016), holdout (0,4085 → 0,3996) y control, y en Kaggle fue 0,42499 (+0,037).
+  Solo lo avisaba la comprobación de cambios en el test (material escolar +0,233 en log): las hojas lineales extrapolan la
+  vuelta al cole. Esa alarma es la más fiable de todas: no se salta nunca sin un envío experimental.
