@@ -11,6 +11,16 @@ import board as bd  # noqa: E402
 import permissions as pm  # noqa: E402
 
 
+def pytest_collection_modifyitems(config, items):
+    """Tests de variantes archivadas (test_vNNN.py): se saltan si variants/V-NNN/model.py ya no está en el repo."""
+    import re
+    root = Path(__file__).parents[1]
+    for it in items:
+        m = re.fullmatch(r"test_v(\d+)\.py", Path(str(it.fspath)).name)
+        if m and not (root / "variants" / f"V-{m.group(1)}" / "model.py").exists():
+            it.add_marker(pytest.mark.skip(reason=f"variante V-{m.group(1)} archivada (carpeta no está en el repo)"))
+
+
 @pytest.fixture(autouse=True)
 def _board_aislado(tmp_path_factory, monkeypatch):
     d = tmp_path_factory.mktemp("boardreal")

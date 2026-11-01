@@ -1,6 +1,6 @@
 {
   "project": "store-sales-forecasting · Previsión de ventas (Favorita)",
-  "updated": "2026-11-01T13:45:45+01:00",
+  "updated": "2026-11-01T16:30:44+01:00",
   "columns": [
     {
       "id": "backlog",
@@ -98,8 +98,8 @@
       "name": "Modelador",
       "role": "Lee código de soluciones de referencia y propone variantes de modelo",
       "color": "#db2777",
-      "status": "idle",
-      "current": null
+      "status": "working",
+      "current": "T-115"
     }
   ],
   "tasks": [
@@ -7113,50 +7113,102 @@
       "id": "T-114",
       "title": "Arreglar 28 tests que fallan: faltan las carpetas de variantes V-001 a V-032",
       "owner": "desarrollador",
-      "status": "backlog",
+      "status": "review",
       "priority": "media",
       "estimate_min": 20.0,
-      "actual_min": null,
+      "actual_min": 0.7,
       "auto": true,
       "manual": null,
       "desc": "Los tests de las variantes antiguas no encuentran su código y fallan, aunque el código de la base sí funciona. Pasa porque las carpetas variants/V-001 a V-032 no están en el repositorio y el test intenta cargar su model.py. Idea: o restaurar esas carpetas desde el historial, o marcar esos tests como archivados, para que la suite vuelva a estar en verde y avise solo cuando algo real se rompa.\n\nCómo sabremos si funciona: python -m pytest tests -q termina sin fallos.\n\n## Técnico\nFallan 28 tests en tests/test_v0*.py con FileNotFoundError en variants/V-0xx/model.py. git ls-files variants solo lista V-042. Los 48 tests restantes pasan.",
       "deps": [],
       "created": "2026-11-01T13:45:41+01:00",
-      "updated": "2026-11-01T13:45:41+01:00",
-      "started_at": null,
-      "finished_at": null,
+      "updated": "2026-11-01T16:30:44+01:00",
+      "started_at": "2026-11-01T16:30:03+01:00",
+      "finished_at": "2026-11-01T16:30:44+01:00",
       "log": [
         {
           "t": "2026-11-01T13:45:41+01:00",
           "by": "tester",
           "msg": "creada"
+        },
+        {
+          "t": "2026-11-01T16:30:03+01:00",
+          "by": "runner",
+          "msg": "empieza desarrollador"
+        },
+        {
+          "t": "2026-11-01T16:30:44+01:00",
+          "by": "desarrollador",
+          "msg": "REVIEW: los 28 tests de variantes archivadas se saltan si falta su carpeta (cambio en tests/conftest.py); la suite queda en 48 pasados, 28 saltados y 0 fallos."
+        }
+      ],
+      "runs": [
+        {
+          "agent": "desarrollador",
+          "mode": "work",
+          "at": "2026-11-01T16:30:44+01:00",
+          "min": 0.7,
+          "turns": 6,
+          "tokens": 52869,
+          "cost_usd": 0.0736103,
+          "verdict": "review"
         }
       ]
+    },
+    {
+      "id": "T-115",
+      "title": "Ronda de aportación: modelador",
+      "owner": "modelador",
+      "status": "doing",
+      "priority": "baja",
+      "estimate_min": 15,
+      "actual_min": null,
+      "auto": true,
+      "manual": null,
+      "desc": "Sigue tu definición (.claude/agents/modelador.md): compara models/base/ con el código de soluciones de referencia y actualiza docs/DISENO-MODELOS.md con las técnicas que nos faltan.",
+      "deps": [],
+      "created": "2026-11-01T16:30:03+01:00",
+      "updated": "2026-11-01T16:30:03+01:00",
+      "started_at": "2026-11-01T16:30:03+01:00",
+      "finished_at": null,
+      "log": [
+        {
+          "t": "2026-11-01T16:30:03+01:00",
+          "by": "runner",
+          "msg": "creada"
+        },
+        {
+          "t": "2026-11-01T16:30:03+01:00",
+          "by": "runner",
+          "msg": "empieza la ronda"
+        }
+      ],
+      "kind": "contrib"
     }
   ],
   "runners": {
     "think": {
-      "state": "stopped",
-      "current": null,
-      "message": "Runner parado",
-      "pid": 4452,
-      "heartbeat": "2026-11-01T13:30:15+01:00",
-      "agent": "arquitecto",
-      "started": "2026-11-01T13:30:03+01:00",
-      "live": "live-T-113-arquitecto-20261101-133003.jsonl",
+      "state": "working",
+      "current": "T-115",
+      "message": "modelador: ronda de aportación (T-115)",
+      "pid": 9140,
+      "heartbeat": "2026-11-01T16:30:04+01:00",
+      "agent": "modelador",
+      "started": "2026-11-01T16:30:04+01:00",
+      "live": "live-T-115-modelador-20261101-163004.jsonl",
       "contrib_at": "2026-10-29T18:19:29+01:00",
       "contrib_agent": "arquitecto",
       "enabled": true
     },
     "measure": {
       "state": "working",
-      "current": "T-109",
-      "message": "verificación mecánica de V-043: backtest con 2 semillas, sin agente (0 tokens)",
-      "pid": 22536,
-      "heartbeat": "2026-11-01T13:44:42+01:00",
-      "agent": "tester",
-      "started": "2026-11-01T13:30:03+01:00",
-      "live": "live-T-109-tester-20261101-134442.jsonl",
+      "current": "T-114",
+      "message": "desarrollador con T-114",
+      "pid": 3824,
+      "heartbeat": "2026-11-01T16:30:04+01:00",
+      "agent": "desarrollador",
+      "started": "2026-11-01T16:30:04+01:00",
+      "live": "live-T-114-desarrollador-20261101-163004.jsonl",
       "enabled": true,
       "mechanical": false
     }
