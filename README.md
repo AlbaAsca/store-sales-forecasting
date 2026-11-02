@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/img/hero.svg" alt="store-sales-forecasting: de la idea al backtest, el holdout y Kaggle, de 0,45751 a 0,38839 RMSLE" width="100%">
+</p>
+
 # 🛒 ¿Cuánto venderá mañana un supermercado?
 
 **Previsión de ventas de 1.782 series temporales con validación temporal honesta**, contada paso a paso.
